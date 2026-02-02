@@ -1,0 +1,20 @@
+<mat-form-field [appearance]="appearance()" class="ui-field ui-textarea">
+  @if (label()) {
+    <mat-label>{{ label() }}</mat-label>
+  }
+  <textarea
+    matInput
+    [attr.rows]="rows()"
+    [attr.cols]="cols()"
+    [placeholder]="placeholder()"
+    [required]="required()"
+    [name]="name() || ''"
+    [id]="id() || ''"
+    [disabled]="disabled()"
+    [value]="value()"
+    [style.height]="height()"
+    (input)="handleInput($event)"
+    (blur)="handleBlur()">
+  </textarea>
+  <ng-content></ng-content>
+</mat-form-field>

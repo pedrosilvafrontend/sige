@@ -1,0 +1,22 @@
+.school-list-card {
+  table {
+    .mat-column-actions {
+      flex: 0 0 120px;
+    }
+    tbody .mat-column-actions {
+      justify-content: end;
+    }
+    .mat-column-name {
+      flex: 0 0 27%;
+    }
+    .mat-column-email {
+      flex: 0 0 20%;
+    }
+    .mat-column-phone {
+      flex: 0 0 12%;
+    }
+    .mat-column-address {
+      flex: 0 0 33%;
+    }
+  }
+}

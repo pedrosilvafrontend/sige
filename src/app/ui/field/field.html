@@ -1,0 +1,43 @@
+<mat-form-field [appearance]="appearance()" floatLabel="always" class="ui-field">
+  @if (label()) {
+    <mat-label>{{ label() }}</mat-label>
+  }
+  @if (cType() == 'score') {
+    <input
+      matInput
+      [type]="type()"
+      [placeholder]="placeholder()"
+      [required]="required()"
+      [name]="name() || ''"
+      [id]="id() || ''"
+
+      mask="separator.1"
+      decimalMarker=","
+      thousandSeparator=""
+      [dropSpecialCharacters]="true"
+      [showMaskTyped]="false"
+
+      [autocomplete]="autocomplete() || undefined"
+      [disabled]="disabled()"
+      [ngModel]="value()"
+      (input)="handleInput($event)"
+      (blur)="handleBlur()"
+    />
+  }
+  @else {
+    <input
+      matInput
+      [type]="type()"
+      [placeholder]="placeholder()"
+      [required]="required()"
+      [name]="name() || ''"
+      [id]="id() || ''"
+      [autocomplete]="autocomplete() || undefined"
+      [disabled]="disabled()"
+      [ngModel]="value()"
+      (input)="handleInput($event)"
+      (blur)="handleBlur()"
+    />
+  }
+  <ng-content></ng-content>
+</mat-form-field>

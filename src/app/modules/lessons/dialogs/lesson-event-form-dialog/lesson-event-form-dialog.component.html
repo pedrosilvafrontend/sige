@@ -1,0 +1,130 @@
+<div class="dialogContainer">
+  <div class="modalHeader">
+    <div class="avatarDetails">
+      <div class="modalTitle">
+        {{'Edit lesson event' | translate}}
+      </div>
+    </div>
+    <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <form class=" form-field-full">
+    <div mat-dialog-content>
+      <div class="row">
+        @if (dialogData) {
+          <app-lesson-events-form [schoolId]="event && event.school && event.school.id || 0"
+                                  [readOnly]="readonly"
+                                  [data]="event"
+                                  (form$)="setForm($event)"
+          ></app-lesson-events-form>
+        }
+
+        <div class="col-sm-12">
+<!--          @let proof = event.evalTools.proof;-->
+          <ui-modal #planningModal [template]="planningTemplate" [options]="{width: '800px'}"></ui-modal>
+          <ui-modal #proofModal [template]="proofTemplate" [options]="{width: '800px'}"></ui-modal>
+
+          <ng-template #planningTemplate>
+            <h3 mat-dialog-title>Planejamento de aula</h3>
+            <mat-dialog-content>
+              <div class="row mt-3" [formGroup]="extraForm">
+                <div class="col-md-12">
+                  <ui-textarea
+                    id="planning"
+                    name="planning"
+                    height="14em"
+                    [label]="'Planning' | translate"
+                    [required]="true"
+                    formControlName="planning"
+                  ></ui-textarea>
+                </div>
+              </div>
+            </mat-dialog-content>
+            <mat-dialog-actions>
+              <div class="d-flex gap-2">
+                <ui-button color="neutral" (onClick)="planningModal.close()" cdkFocusInitial>Cancelar</ui-button>
+                <ui-button (onClick)="savePlanning(planningModal.close)">Salvar</ui-button>
+              </div>
+            </mat-dialog-actions>
+          </ng-template>
+
+          <ng-template #proofTemplate>
+            <h3 mat-dialog-title>Prova</h3>
+            <mat-dialog-content>
+              @let disableProof = disabled || (proof.status == 'APPROVED' && user.role == 'teacher');
+              @if (proof && proof.status) {
+                <div class="my-3">
+                  <span class="badge" [ngClass]="'text-bg-'+proofStatusClass[proof.status]">
+                    {{ proof.status | translate }}
+                  </span>
+                </div>
+              }
+              <app-test-form
+                class="d-block mt-3"
+                [data]="proof || {}"
+                [disabled]="disableProof"
+                (form$)="(proofForm = $event)"
+              >
+              </app-test-form>
+            </mat-dialog-content>
+            <mat-dialog-actions>
+              <div class="d-flex gap-2">
+                @if (proof?.id && !disableProof) {
+                  <ui-button color="danger" (onClick)="deleteProofModal.open()" cdkFocusInitial>Excluír prova</ui-button>
+                }
+                <ui-button color="neutral" (onClick)="proofModal.close()" cdkFocusInitial>
+                  @if (disableProof) {
+                    Fechar
+                  } @else {
+                    Cancelar
+                  }
+                </ui-button>
+                @if (!disableProof) {
+                  <ui-button (onClick)="saveProof(proofModal.close)">
+                    Salvar
+                    @let isManager = user.role && ['admin', 'association', 'principal', 'coordinator'].includes(user.role);
+                    @if (proof.status && proof.status != 'APPROVED' && isManager) {
+                      e aprovar
+                    }
+                  </ui-button>
+                }
+              </div>
+            </mat-dialog-actions>
+          </ng-template>
+
+          <ui-modal #deleteProofModal [template]="deleteProofTemplate"></ui-modal>
+          <ng-template #deleteProofTemplate>
+            <h3 mat-dialog-title>Excluír prova</h3>
+            <mat-dialog-content>
+              <p>Prova: <strong>{{ proof?.title }}</strong></p>
+              Deseja realmente excluír a prova ?
+            </mat-dialog-content>
+            <mat-dialog-actions>
+              <div class="d-flex gap-2">
+                <ui-button color="neutral" (onClick)="deleteProofModal.close()" cdkFocusInitial>Cancelar</ui-button>
+                <ui-button color="danger" (onClick)="deleteProof(proofModal.close);deleteProofModal.close()" cdkFocusInitial>Excluír prova</ui-button>
+              </div>
+            </mat-dialog-actions>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    <div matDialogActions>
+      <div class="dialog-buttons">
+        <ui-button icon="book" color="default" (onClick)="planningModal.open()">Planejamento</ui-button>
+        <ui-button icon="grading" color="default" (onClick)="proofModal.open()">
+          <div class="d-flex gap-1 align-items-center">
+                <span>
+                  {{ (proof && proof.id ? 'Proof' : 'Add proof') | translate }}
+                </span>
+            @if (proof && proof.status) {
+              <span class="circle" [ngClass]="'text-bg-'+proofStatusClass[proof.status]"></span>
+            }
+          </div>
+        </ui-button>
+        <ui-button color="neutral" (onClick)="close()" type="button">{{ 'close' | translate }}</ui-button>
+      </div>
+    </div>
+  </form>
+</div>

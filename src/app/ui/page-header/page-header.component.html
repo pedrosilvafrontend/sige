@@ -1,0 +1,9 @@
+<div class="page-header-inner">
+  <div class="d-flex gap-2 justify-content-between align-content-center">
+    <h1 class="page-title">{{title | translate}} <small>{{subtitle}}</small></h1>
+    <ng-content></ng-content>
+  </div>
+  @if (!hideBreadcrumb) {
+<!--    <app-breadcrumb [nav]="nav"></app-breadcrumb>-->
+  }
+</div>

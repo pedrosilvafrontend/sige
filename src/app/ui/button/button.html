@@ -1,0 +1,23 @@
+@if (fabIcon()) {
+  <button matMiniFab
+          [type]="type()"
+          [disabled]="disabled()"
+          [ngClass]="`color-${color()} ${size()}`"
+          (click)="btnClick()"
+  >
+    <mat-icon>{{ fabIcon() }}</mat-icon>
+  </button>
+}
+@else {
+  <button
+    [type]="type()" matButton="filled"
+    [disabled]="disabled()"
+    [ngClass]="`color-${color()} ${size()}`"
+    (click)="btnClick()"
+  >
+    @if (icon()) {
+      <mat-icon>{{ icon() }}</mat-icon>
+    }
+    <ng-content></ng-content>
+  </button>
+}

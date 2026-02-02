@@ -1,0 +1,56 @@
+<mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-100">
+  <mat-label>{{ 'Curricular component' | translate }}</mat-label>
+  <input type="text"
+         aria-label="curricular component"
+         matInput
+         (focus)="handleFocus($event)"
+         (blur)="handleBlur()"
+         [formControl]="control"
+         [matAutocomplete]="auto">
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+    @for (item of filteredOptions | async; track item.id) {
+      <mat-option [value]="item">
+        {{ item.code ? item.code+' - ' : '' }}{{ item.name }}
+      </mat-option>
+    }
+    @if (!classYearId()) {
+      <mat-option>
+        {{ noItemsMessage | translate }}
+      </mat-option>
+    }
+  </mat-autocomplete>
+  @if (control.hasError('required')) {
+    <mat-error>
+      {{ 'validations.required' | translate }}
+    </mat-error>
+  }
+
+<!--  <mat-select-->
+<!--    [value]="form.value"-->
+<!--    (blur)="handleBlur()"-->
+<!--    [compareWith]="objectCompare">-->
+<!--    @if (curricularComponents.length) {-->
+<!--      <mat-option [value]="null">-</mat-option>-->
+<!--    }-->
+<!--    @for (item of curricularComponents; track item.id) {-->
+<!--      <mat-option [value]="item">-->
+<!--        {{item.code}} - {{ item.name }}-->
+<!--      </mat-option>-->
+<!--    }-->
+<!--    @if (!classYearId()) {-->
+<!--      <mat-option>-->
+<!--        {{ 'Select a class' | translate }}-->
+<!--      </mat-option>-->
+<!--    }-->
+<!--    @else if (!curricularComponents.length) {-->
+<!--      <mat-option>-->
+<!--        {{ noItemsMessage | translate }}-->
+<!--      </mat-option>-->
+<!--    }-->
+<!--  </mat-select>-->
+<!--  @if (form.controls['id'].hasError('required')) {-->
+<!--    <mat-error>-->
+<!--      {{ 'validations.required' | translate }}-->
+<!--    </mat-error>-->
+<!--  }-->
+</mat-form-field>

@@ -1,0 +1,8 @@
+@use 'variables' as *;
+
+h3 {
+  background-color: lighten($neutral, 20%);
+  padding: 0 10px;
+  line-height: 2.2em;
+  //outline: 8px solid $neutral;
+}

@@ -1,0 +1,41 @@
+@use 'variables' as *;
+
+.mdc-button.mat-mdc-button-base, .mdc-fab.mat-mdc-mini-fab {
+  border-radius: $field-border-radius;
+  &:not([disabled]) {
+    background-color: $primary;
+    color: $white;
+    box-shadow: none;
+    &.color-danger {
+      background-color: $danger;
+    }
+    &.color-success {
+      background-color: $success;
+    }
+    &.color-warning {
+      background-color: $warning;
+    }
+    &.color-info {
+      background-color: $info;
+    }
+    &.color-neutral {
+      background-color: $neutral;
+    }
+  }
+  .mat-icon {
+    font-size: 1.2em;
+    width: 1em;
+    height: 1em;
+  }
+  &.small {
+    height: 2em;
+    overflow: hidden;
+  }
+}
+.mdc-fab.mat-mdc-mini-fab {
+  &.small {
+    font-size: inherit;
+    width: 2.2em;
+    height: 2em;
+  }
+}

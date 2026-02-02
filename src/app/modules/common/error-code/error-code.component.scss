@@ -1,0 +1,31 @@
+@use "long-shadow";
+
+.error-wrap {
+  text-align: center;
+}
+
+.error-code {
+  padding: 20px 0;
+  font-size: 150px;
+  text-shadow: long-shadow.long-shadow(
+    $direction: 45deg,
+    $length: 60px,
+    $color: rgba(0, 0, 0, 0.03),
+    $fade: rgba(0, 0, 0, 0.0015),
+    $shadow-count: 20
+  );
+}
+
+.error-title {
+  margin: 0 0 16px;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 32px;
+}
+
+.error-message {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 28px;
+}

@@ -1,0 +1,17 @@
+:host {
+  display: inline-block;
+  width: 100%;
+}
+.ui-textarea {
+  .mat-mdc-form-field {
+    width: inherit;
+    height: 100%;
+  }
+  .mat-mdc-form-field-flex,
+  .mdc-text-field--outlined .mat-mdc-form-field-infix {
+    height: 100%;
+  }
+}
+
+
+

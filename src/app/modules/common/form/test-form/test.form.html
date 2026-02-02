@@ -1,0 +1,40 @@
+<div class="row" [formGroup]="form">
+  <div class="col-md-12">
+    <ui-field
+      id="title"
+      name="title"
+      [label]="'Title' | translate"
+      formControlName="title"
+    >
+    </ui-field>
+  </div>
+  <div class="col-md-6">
+    <ui-field
+      id="score"
+      name="score"
+      cType="score"
+      [label]="'Score' | translate"
+      [required]="true"
+      formControlName="score"
+    >
+    </ui-field>
+  </div>
+  <div class="col-md-12">
+    <ui-textarea
+      id="content"
+      name="content"
+      [label]="'Content' | translate"
+      [required]="true"
+      formControlName="content"
+      ></ui-textarea>
+  </div>
+  <div class="col-md-12">
+    <ui-textarea
+      id="whereToFindIt"
+      name="whereToFindIt"
+      [label]="'Where to find it' | translate"
+      formControlName="whereToFindIt"
+    >
+    </ui-textarea>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+[
+  {
+    "route": "calendar",
+    "name": "calendar",
+    "type": "link",
+    "icon": "calendar",
+    "id": "93c3"
+  },
+  {
+    "route": "schools",
+    "name": "schools",
+    "type": "link",
+    "icon": "book",
+    "id": "fe31"
+  },
+  {
+    "route": "classes",
+    "name": "classes",
+    "type": "link",
+    "icon": "book",
+    "id": "ed3b"
+  },
+  {
+    "route": "lessons",
+    "name": "lessons",
+    "type": "link",
+    "icon": "book",
+    "id": "ed4b"
+  },
+  {
+    "route": "teachers",
+    "name": "teachers",
+    "type": "link",
+    "icon": "book",
+    "id": "8e03"
+  },
+  {
+    "route": "managers",
+    "name": "managers",
+    "allowedRoles": ["admin", "principal", "coordinator"],
+    "type": "link",
+    "icon": "book",
+    "id": "8e03"
+  },
+  {
+    "route": "configs",
+    "name": "configs",
+    "type": "sub",
+    "icon": "tool",
+    "children": [
+      {
+        "route": "curricular-components-list",
+        "name": "curricular-components",
+        "type": "link",
+        "icon": "book",
+        "id": "8e03"
+      },
+      {
+        "route": "day-shifts",
+        "name": "day-shifts",
+        "type": "link",
+        "icon": "calendar",
+        "id": "8e04"
+      },
+      {
+        "route": "general",
+        "name": "general",
+        "type": "link",
+        "icon": "cog",
+        "id": "8e05"
+      }
+    ],
+    "id": "a985"
+  }
+]

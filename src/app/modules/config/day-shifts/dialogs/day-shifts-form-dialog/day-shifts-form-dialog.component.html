@@ -1,0 +1,43 @@
+<div class="dialogContainer">
+  <div class="modalHeader">
+    <div class="modalTitle">
+      {{'day-shift' | translate}}: {{dialogTitle | translate}}
+    </div>
+    <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <form class=" form-field-full" [formGroup]="form" (ngSubmit)="submit()">
+    <div mat-dialog-content>
+      <div class="row m-b-24">
+        <div class="col-sm-6">
+          <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{ 'name' | translate }}</mat-label>
+            <input matInput formControlName="name">
+<!--            <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>school</mat-icon>-->
+            @if (form.get('name')?.hasError('required')) {
+            <mat-error>
+              {{ 'validations.required' | translate }}
+            </mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+<!--      <div class="row m-b-24">-->
+<!--        <div class="col-sm-12">-->
+<!--          <div class="example-button-row">-->
+<!--            <button mat-flat-button color="primary" [disabled]="!form.valid" type="submit">{{ 'save' | translate }}</button>-->
+<!--            <button mat-flat-button color="warn" mat-dialog-close tabindex="-1">{{ 'cancel' | translate }}</button>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+
+    </div>
+    <div matDialogActions>
+      <div class="dialog-buttons">
+        <ui-button type="button" color="neutral" mat-dialog-close tabindex="-1">{{ 'Cancel' | translate }}</ui-button>
+        <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>
+      </div>
+    </div>
+  </form>
+</div>

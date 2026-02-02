@@ -1,0 +1,66 @@
+<div class="auth-container">
+  <div class="row auth-main justify-content-center align-items-center">
+    <!--<div class="col-sm-6 px-0">
+      <div class="left-img" style="background-image: url(assets/images/pages/bg-02.png);">
+      </div>
+    </div>-->
+    <div class="auth-form-section">
+      <mat-card class="authCard">
+        <mat-card-content>
+          <div class="form-section">
+            <div class="auth-wrapper">
+              <h2 class="welcome-msg"> Sign Up </h2>
+              <p class="auth-signup-text text-muted">Enter details to create your account</p>
+              <form class="form-field-full" [formGroup]="registerForm">
+                <mat-form-field appearance="outline">
+                  <mat-label>{{'username' | translate}}</mat-label>
+                  <input matInput formControlName="username" required>
+                  <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>face</mat-icon>
+                  @if (registerForm.get('username')?.invalid) {
+                  <mat-error>
+                    <span>{{'validations.required' | translate}}</span>
+                  </mat-error>
+                  }
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{'password' | translate}}</mat-label>
+                  <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" required>
+                  <mat-icon class="material-icons-outlined color-icon p-3" matSuffix (click)="hide = !hide">
+                    {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                  @if (registerForm.get('password')?.invalid) {
+                  <mat-error>
+                    <span>{{'validations.required' | translate}}</span>
+                  </mat-error>
+                  }
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{'confirm_password' | translate}}</mat-label>
+                  <input matInput [type]="chide ? 'password' : 'text'" formControlName="confirmPassword" required>
+                  <mat-icon class="material-icons-outlined color-icon p-3" matSuffix (click)="chide = !chide">
+                    {{chide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                  @if (registerForm.get('confirmPassword')?.hasError('required')) {
+                  <mat-error>
+                    <span>{{'validations.required' | translate}}</span>
+                  </mat-error>
+                  }
+                  @if (registerForm.get('confirmPassword')?.hasError('mismatch')) {
+                  <mat-error translate [translateParams]="{value: 'login.password' | translate}">
+                    <span>{{'validations.inconsistent'| translate}}</span>
+                  </mat-error>
+                  }
+                </mat-form-field>
+                <mat-checkbox>{{'read_and_agree' | translate}}</mat-checkbox>
+                <button class="w-100 m-y-16 login-btn" mat-raised-button color="primary" (click)="register()">
+                  {{'register' | translate}}
+                </button>
+                <div class="askNoAcc">{{'have_an_account' | translate}}
+                  <a routerLink="/auth/login">{{'login' | translate}}</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

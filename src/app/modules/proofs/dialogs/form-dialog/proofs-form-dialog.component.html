@@ -1,0 +1,100 @@
+<div class="dialogContainer">
+  <div class="modalHeader">
+    <div class="avatarDetails">
+      <div class="modalTitle">
+        {{ dialogTitle | translate }}: {{ proof.title }}
+      </div>
+    </div>
+    <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <form class="form-field-full" [formGroup]="form" (ngSubmit)="submit()">
+    <div mat-dialog-content>
+      <div class="row m-b-24">
+        <div class="col-sm-12">
+          <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{ 'title' | translate }}</mat-label>
+            <input matInput formControlName="title">
+            @if (form.get('title')?.hasError('required')) {
+              <mat-error>
+                {{ 'validations.required' | translate }}
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row m-b-24">
+        <div class="col-sm-12">
+          <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{ 'content' | translate }}</mat-label>
+            <textarea matInput formControlName="content"></textarea>
+            @if (form.get('content')?.hasError('required')) {
+              <mat-error>
+                {{ 'validations.required' | translate }}
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row m-b-24">
+        <div class="col-sm-6">
+          <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{ 'date' | translate }}</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="date">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{ 'score' | translate }}</mat-label>
+            <input matInput formControlName="score">
+            @if (form.get('score')?.hasError('required')) {
+              <mat-error>
+                {{ 'validations.required' | translate }}
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+
+<!--      <div class="row m-b-24">-->
+<!--        <div class="col-sm-6">-->
+<!--          <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">-->
+<!--            <mat-label>{{ 'whereToFindIt' | translate }}</mat-label>-->
+<!--            <input matInput formControlName="whereToFindIt">-->
+<!--          </mat-form-field>-->
+<!--        </div>-->
+<!--        <div class="col-sm-6">-->
+<!--          <mat-form-field appearance="outline" subscriptSizing="dynamic">-->
+<!--            <mat-label>{{ 'status' | translate }}</mat-label>-->
+<!--            <mat-select formControlName="status">-->
+<!--              <mat-option value="PENDING_APPROVAL">{{ 'PENDING_APPROVAL' | translate }}</mat-option>-->
+<!--              <mat-option value="APPROVED">{{ 'APPROVED' | translate }}</mat-option>-->
+<!--              <mat-option value="REJECTED">{{ 'REJECTED' | translate }}</mat-option>-->
+<!--            </mat-select>-->
+<!--          </mat-form-field>-->
+<!--        </div>-->
+<!--      </div>-->
+    </div>
+    <div matDialogActions>
+      <div class="dialog-buttons">
+        @let isManager = auth.role === 'admin' || auth.role === 'principal' || auth.role === 'coordinator';
+        @if (isManager) {
+          @if (proof.status === 'PENDING_APPROVAL') {
+            <ui-button color="danger" tabindex="-1" type="button" (onClick)="onReject()">{{ 'Reject' | translate }}</ui-button>
+          }
+          @if ((proof.status === 'REJECTED' || proof.status === 'PENDING_APPROVAL')) {
+            <ui-button color="success" tabindex="-1" type="button" (onClick)="onApprove()">{{ 'Approve' | translate }}</ui-button>
+          }
+        }
+
+        <ui-button color="neutral" mat-dialog-close tabindex="-1" type="button">{{ 'Cancel' | translate }}</ui-button>
+        <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,26 @@
+@for (criterionForm of form.controls; track criterionForm; let i = $index) {
+  <div class="criterion-form">
+    <div class="row">
+      <div class="col-md-12">
+        <app-criterion-select [schoolId]="schoolId()" [formControl]="criterionForm.controls['code']" (change$)="onCriterionChange($event, i)"></app-criterion-select>
+      </div>
+    </div>
+
+    @for (evaluationForm of (criterionForm.controls['items'].controls || []); track evaluationForm) {
+      <app-evaluation-form [schoolId]="schoolId()" [data]="{ criterionCode: mainForm.controls.criterionCode.value || '' }" [form]="evaluationForm"></app-evaluation-form>
+    }
+
+    <div class="d-flex gap-2 mb-4">
+      <ui-button (onClick)="addEvaluation(i)" [disabled]="form.invalid">
+        {{ 'Add item to' | translate: { code: criterionForm.controls['code'].value } }}
+      </ui-button>
+      @if (i === form.controls.length -1 && criterionForm.controls['items'].controls.length > 0) {
+        <ui-button (onClick)="addCriterion()" [disabled]="form.invalid">{{ 'Add criterion' | translate }}</ui-button>
+      }
+    </div>
+  </div>
+}
+
+@if (form.controls.length === 0) {
+  <ui-button (onClick)="addCriterion()" [disabled]="form.invalid">{{ 'Add criterion' | translate }}</ui-button>
+}

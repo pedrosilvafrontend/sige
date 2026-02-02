@@ -1,0 +1,77 @@
+.activity-col {
+  width: 100%;
+  min-width: 16em;
+  //max-width: 18em;
+}
+.mat-mdc-card {
+  width: 100%;
+  //min-width: 20em;
+  color: #666666;
+  margin-bottom: 0;
+  .day {
+    font-size: 2.8rem;
+    line-height: 2.8rem;
+    color: #cccccc;
+    font-weight: 800;
+  }
+  .month {
+    font-size: 1.2rem;
+    line-height: 1.2em;
+    color: #bbbbbb;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .hour {
+    font-size: 1rem;
+    color: #aaaaaa;
+    font-weight: 500;
+  }
+  //.day, .month, .hour {
+  //  width: 100%;
+  //  min-width: 5rem;
+  //  max-width: 10rem;
+  //}
+  .activities {
+    height: 2.2rem;
+  }
+  .curricular-component {
+    font-size: 1.2rem;
+    line-height: 1.4rem;
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .teacher-name {
+    font-size: 0.8rem;
+    vertical-align: middle;
+  }
+  .month, .curricular-component {
+    height: 1.4rem;
+    margin: 0.2rem 0;
+  }
+}
+
+.row.slider-container {
+  //width: 100%; /* Or a fixed width */
+  overflow-x: scroll; /* or auto */
+  //white-space: nowrap; /* Keeps slides in a single line */
+  flex-wrap: nowrap;
+}
+
+.slide {
+  //display: inline-block; /* or use flexbox on container */
+  ////width: 20%; /* Or a fixed width for each slide */
+  //height: 200px; /* Example height */
+  ////background-color: lightgray; /* Example styling */
+  //margin-right: 10px; /* Spacing between slides */
+}
+
+.slider-container::-webkit-scrollbar {
+  display: none;
+}
+
+.slider-container {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}

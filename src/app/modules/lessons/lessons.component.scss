@@ -1,0 +1,12 @@
+.mat-column-address, .mat-column-email {
+  min-width: 20rem;
+}
+.mat-column-actions {
+  max-width: 9rem;
+}
+.mat-column-phone {
+  max-width: 12rem;
+}
+table.mat-mdc-table .mat-column-actions {
+  flex: 0 0 150px;
+}

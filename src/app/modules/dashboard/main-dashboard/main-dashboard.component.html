@@ -1,0 +1,87 @@
+<div>
+  <h2>Próximas atividades</h2>
+  <div class="">
+    <div class="row row-gap-24 my-4">
+      @for (event of events; track event.date) {
+        <div class="col activity-col">
+<!--        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 col-xxl-2 m-b-16">-->
+          <mat-card class="cursor-pointer" (click)="openLessonEventDialog(event)">
+            <mat-card-content>
+<!--              <div class="d-flex gap-2">-->
+              <div class="">
+
+                <div class="activities">
+                  @if (event.evalTools.proof?.status === 'APPROVED') {
+<!--                   TODO: aplicar activity.color de acordo com a base de dados -->
+                    <span [className]="'badge m-x-2 activity-test'" [ngStyle]="{ 'background-color': '#e36520' }">{{ 'Proof' | translate }}</span>
+                  } @else if (event.evalTools.work?.score) {
+                    <span [className]="'badge m-x-2 activity-work'" [ngStyle]="{ 'background-color': '#007bff' }">{{ 'Work' | translate }}</span>
+                  } @else {
+                    <span class="badge badge-solid-gray">{{ 'Lesson' | translate }}</span>
+                  }
+                </div>
+
+                @if (!event.groupId) {
+                  <div class="d-flex gap-3 align-items-center">
+                    <div class="day">
+                      {{ event.date | date: 'dd' }}
+                    </div>
+                    <div>
+                      <div class="month">
+                        {{ event.date | date: 'MMM' }}
+                      </div>
+                      <div class="hour">
+                        {{ event.date | date: 'HH:mm' }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+
+                    <div class="curricular-component">
+                      {{ event.curricularComponent?.name }}
+                    </div>
+                    @if (event.lesson; as lesson) {
+                      @if (user().role !== 'teacher') {
+                        <div class="teacher-name">
+                          {{ lesson.teacher?.fullName }}
+                        </div>
+                      }
+                    }
+                    <div class="school truncate-text">
+                      <span [matTooltip]="event.school?.name || ''">{{ event.school?.acronym }}</span>
+                      @if (event.schoolClass; as schoolClass) {
+                        - {{ schoolClass.code }}
+                      }
+                    </div>
+                  </div>
+                }
+                @else  {
+                  @let date = event.date | date: dateFormat;
+                  @let ts = event.frequency.timeSchedule;
+                  {{ date }} de {{ ts && ts.startTime  }} às {{ ts && ts.endTime }}
+                }
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
+
+      <div class="col activity-col"></div>
+      <div class="col activity-col"></div>
+      <div class="col activity-col"></div>
+      <div class="col activity-col"></div>
+      <div class="col activity-col"></div>
+      <div class="col activity-col"></div>
+    </div>
+
+    <div class="row my-4">
+<!--      <app-activities-count></app-activities-count>-->
+      <div class="col"></div>
+      <div class="col"></div>
+      <div class="col"></div>
+    </div>
+
+  </div>
+
+</div>

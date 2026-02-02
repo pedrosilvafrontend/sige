@@ -1,0 +1,27 @@
+<fieldset [ngClass]="{ disabled: disabled() || form.disabled }">
+  <legend>{{ 'activities' | translate }}</legend>
+  <label for="acInput" class="d-block cursor-pointer">
+    @for (item of (form.value || []); track item) {
+      <span [className]="'badge badge-solid d-inline-flex align-items-center'" [ngStyle]="{ 'background-color': item.color }">
+                  {{ item[keyView] }}
+        @if (!disabled() && !form.disabled) {
+          <mat-icon class="cursor-pointer" (click)="$event.preventDefault();$event.stopPropagation();removeItem(item)">
+            close
+          </mat-icon>
+        }
+      </span>
+    }
+    @if (autocomplete) {
+      <input
+        id="acInput" class="autocomplete-input p-y-4 p-x-12" type="text"
+        aria-label="Number" matInput [formControl]="autocomplete.control" [matAutocomplete]="auto" (blur)="onBlur()" [hidden]="disabled() || form.disabled">
+      <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+        @for (option of autocomplete.filtered | async; track option) {
+          <mat-option [value]="option" (onSelectionChange)="selectItem(option)">
+            {{option | obj: keyView }}
+          </mat-option>
+        }
+      </mat-autocomplete>
+    }
+  </label>
+</fieldset>

@@ -1,0 +1,106 @@
+<div class="form-field-full" [formGroup]="form">
+  <div class="row">
+    <div class="col-md-6">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'country' | translate }}</mat-label>
+        <mat-select formControlName="country" [compareWith]="compare" required>
+          <mat-option [value]="'brasil'">
+            Brasil
+          </mat-option>
+          <mat-option [value]="'other'">
+            Other
+          </mat-option>
+        </mat-select>
+        @if (form.get('country')?.hasError('required')) {
+          <mat-error>
+            {{ 'validations.required' | translate }}
+          </mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="col-sm-6">
+      <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'postalCode' | translate }}</mat-label>
+        <input matInput formControlName="postalCode" type="text" mask="00000-000">
+        <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>street</mat-icon>
+        @if (form.get('postalCode')?.hasError('required')) {
+          <mat-error>
+            {{ 'validations.required' | translate }}
+          </mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="col-sm-12">
+      <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'address' | translate }}</mat-label>
+        <textarea matInput formControlName="address"></textarea>
+      </mat-form-field>
+    </div>
+    <div class="col-sm-6">
+      <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'number' | translate }}</mat-label>
+        <input matInput formControlName="number">
+        <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>street</mat-icon>
+        @if (form.get('number')?.hasError('required')) {
+          <mat-error>
+            {{ 'validations.required' | translate }}
+          </mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="col-sm-6">
+      <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'city' | translate }}</mat-label>
+        <input matInput formControlName="city">
+        <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>street</mat-icon>
+        @if (form.get('city')?.hasError('required')) {
+          <mat-error>
+            {{ 'validations.required' | translate }}
+          </mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="col-sm-6">
+      <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'state' | translate }}</mat-label>
+        <mat-select formControlName="state" [compareWith]="compare" required>
+          <mat-option [value]="'AC'">Acre</mat-option>
+          <mat-option [value]="'AL'">Alagoas</mat-option>
+          <mat-option [value]="'AP'">Amapá</mat-option>
+          <mat-option [value]="'AM'">Amazonas</mat-option>
+          <mat-option [value]="'BA'">Bahia</mat-option>
+          <mat-option [value]="'CE'">Ceará</mat-option>
+          <mat-option [value]="'DF'">Distrito Federal</mat-option>
+          <mat-option [value]="'ES'">Espírito Santo</mat-option>
+          <mat-option [value]="'GO'">Goiás</mat-option>
+          <mat-option [value]="'MA'">Maranhão</mat-option>
+          <mat-option [value]="'MT'">Mato Grosso</mat-option>
+          <mat-option [value]="'MS'">Mato Grosso do Sul</mat-option>
+          <mat-option [value]="'MG'">Minas Gerais</mat-option>
+          <mat-option [value]="'PA'">Pará</mat-option>
+          <mat-option [value]="'PB'">Paraíba</mat-option>
+          <mat-option [value]="'PR'">Paraná</mat-option>
+          <mat-option [value]="'PE'">Pernambuco</mat-option>
+          <mat-option [value]="'PI'">Piauí</mat-option>
+          <mat-option [value]="'RJ'">Rio de Janeiro</mat-option>
+          <mat-option [value]="'RN'">Rio Grande do Norte</mat-option>
+          <mat-option [value]="'RS'">Rio Grande do Sul</mat-option>
+          <mat-option [value]="'RO'">Rondônia</mat-option>
+          <mat-option [value]="'RR'">Roraima</mat-option>
+          <mat-option [value]="'SC'">Santa Catarina</mat-option>
+          <mat-option [value]="'SP'">São Paulo</mat-option>
+          <mat-option [value]="'SE'">Sergipe</mat-option>
+          <mat-option [value]="'TO'">Tocantins</mat-option>
+          <mat-option [value]="'other'">
+            {{ 'other' | translate }}
+          </mat-option>
+        </mat-select>
+        @if (form.get('state')?.hasError('required')) {
+          <mat-error>
+            {{ 'validations.required' | translate }}
+          </mat-error>
+        }
+      </mat-form-field>
+    </div>
+  </div>
+</div>

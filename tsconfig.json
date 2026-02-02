@@ -3,6 +3,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "src",
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -13,7 +14,29 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+    "paths": {
+      "@core": ["app/core"],
+      "@core/*": ["app/core/*"],
+      "@models": ["app/core/models"],
+      "@models/*": ["app/core/models/*"],
+      "@form": ["app/form"],
+      "@form/*": ["app/form/*"],
+      "@services": ["app/services"],
+      "@services/*": ["app/services/*"],
+      "@ui": ["app/ui"],
+      "@ui/*": ["app/ui/*"],
+      "@state": ["app/shared/services/state"],
+      "@state/*": ["app/shared/services/state/*"],
+      "@env": ["environments"],
+      "@env/*": ["environments/*"],
+      "@modules": ["app/modules"],
+      "@modules/*": ["app/modules/*"],
+      "@util": ["app/core/util"],
+      "@util/*": ["app/core/util/*"],
+      "@assets": ["app/assets"],
+      "@assets/*": ["app/assets/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

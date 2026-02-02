@@ -1,1 +1,500 @@
+
+// Include theming for Angular Material with `mat.theme()`.
+// This Sass mixin will define CSS variables that are used for styling Angular Material
+// components according to the Material 3 design spec.
+// Learn more about theming and how to use it for your application's
+// custom components at https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+@use 'styles/theme/theme-colors' as custom-theme;
+@use 'bootstrap/scss/bootstrap-utilities';
+@use 'bootstrap/scss/bootstrap-grid';
+@use 'variables' as *;
+
+html {
+  height: 100%;
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+body {
+  // Default the application to a light color theme. This can be changed to
+  // `dark` to enable the dark color theme, or to `light dark` to defer to the
+  // user's system settings.
+  color-scheme: light;
+
+  // Set a default background, font and text colors for the application using
+  // Angular Material's system-level CSS variables. Learn more about these
+  // variables at https://material.angular.dev/guide/system-variables
+  //background-color: var(--mat-sys-surface);
+  background-color: $denim;
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  // Reset the user agent margin.
+  margin: 0;
+  height: 100%;
+}
 /* You can add global styles to this file, and also import other style files */
+
+
+* { box-sizing: border-box; }
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.gap-1 { gap: 0.5rem; }
+.gap-2 { gap: 1rem; }
+.gap-3 { gap: 1.5rem; }
+.gap-4 { gap: 2rem; }
+.gap-5 { gap: 2.5rem; }
+.row-gap-24 {
+  row-gap: 24px;
+}
+
+.header-menu {
+  background-color: $denim;
+  height: 3rem;
+}
+.root-container {
+  padding: 1rem;
+  margin: 0 10px;
+  background-color: $white;
+  height: calc(100vh - 3rem - 10px);
+  box-sizing: border-box;
+  border-radius: $field-border-radius;
+  border: solid $tertiary;
+  border-width: 2px 0;
+  outline: 1px solid $navy-blue;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+.root-container.public {
+  height: calc(100vh - 20px);
+  margin-top: 10px
+}
+.public-container {
+  background-color: $white;
+  scrollbar-width: thin;
+  height: calc(100vh);
+  overflow-x: hidden;
+  padding: 10px;
+}
+
+// .mat-drawer-container {
+//   height: 100vh;
+// }
+.display-none {
+  display: none;
+}
+.text-muted {
+  color: #96a2b4;
+}
+.float-start {
+  float: left;
+  [dir="rtl"] & {
+    float: right;
+  }
+}
+.float-end {
+  float: right;
+  [dir="rtl"] & {
+    float: left;
+  }
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.btn-space {
+  margin: 0px 10px;
+}
+.ng-scroll-content {
+  padding: 0px !important;
+}
+
+
+@media (max-width: 600px) {
+  .mobile-label {
+    width: 100px;
+    display: inline-block;
+    font-weight: bold;
+  }
+}
+@media (max-width: 480px) {
+  .responsive_table .mdc-data-table__row {
+    //flex-direction: column;
+    //align-items: start;
+    //padding: 8px 0;
+    //display: grid
+    padding-left: 0;
+    padding-right: 0;
+  }
+  mat-row mat-cell {
+    position: relative;
+    border-bottom-color: transparent !important;
+    .mobile-label {
+      position: absolute;
+      top: 0;
+      font-weight: 200;
+      font-size: 0.7rem;
+      line-height: 1.2em;
+    }
+  }
+}
+
+@media (min-width: 600px) {
+  .mobile-label {
+    display: none;
+  }
+}
+
+table.mat-mdc-table {
+  background-color: transparent;
+  .mat-column-actions {
+    flex: 0 0 120px;
+  }
+  tbody .mat-column-actions {
+    justify-content: end;
+  }
+  .mat-mdc-row {
+    background-color: #F5F5F5;
+    margin: 8px 0;
+    &:hover {
+      background-color: #DFDFDF;
+    }
+  }
+  .mat-mdc-cell, .mat-mdc-header-cell {
+    border: none;
+  }
+}
+mat-snack-bar-container > div {
+  background-color: inherit !important;
+}
+
+.mat-mdc-unelevated-button, fc-button {
+  border-radius: 6px !important;
+}
+
+.mat-mdc-unelevated-button.mat-primary:not(:disabled), fc-button-primary {
+  color: #ffffff;
+  background-color: #003b6f !important;
+}
+
+// alert
+.alert {
+  color: #fff;
+  border: none;
+  padding: 15px 20px;
+  font-size: 14px;
+
+  a{
+    color: #ffc107 !important;
+  }
+
+  &.alert-primary {
+    background-color: #6777ef;
+  }
+
+  &.alert-secondary {
+    background-color: #cdd3d8;
+  }
+
+  &.alert-success {
+    background-color: #54ca68;
+  }
+
+  &.alert-info {
+    background-color: #3abaf4;
+  }
+
+  &.alert-warning {
+    background-color: #ffa426;
+  }
+
+  &.alert-danger {
+    background-color: #fc544b;
+  }
+
+  &.alert-light {
+    background-color: #e3eaef;
+    color: #191d21;
+  }
+
+  &.alert-dark {
+    background-color: #191d21;
+  }
+}
+// end alert
+
+.root-container {
+  .mat-mdc-card {
+    background: #fafafa;
+    border-radius: 4px;
+    box-shadow: none;
+    outline: 1px solid #efefef;
+  }
+  google-chart {
+    [fill="white"] {
+      fill: transparent;
+    }
+  }
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+  .mat-mdc-form-field-infix {
+    width: auto;
+  }
+  .mat-mdc-form-field-bottom-align {
+    min-height: 16px;
+  }
+}
+
+// container
+
+.container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+  max-width: 1920px;
+}
+//@media (min-width: 1920px) {
+//  .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+//    max-width: 1900px;
+//  }
+//}
+
+// end container
+
+
+// badges
+
+.badge {
+  font-family: sans-serif;
+  font-weight: 600;
+  background-color: $neutral;
+  padding: 0 0.6em;
+  line-height: 2em;
+  margin: 0 0.2em;
+  //color: $dark-text;
+  color: $white;
+  border-radius: $field-border-radius;
+  &.badge-solid-red {
+    background-color: $danger;
+  }
+  &.badge-solid-green {
+    background-color: $cool;
+  }
+}
+
+// end badges
+
+
+// dialog modal
+.mat-mdc-dialog-container {
+  .mat-mdc-dialog-surface {
+    border-radius: $border-radius;
+  }
+}
+.modalHeader {
+  display: flex;
+  width: 100%;
+  padding: 5px 15px;
+  border-bottom: 1px solid;
+  border-color: rgba(82, 63, 105, 0.06);
+  min-height: 3.4rem;
+  .modalTitle {
+    font-size: 16px;
+    margin: 5px 8px;
+    line-height: 35px;
+    font-weight: 500;
+  }
+  .avatarDetails {
+    display: flex;
+    align-items: flex-start;
+    margin: 5px 10px;
+    img {
+      height: 35px;
+      width: 35px;
+      border-radius: 50%;
+    }
+  }
+  img {
+    border-radius: 50%;
+    height: 35px;
+    width: 35px;
+  }
+}
+.modalFooter {
+  padding: var(--mat-dialog-content-padding);
+}
+.modal-close-button {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  color: #161d38;
+  right: 10px;
+  position: absolute !important;
+  [dir="rtl"] & {
+    left: 10px;
+    right: unset;
+  }
+  .mat-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+  }
+}
+
+.dark {
+  .modalHeader {
+    border-color: rgba(212, 212, 212, 0.06);
+    .modalTitle {
+      color: #96a2b4;
+    }
+  }
+  .modal-close-button .mat-icon {
+    color: #96a2b4;
+  }
+}
+
+.mdc-dialog {
+  .dialog-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mat-mdc-dialog-actions {
+    display: flex;
+    position: relative;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 52px;
+    margin: 0;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    padding: 0.7rem 1rem;
+    justify-content: center;
+  }
+}
+
+.mat-mdc-dialog-container-with-actions .mat-mdc-dialog-content {
+  padding: 5px 2rem;
+  min-height: 30vh;
+}
+
+// end dialog modal
+
+
+.right-side-btn {
+  text-align: right;
+  button {
+    overflow: hidden;
+    .mat-mdc-select {
+      width: 200px;
+      display: table;
+      position: absolute;
+      right: 0;
+    }
+  }
+}
+
+.mat-mdc-snack-bar-container .mat-mdc-snackbar-surface {
+  color: #f2f0f4 !important;
+  border-radius: $field-border-radius;
+  background-color: #2f3033 !important;
+}
+
+fieldset {
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+  padding-top: 1.5em;
+}
+
+
+.truncate-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mat-mdc-form-field-infix {
+  z-index: 1;
+}
+.mdc-text-field--outlined:not(.mdc-text-field--disabled) .mat-mdc-notch-piece {
+  border-color: #bbbbbb;
+}
+.mdc-notched-outline {
+  background-color: white;
+  z-index: 0;
+  border-radius: 5px;
+}
+
+.mdc-text-field--disabled {
+  .mdc-notched-outline {
+    background-color: #faf9fd;
+  }
+  .mdc-text-field__input, .mdc-floating-label {
+    color: #4f4f4f !important;
+  }
+  .mat-mdc-notch-piece {
+    border-color: #eeeeee !important;
+  }
+}
+
+.mat-mdc-unelevated-button:not(:disabled) {
+  &[color="warn"] {
+    color: #fff;
+    background-color: $danger;
+  }
+}
+
+.hover-danger {
+  &:hover {
+    background-color: $danger !important;
+    color: #fff !important;
+  }
+}
+
+.mat-mdc-radio-group {
+  display: flex;
+  gap: 0.8rem;
+  .mat-mdc-radio-button {
+    .mdc-label {
+      margin-left: 0;
+      padding-left: 0;
+    }
+  }
+  //mdc-form-field
+  //.mat-mdc-radio-button + .mat-mdc-radio-button {
+  //  margin-left: 1rem;
+  //}
+}
+
+.circle {
+  width: 1rem;
+  height: 1rem;
+  margin: 0 0.3rem;
+  border-radius: 1rem;
+}
+
+
+.mat-mdc-dialog-container {
+  .mat-mdc-tab-body-content {
+    padding: 0 !important;
+    height: auto;
+    overflow: hidden;
+  }
+}

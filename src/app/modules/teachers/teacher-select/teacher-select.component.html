@@ -1,0 +1,52 @@
+<mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-100">
+  <mat-label>{{ 'teacher' | translate | titlecase }}</mat-label>
+
+  <input type="text"
+         aria-label="teacher"
+         matInput
+         (blur)="handleBlur()"
+         [formControl]="control"
+         [matAutocomplete]="auto">
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+    @for (item of filteredOptions | async; track item.id) {
+      <mat-option [value]="item">
+        {{ item.code ? item.code+' - ' : '' }}{{ item.fullName }}
+      </mat-option>
+    }
+  </mat-autocomplete>
+  @if (control.hasError('required')) {
+    <mat-error>
+      {{ 'validations.required' | translate }}
+    </mat-error>
+  }
+
+
+  <!--<mat-select
+    [value]="form.value"
+    (valueChange)="change($event)"
+    [compareWith]="objectCompare">
+    @if (teachers.length) {
+      <mat-option [value]="null">
+        {{ '-' | translate }}
+      </mat-option>
+    }
+    @for (item of teachers; track item.id) {
+      <mat-option [value]="item">
+        {{item.code}} {{ item.fullName }}
+      </mat-option>
+    }
+    @if (noItemsMessage && teachers.length === 0) {
+      <mat-option [value]="null">
+        {{ noItemsMessage }}
+      </mat-option>
+    }
+  </mat-select>
+  @if (form.controls.id.hasError('required')) {
+    <mat-error>
+      {{ 'validations.required' | translate }}
+    </mat-error>
+  }-->
+</mat-form-field>
+
+
+<!--  <pre>{{ control.value | json }}</pre>-->

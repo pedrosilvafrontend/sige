@@ -1,0 +1,148 @@
+<div class="main-menu">
+
+  <div class="mobile-menu d-lg-none">
+<!--    <button matIconButton [routerLink]="'dashboard'">-->
+<!--      <mat-icon>home</mat-icon>-->
+<!--    </button>-->
+    <button matIconButton [matMenuTriggerFor]="menu" aria-label="Mobile menu">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item [routerLink]="'dashboard'">{{ 'dashboard' | translate }}</button>
+      <button mat-menu-item [routerLink]="'calendar'">{{ 'calendar' | translate }}</button>
+      <button mat-menu-item [routerLink]="'lessons'">{{ 'lessons' | translate }}</button>
+      <button mat-menu-item [routerLink]="'teachers'">{{ 'teachers' | translate }}</button>
+      <button mat-menu-item [routerLink]="'classes'">{{ 'classes' | translate }}</button>
+      <button mat-menu-item [routerLink]="'schools'">{{ 'schools' | translate }}</button>
+      @if (allowMenu.managers) {
+        <button mat-menu-item [routerLink]="'managers'">{{ 'management' | translate }}</button>
+        <button mat-menu-item [routerLink]="'proofs'">{{ 'proofs' | translate }}</button>
+      }
+      <button mat-menu-item [matMenuTriggerFor]="cfgMenu">{{ 'configs' | translate }}</button>
+      <mat-menu #cfgMenu="matMenu">
+        <button mat-menu-item [routerLink]="'configs/curricular-components-list'">{{ 'Curricular components' | translate }}</button>
+        <button mat-menu-item [routerLink]="'configs/day-shifts'">{{ 'day-shifts' | translate }}</button>
+        <button mat-menu-item [routerLink]="'configs/general'">{{ 'general' | translate }}</button>
+      </mat-menu>
+    </mat-menu>
+  </div>
+
+  <div cdkMenuBar class="d-none d-lg-flex">
+    <button class="menu-bar-item"
+            cdkMenuItem
+            [routerLink]="'dashboard'"
+    >
+      <img src="sige.png" alt="SIGE: Sistema Integrado de Gestão Escolar" class="logo">
+    </button>
+    <button class="menu-bar-item"
+            cdkMenuItem
+            [routerLink]="'calendar'"
+    >
+      {{ 'calendar' | translate }}
+    </button>
+    <button class="menu-bar-item"
+            cdkMenuItem
+            [routerLink]="'lessons'"
+    >
+      {{ 'lessons' | translate }}
+    </button>
+    @if (allowMenu.teachers) {
+      <button class="menu-bar-item"
+              cdkMenuItem
+              [routerLink]="'teachers'"
+      >
+        {{ 'teachers' | translate }}
+      </button>
+    }
+    <button class="menu-bar-item"
+            cdkMenuItem
+            [routerLink]="'classes'"
+    >
+      {{ 'classes' | translate }}
+    </button>
+    <button class="menu-bar-item"
+            cdkMenuItem
+            [routerLink]="'schools'"
+    >
+      {{ 'schools' | translate }}
+    </button>
+    @if (allowMenu.managers) {
+      <button class="menu-bar-item"
+              cdkMenuItem
+              [cdkMenuTriggerFor]="managementMenu"
+      >
+        {{ 'management' | translate }}
+      </button>
+    }
+    <ng-template #managementMenu>
+      <div class="my-custom-menu" cdkMenu>
+        <button class="menu-item"
+                cdkMenuItem
+                [routerLink]="'managers'"
+        >
+          {{ 'managers' | translate }}
+        </button>
+        <button class="menu-item"
+                cdkMenuItem
+                [routerLink]="'proofs'"
+        >
+          {{ 'proofs' | translate }}
+        </button>
+        <!--<button class="menu-item"
+                cdkMenuItem
+                [routerLink]="'works'"
+        >
+          {{ 'works' | translate }}
+        </button>-->
+      </div>
+    </ng-template>
+
+    @if (allowMenu.configs) {
+      <button class="menu-bar-item"
+              cdkMenuItem
+              [cdkMenuTriggerFor]="configMenu"
+      >
+        {{ 'configs' | translate }}
+      </button>
+    }
+    <ng-template #configMenu>
+      <div class="my-custom-menu" cdkMenu>
+        <button class="menu-item"
+                cdkMenuItem
+                [routerLink]="'configs/curricular-components-list'"
+        >
+          {{ 'Curricular components' | translate }}
+        </button>
+        <button class="menu-item"
+                cdkMenuItem
+                [routerLink]="'configs/day-shifts'"
+        >
+          {{ 'day-shifts' | translate }}
+        </button>
+        <button class="menu-item"
+                cdkMenuItem
+                [routerLink]="'configs/general'"
+        >
+          {{ 'general' | translate }}
+        </button>
+      </div>
+    </ng-template>
+  </div>
+
+  <div class="right-menu">
+    <button matIconButton [matMenuTriggerFor]="notificationsMenu" aria-label="Menu notificações">
+      <mat-icon [matBadge]="notifications.length">notifications</mat-icon>
+    </button>
+    <mat-menu #notificationsMenu="matMenu">
+      @for (item of notifications; track item) {
+        <button mat-menu-item (click)="goToLesson(item.item.lesson)">{{ item.message }}</button>
+      }
+    </mat-menu>
+    <button matIconButton [matMenuTriggerFor]="authMenu" aria-label="Menu usuário logado">
+      <mat-icon>person</mat-icon>
+    </button>
+    <mat-menu #authMenu="matMenu">
+      <button mat-menu-item (click)="logout()">{{ 'logout' | translate }}</button>
+    </mat-menu>
+  </div>
+</div>

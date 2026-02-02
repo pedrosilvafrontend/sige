@@ -1,0 +1,138 @@
+<div class="dialogContainer">
+  <div class="modalHeader">
+    <div class="avatarDetails">
+<!--      <label class="hoverable" for="tableFileInput">-->
+<!--        <img [src]="url ? url : table.img" alt="image">-->
+<!--        <div class="hover-text">Upload</div>-->
+<!--        <div class="background"></div>-->
+<!--      </label>-->
+<!--      <input id="tableFileInput" type='file' (change)="onImageUpload($event)">-->
+      <div class="modalTitle">
+        {{'teacher' | translate}}: {{ dialogTitle | translate }}
+      </div>
+    </div>
+    <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <form class=" form-field-full" [formGroup]="form" (ngSubmit)="submit()">
+    <div mat-dialog-content>
+      <div class="row m-b-24">
+        <div class="col-sm-6">
+          <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{ 'fullName' | translate }}</mat-label>
+            <input matInput formControlName="fullName">
+            <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>face</mat-icon>
+            @if (form.get('fullName')?.hasError('required')) {
+            <mat-error>
+              {{ 'validations.required' | translate }}
+            </mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row m-b-24">
+        <div class="col-sm-12">
+          <mat-label class="msr-3">{{ 'gender' | translate }}:</mat-label>
+          <mat-radio-group aria-label="Select gender" formControlName="gender" required>
+            <mat-radio-button value="M" color="primary">{{ 'male' | translate }}</mat-radio-button>
+            <mat-radio-button value="F" color="primary">{{ 'female' | translate }}</mat-radio-button>
+            @if (form.get('gender')?.hasError('required')) {
+            <mat-error>
+              {{ 'validations.gender' | translate }}
+            </mat-error>
+            }
+          </mat-radio-group>
+        </div>
+      </div>
+      <div class="row m-b-24">
+        <div class="col-sm-6">
+          <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{ 'email' | translate }}</mat-label>
+            <input matInput formControlName="email" required>
+            <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>email</mat-icon>
+            @if (form.get('email')?.hasError('required') || form.get('email')?.touched) {
+            <mat-error>
+              {{ 'validations.email' | translate }}
+            </mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="col-sm-6">
+          <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{ 'birthDate' | translate }}</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="birthDate">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            @if (form.get('birthDate')?.hasError('required')) {
+            <mat-error>
+              {{ 'validations.date' | translate }}
+            </mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row m-b-24">
+        <div class="col-sm-6">
+          <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{ 'mobile' | translate }}</mat-label>
+            <input matInput formControlName="mobile">
+            <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>phone</mat-icon>
+            @if (form.get('mobile')?.hasError('phone')) {
+            <mat-error>
+              {{ 'validations.phone' | translate }}
+            </mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row m-b-24">
+        <div class="col-sm-12">
+          <app-address-form [data]="table.address" (form$)="form.addControl('address', $event)"></app-address-form>
+        </div>
+      </div>
+      <div class="row m-b-24">
+        <!--<div class="col-sm-6">
+          <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{ 'schools' | translate }}</mat-label>
+            <input matInput formControlName="schools">
+          </mat-form-field>
+        </div>-->
+        <div class="col-sm-12">
+          <fieldset>
+            <legend>{{ 'schools' | translate }}</legend>
+            @for (school of (form.controls.schools.value || []); track school.id;) {
+              <span class="badge badge-solid-blue cursor-pointer"
+                    (click)="openSchoolSelection()">
+                {{ school.acronym }}
+<!--                <mat-icon (click)="form.controls.schools.removeAt(form.controls.schools.value.indexOf(school))">close</mat-icon>-->
+              </span>
+            }
+            @if (!form.controls.schools.value.length) {
+              <span class="badge badge-solid-blue cursor-pointer" (click)="openSchoolSelection()">
+                {{ 'Adicionar' | translate }}
+              </span>
+            }
+            <!--<app-school-select (form$)="schoolSelect($event)"
+                               [getParams]="{class:true}"></app-school-select>-->
+          </fieldset>
+        </div>
+      </div>
+<!--      <div class="row m-b-24">-->
+<!--        <div class="col-sm-12">-->
+<!--          <div class="example-button-row">-->
+<!--            <button mat-flat-button color="primary" [disabled]="!form.valid" type="submit">{{ 'save' | translate }}</button>-->
+<!--            <button mat-flat-button color="warn" mat-dialog-close tabindex="-1">{{ 'cancel' | translate }}</button>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    <pre>{{ form.value | json }}</pre>-->
+    </div>
+    <div matDialogActions>
+      <div class="dialog-buttons">
+        <ui-button color="neutral" mat-dialog-close tabindex="-1">{{ 'Cancel' | translate }}</ui-button>
+        <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>
+      </div>
+    </div>
+  </form>
+</div>

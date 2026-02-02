@@ -1,0 +1,67 @@
+<mat-card [ngStyle]="{'min-width': chart.width+30+'px'}">
+  <mat-card-content>
+    <h3>Atividades</h3>
+
+    <form class="d-flex gap-2 my-4" [formGroup]="filters" (ngSubmit)="submit()" novalidate>
+
+      <!--<mat-form-field appearance="outline">
+        <mat-label>{{ 'school' | translate }}</mat-label>
+        <mat-select formControlName="schoolId">
+          <mat-option [value]="0"></mat-option>
+          @for (item of schools; track item) {
+            <mat-option [value]="item.id">
+              {{ item.acronym }} - {{ item.name }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>-->
+
+<!--      <app-school-select formControlName="school"></app-school-select>-->
+      <app-school-select
+        formControlName="school"
+        [getParams]="{}"
+        [disabled]="false"
+        [data]="{}"
+      ></app-school-select>
+
+      @if (filters.get('school.id')?.value; as school) {
+        <app-class-select
+          formControlName="class"
+          [schoolId]="school"
+          [showSchool]="false"
+        ></app-class-select>
+      }
+
+
+<!--
+
+      <app-curricular-component-select
+      (form$)="addFilterControl('curricularComponent', $event)"
+      [data]="{}"
+      (change$)="applyFilter()"
+      ></app-curricular-component-select>
+-->
+
+    </form>
+
+    @if (chart.data.length > 0) {
+      <!--
+      <google-chart
+        class="m-x-auto"
+        [title]="chart.title"
+        [type]="chart.type"
+        [data]="chart.data"
+        [columns]="chart.columns"
+        [options]="chart.options"
+        [width]="chart.width"
+        [height]="chart.height"
+      >
+      </google-chart>
+      -->
+    } @else {
+      <div class="text-center">
+        <h4>Nenhuma atividade encontrada</h4>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

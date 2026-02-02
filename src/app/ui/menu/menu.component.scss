@@ -1,0 +1,95 @@
+@use 'variables' as *;
+
+:host {
+  display: block;
+}
+.main-menu {
+  color: $white;
+  height: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  button, .mat-icon {
+    color: inherit;
+  }
+  .logo {
+    height: 32px;
+  }
+}
+
+.cdk-menu {
+  display: inline-flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 6px 0;
+  font-size: 1rem;
+}
+
+.cdk-menu-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: fit-content;
+}
+
+.cdk-overlay-pane {
+  .cdk-menu {
+    background-color: $primary;
+    border-radius: $field-border-radius;
+    .menu-item {
+      color: $white;
+      &:hover {
+        background-color: $denim;
+      }
+    }
+  }
+}
+
+
+.menu-item, .cdk-menu-item {
+  font-size: 0.9rem;
+  background-color: transparent;
+  border: 1px solid transparent;
+  //background-color: white;
+  cursor: pointer;
+  //border: none;
+
+  user-select: none;
+  line-height: 2rem;
+  padding: 0 16px;
+  margin: 0.4em;
+
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  flex: 1;
+  color: $white;
+
+  border-radius: $field-border-radius;
+  &[aria-expanded="true"] {
+    background-color: $denim;
+    &:hover {
+      background-color: $denim;
+    }
+  }
+  &:hover {
+    background-color: $denim;
+  }
+  &:active {
+    //background-color: $tertiary;
+    background-color: rgb(170, 170, 170);
+  }
+}
+
+.cdk-overlay-container {
+  &>div {
+    .cdk-overlay-pane {
+      border-top-left-radius: 0;
+      border-left-color: transparent;
+    }
+    &:first-child .cdk-overlay-pane {
+      border-radius: 0 0 $field-border-radius $field-border-radius;
+    }
+  }
+}

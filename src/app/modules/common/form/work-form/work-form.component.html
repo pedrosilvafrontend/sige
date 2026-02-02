@@ -1,0 +1,64 @@
+<div class="row" [formGroup]="form">
+  <div class="col-md-6">
+    <ui-field
+      id="score"
+      name="score"
+      [label]="'Score' | translate"
+      mask="0*,00"
+      formControlName="score"
+    >
+    </ui-field>
+  </div>
+  <div class="col-md-6">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'Local' | translate }}</mat-label>
+      <mat-select formControlName="local" required>
+        <mat-option [value]="'home'">
+          {{ 'Home' | translate  }}
+        </mat-option>
+        <mat-option [value]="'classroom'">
+          {{ 'Classroom' | translate  }}
+        </mat-option>
+        <mat-option [value]="'other'">
+          {{ 'Other' | translate  }}
+        </mat-option>
+      </mat-select>
+      @if (form.get('local')?.hasError('required')) {
+        <mat-error>
+          {{ 'validations.required' | translate }}
+        </mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <div class="col-md-12">
+    <ui-textarea
+      id="description"
+      name="description"
+      [label]="'Description' | translate"
+      formControlName="description"
+    >
+    </ui-textarea>
+  </div>
+  <div class="col-md-12">
+    <ui-textarea
+      id="evaluationCriteria"
+      name="evaluationCriteria"
+      [label]="'Evaluation criteria' | translate"
+      [height]="'20em'"
+      formControlName="evaluationCriteria"
+    >
+    </ui-textarea>
+  </div>
+  <div class="col-md-12">
+
+<!--    <app-evaluation-group-form [schoolId]="schoolId()" (form$)="setEvaluationsForm($event)"></app-evaluation-group-form>-->
+
+
+<!--    <ui-button (click)="addEvaluation()">Add Evaluation</ui-button>-->
+<!--    @for (evaluationForm of form.controls.evaluations.controls; track evaluationForm; let i = $index) {-->
+<!--      <app-evaluation-form [form]="evaluationForm" (form$)="setEvaluationForm($event, i)"></app-evaluation-form>-->
+<!--    }-->
+  </div>
+
+<!--  <pre style="width: 800px;overflow-x: auto;">{{ form.value | json }}</pre>-->
+</div>

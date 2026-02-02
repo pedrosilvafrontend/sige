@@ -1,0 +1,32 @@
+<div class="dialogContainer">
+  <div class="modalHeader">
+    <div class="avatarDetails">
+      <div class="modalTitle">
+        {{(data.id ? 'Edit lesson' : 'New lesson') | translate}}
+      </div>
+    </div>
+    <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <form class=" form-field-full" [formGroup]="form" (ngSubmit)="submit()">
+    <div mat-dialog-content>
+      <div class="row m-b-24">
+        <app-lesson-form [data]="data" (form$)="setForm($event)"></app-lesson-form>
+<!--        <div class="col-sm-12">-->
+<!--          <div class="d-flex gap-1 justify-content-end">-->
+<!--            <button mat-flat-button color="primary" [disabled]="!form.valid" type="submit">{{ 'save' | translate }}</button>-->
+<!--            <button mat-flat-button color="warn" mat-dialog-close tabindex="-1">{{ 'cancel' | translate }}</button>-->
+<!--          </div>-->
+<!--        </div>-->
+      </div>
+<!--    <pre>{{ form.value | json }}</pre>-->
+    </div>
+    <div matDialogActions>
+      <div class="dialog-buttons">
+        <ui-button color="neutral" mat-dialog-close tabindex="-1">{{ 'Cancel' | translate }}</ui-button>
+        <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>
+      </div>
+    </div>
+  </form>
+</div>

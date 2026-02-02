@@ -1,0 +1,40 @@
+.calendar-block {
+  .filter-container {
+    .filter-form {
+      .col {
+        min-width: 16em;
+        max-width: 24em;
+      }
+    }
+  }
+
+  .content {
+    max-width: 2600px;
+    margin: 0 auto;
+    padding: 1rem;
+
+    .mat-mdc-card {
+      border: none;
+      box-shadow: none;
+    }
+  }
+
+  .fc-list-table tr {
+    cursor: pointer;
+  }
+
+  .fc-event-main-frame {
+    line-height: 1em;
+    font-size: 10px;
+    display: block;
+  }
+  .fc-event-time, .fc-event-title-container {
+    display: inline;
+  }
+
+.fc table.fc-scrollgrid-sync-table {
+    .fc-daygrid-day-frame {
+      min-height: 200px;
+    }
+  }
+}

@@ -31,6 +31,16 @@
             ],
             "styles": [
               "src/styles.scss"
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/styles/abstracts"
+              ]
+            },
+            "allowedCommonJsDependencies": [
+              "base64-js",
+              "ngx-toastr",
+              "xlsx"
             ]
           },
           "configurations": {
@@ -38,13 +48,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "2MB",
+                  "maximumError": "5MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "150kB",
+                  "maximumError": "150kB"
                 }
               ],
               "outputHashing": "all"
@@ -66,6 +76,12 @@
             "development": {
               "buildTarget": "sige:build:development"
             }
+          },
+          "options": {
+            "proxyConfig": "src/proxy.conf.js",
+            "allowedHosts": [
+              "sige.a.pinggy.link"
+            ]
           },
           "defaultConfiguration": "development"
         },

@@ -1,0 +1,217 @@
+<ui-page-header [title]="'proofs' | translate"></ui-page-header>
+
+<div class="table-header-toolbar">
+  <div class="row justify-content-between">
+    <div class="col-sm-8 col-lg-3">
+      <span class="table-header"></span>
+      <mat-form-field appearance="outline" class="search-box">
+        <mat-label class="search-label">Busca</mat-label>
+        <input #filter (keyup)="applyFilter($event)" matInput type="text">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+    <div class="col-sm-4">
+      <div class="right-side-btn">
+        <button mat-icon-button [hidden]="!selection.hasValue()" (click)="removeSelectedRows()"
+                class="tbl-header-btn text-red" matTooltip="Delete">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+<!--        <button mat-icon-button (click)="addNew()" class="tbl-header-btn text-green" [matTooltip]="'Add' | translate">-->
+<!--          <mat-icon>add_circle_outline</mat-icon>-->
+<!--        </button>-->
+        <button mat-icon-button (click)="refresh()" class="tbl-header-btn text-dark-grey" [matTooltip]="'Refresh' | translate">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <button mat-icon-button class="text-indigo" (click)="select.open()" [matTooltip]="'Show/Hide Column' | translate">
+          <mat-icon>filter_list</mat-icon>
+          <mat-select #select [(ngModel)]="filter.value" class="column-filter">
+            <span class="table-column-label">{{ 'Show/Hide Column' | translate }}</span>
+            @for (cd of columnDefinitions; track cd; let i = $index) {
+              <div>
+                <mat-option>
+                  <mat-checkbox (click)="$event.stopPropagation()" [(ngModel)]="cd.visible" color="primary">
+                    {{cd.label}}
+                  </mat-checkbox>
+                </mat-option>
+              </div>
+            }
+          </mat-select>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overflow-auto">
+  <div class="responsive_table">
+    <table mat-table [dataSource]="dataSource" matSort class="mat-cell advance-table">
+
+      @for (column of columnDefinitions; track column) {
+        @switch (column.type) {
+          @case ('actionBtn') {
+            <ng-container matColumnDef="actions">
+              <mat-header-cell class="pr-0" *matHeaderCellDef [ngStyle]="{'width': '160px'}">{{ column.label }}</mat-header-cell>
+              <mat-cell *matCellDef="let row; let i=index;" class="pr-0">
+<!--                <button [matTooltip]="'Approve' | translate" mat-icon-button color="accent" (click)="$event.stopPropagation();approveItem(row)"-->
+<!--                  class="tbl-action-btn">-->
+<!--                  <mat-icon>thumb_up</mat-icon>-->
+<!--                </button>-->
+                @let isManager = auth.role === 'admin' || auth.role === 'principal' || auth.role === 'coordinator';
+                <button
+                  [matTooltip]="(isManager && row.status === 'PENDING_APPROVAL' ? 'Approve or reject': 'Edit') | translate"
+                  mat-icon-button color="accent"
+                  (click)="$event.stopPropagation();editCall(row)"
+                  class="tbl-action-btn">
+                  @if (isManager && row.status === 'PENDING_APPROVAL') {
+                    <mat-icon>rule</mat-icon>
+                  }
+                  @else {
+                    <mat-icon>edit</mat-icon>
+                  }
+                </button>
+                <button [matTooltip]="'Delete' | translate" mat-icon-button color="accent" (click)="$event.stopPropagation();deleteItem(row)"
+                  class="tbl-action-btn">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </mat-cell>
+            </ng-container>
+          }
+          @case ('date') {
+            <ng-container [matColumnDef]="column.def">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <span class="truncate-text">{{ column.label }}</span>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
+                <span class="mobile-label">{{ column.label }}:</span>
+                <span class="truncate-text">
+                      {{ row[column.def] | date: 'dd/MM/yyyy' }}
+                    </span>
+              </mat-cell>
+            </ng-container>
+          }
+          @case ('curricularComponent') {
+            <ng-container [matColumnDef]="column.def">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <span class="truncate-text">{{ column.label }}</span>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
+                <span class="mobile-label">{{ column.label }}:</span>
+                <span class="truncate-text">
+                  @if (row.lesson?.curricularComponent; as cc) {
+                    {{ cc.id }} - {{ cc.name }}
+                  }
+                </span>
+              </mat-cell>
+            </ng-container>
+          }
+          @case ('schoolClass') {
+            <ng-container [matColumnDef]="column.def">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <span class="truncate-text">{{ column.label }}</span>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
+                <span class="mobile-label">{{ column.label }}:</span>
+                <span class="truncate-text">
+                  @if (row.lesson?.schoolClass; as sc) {
+                    {{ sc.code }}
+                  }
+                </span>
+              </mat-cell>
+            </ng-container>
+          }
+          @case ('teacher') {
+            <ng-container [matColumnDef]="column.def">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <span class="truncate-text">{{ column.label }}</span>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
+                <span class="mobile-label">{{ column.label }}:</span>
+                <span class="truncate-text">
+                  @if (row.lesson?.teacher; as teacher) {
+                    {{ teacher.id }} - {{ teacher.fullName }}
+                  }
+                </span>
+              </mat-cell>
+            </ng-container>
+          }
+          @case ('status') {
+            <ng-container [matColumnDef]="column.def">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <span class="truncate-text">{{ column.label }}</span>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
+                <span class="mobile-label">{{ column.label }}:</span>
+                @if (row.status) {
+                  <div>
+                    <span class="badge" [ngClass]="'text-bg-'+proofStatusClass[row.status]">
+                      {{ row.status | translate }}
+                    </span>
+                  </div>
+                }
+              </mat-cell>
+            </ng-container>
+          }
+          @default {
+            <ng-container [matColumnDef]="column.def">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <span class="truncate-text">{{ column.label }}</span>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
+                <span class="mobile-label">{{ column.label }}:</span>
+                <span class="truncate-text">
+                  {{ row[column.def] }}
+                </span>
+              </mat-cell>
+            </ng-container>
+          }
+        }
+      }
+
+      <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: getDisplayedColumns();" (click)="editCall(row)"
+        [style.cursor]="'pointer'" matRipple>
+      </mat-row>
+    </table>
+  </div>
+
+  @if (isLoading) {
+    <div class="tbl-spinner">
+      <mat-progress-spinner color="primary" [diameter]="40" mode="indeterminate">
+      </mat-progress-spinner>
+    </div>
+  }
+
+  <div style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+    [style.top]="contextMenuPosition.y" [matMenuTriggerFor]="contextMenu">
+  </div>
+  <mat-menu #contextMenu="matMenu">
+    <ng-template matMenuContent let-item="item">
+      <button mat-menu-item (click)="addNew()">
+        <mat-icon>add_circle_outline</mat-icon>
+        <span>Add Record</span>
+      </button>
+      <button mat-menu-item (click)="editCall(item)">
+        <mat-icon class="material-icons-outlined">mode_edit</mat-icon>
+        <span>Edit Record</span>
+      </button>
+      <button mat-menu-item (click)="deleteItem(item)">
+        <mat-icon>delete_outline</mat-icon>
+        <span>Delete Record</span>
+      </button>
+      <button mat-menu-item (click)="refresh()">
+        <mat-icon>refresh</mat-icon>
+        <span>Refresh Record</span>
+      </button>
+    </ng-template>
+  </mat-menu>
+
+  @if (!isLoading && dataSource.data.length === 0) {
+    <div class="no-results">
+      No results
+    </div>
+  }
+
+  <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 25, 100]">
+  </mat-paginator>
+</div>

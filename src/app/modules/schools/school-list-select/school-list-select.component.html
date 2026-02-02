@@ -1,0 +1,21 @@
+<div class="dialogContainer">
+  <div class="modalHeader">
+    <div class="modalTitle">
+      {{'schools' | translate}}
+    </div>
+    <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div mat-dialog-content>
+    <app-school-list #schoolList [type]="'select'" [form]="form" [params]="{full: true}"></app-school-list>
+
+    <div class="row m-b-24">
+      <div class="col-sm-12">
+        <div class="text-center">
+          <button mat-flat-button color="default" mat-dialog-close tabindex="-1" (click)="close(schoolList.selection.selected)">{{ 'ok' | translate }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

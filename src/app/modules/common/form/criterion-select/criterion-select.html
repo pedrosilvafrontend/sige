@@ -1,0 +1,28 @@
+<mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-100">
+  <mat-label>{{ 'Criterion' | translate }}</mat-label>
+  <mat-select
+    [formControl]="form"
+    (selectionChange)="change($event)"
+    (closed)="markAsTouched()">
+    @if (criteria.length) {
+      <mat-option [value]="null">
+        {{ '-' }}
+      </mat-option>
+    }
+    @for (item of criteria; track item.id) {
+      <mat-option [value]="item.code">
+        {{item.code}} - {{ item.description }}
+      </mat-option>
+    }
+    @if (noItemsMessage && criteria.length === 0) {
+      <mat-option [value]="null">
+        {{ noItemsMessage | translate }}
+      </mat-option>
+    }
+  </mat-select>
+  @if (this.form.hasError('required')) {
+    <mat-error>
+      {{ 'validations.required' | translate }}
+    </mat-error>
+  }
+</mat-form-field>

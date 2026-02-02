@@ -1,0 +1,17 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    @for (navLink of nav; track trackByNavlink($index, navLink); let isFirst = $first) {
+      <li class="breadcrumb-item">
+        @if (isFirst) {
+          <a href="#" class="link">
+            <mat-icon [class]="'breadcrumb-home'">home</mat-icon>
+          </a>
+        }
+        @if (!isFirst) {
+          <mat-icon class="separator">noise_control_off</mat-icon>
+          <span class="pageText">{{navLink | translate}}</span>
+        }
+      </li>
+    }
+  </ol>
+</nav>
