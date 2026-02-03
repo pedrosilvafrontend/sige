@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, inject, input, OnDestroy, OnInit } from '
 import { MatCardModule } from '@angular/material/card';
 import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { LessonEvent, Proof, SchoolEvent } from '@models';
-import { DatePipe, NgStyle } from '@angular/common';
+import { DatePipe, LowerCasePipe, NgClass, NgStyle } from '@angular/common';
 import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { User } from '@core/models/interface';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { LessonEventService } from '@services/lesson-event.service';
 import { UpdateService } from '@services/update.service';
+import { MatBadge } from '@angular/material/badge';
 
 @Component({
   selector: 'app-main-dashboard',
@@ -27,7 +28,10 @@ import { UpdateService } from '@services/update.service';
     MatFormFieldModule,
     FormsModule,
     ReactiveFormsModule,
-    NgStyle
+    NgStyle,
+    MatBadge,
+    NgClass,
+    LowerCasePipe
   ],
   providers: [
     TranslatePipe
@@ -47,6 +51,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   user = input.required<User>();
   events: LessonEvent[] = [];
   dateFormat = 'dd/MM/yyyy';
+  public proofStatusClass: any = Proof.statusClass;
 
   async ngOnInit() {
     await this.getEvents();

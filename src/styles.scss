@@ -56,6 +56,8 @@ ul {
   margin: 0;
 }
 
+[hidden] { display: none !important; }
+
 .gap-1 { gap: 0.5rem; }
 .gap-2 { gap: 1rem; }
 .gap-3 { gap: 1.5rem; }
@@ -280,6 +282,7 @@ mat-snack-bar-container > div {
 // badges
 
 .badge {
+  position: relative;
   font-family: sans-serif;
   font-weight: 600;
   background-color: $neutral;
@@ -496,5 +499,129 @@ fieldset {
     padding: 0 !important;
     height: auto;
     overflow: hidden;
+  }
+}
+
+.dot-badge::after,
+button.mdc-button[data-badge]::after {
+  content: attr(data-badge);
+  position: absolute;
+  top: -0.4rem;
+  right: -0.4rem;
+  min-width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  font-size: 0.6rem;
+  line-height: 1rem;
+}
+.dot-badge::after {
+  top: -0.5rem;
+  right: -0.5rem;
+}
+
+.dot-badge-danger::after,
+button.mdc-button[data-badgeColor="danger"]::after {
+  background-color: $light-danger;
+  color: $white;
+}
+.dot-badge-success::after,
+button.mdc-button[data-badgeColor="success"]::after {
+  background-color: $cool;
+  color: $white;
+}
+.dot-badge-warning::after,
+button.mdc-button[data-badgeColor="warning"]::after {
+  background-color: $warm;
+  color: $dark-text
+}
+.dot-badge-info::after,
+button.mdc-button[data-badgeColor="info"]::after {
+  background-color: $info;
+  color: $white;
+}
+
+.fc-timeGridWeek-view .fc-event.activity-status- {
+  &info,
+  &success,
+  &danger,
+  &warning {
+    position: relative;
+    &::before {
+      content: '';
+      position: absolute;
+      top: -0.1rem;
+      right: -0.2rem;
+      min-width: 1rem;
+      height: 1rem;
+      border-radius: 50%;
+      font-size: 0.6rem;
+      line-height: 1rem;
+    }
+  }
+  &info::before {
+    background-color: $info;
+  }
+  &success::before {
+    background-color: $cool;
+  }
+  &danger::before {
+    background-color: $danger;
+  }
+  &warning::before {
+    background-color: $warm;
+  }
+}
+.activity-status- {
+  &info,
+  &success,
+  &danger,
+  &warning {
+    .fc-list-event-graphic {
+      position: relative;
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0.1rem;
+        right: -0.2rem;
+        min-width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        font-size: 0.6rem;
+        line-height: 1rem;
+      }
+    }
+  }
+  &info .fc-list-event-graphic::before {
+    background-color: $info;
+  }
+  &success .fc-list-event-graphic::before {
+    background-color: $cool;
+  }
+  &danger .fc-list-event-graphic::before {
+    background-color: $danger;
+  }
+  &warning .fc-list-event-graphic::before {
+    background-color: $warm;
+  }
+}
+
+.fc-list-event-graphic {
+  .fc-list-event-dot {
+    display: none;
+  }
+  &::after {
+    content: 'Aula';
+    border-radius: 0.3rem;
+    padding: 0 0.3rem;
+    background: $neutral;
+    color: $white;
+  }
+}
+
+.event-activity-test .fc-list-event-graphic {
+  &::after {
+    content: 'Prova';
+    background: var(--test-color);
+    color: $white;
   }
 }

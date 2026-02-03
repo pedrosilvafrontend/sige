@@ -1,4 +1,4 @@
-import { Component, inject, ViewEncapsulation } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService, SettingsService } from '@services';
 import { TranslateModule } from '@ngx-translate/core';
@@ -9,8 +9,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { Field } from '@ui/field/field';
-import { JsonPipe, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { Button } from '@ui/button/button';
+import { LoadingService } from '@services/loading.service';
 
 
 @Component({
@@ -36,6 +37,8 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private settings = inject(SettingsService);
+  private loadingService = inject(LoadingService);
+  loading = this.loadingService.isShow;
 
   isSubmitting = false;
   error = '';

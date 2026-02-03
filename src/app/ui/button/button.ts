@@ -22,6 +22,8 @@ export class Button {
   fabIcon = input<string>('');
   color = input<string>('primary');
   size = input<string>('normal');
+  badge = input<string>('');
+  badgeColor = input<string>('');
   onClick = output<void>();
 
   btnClick() {

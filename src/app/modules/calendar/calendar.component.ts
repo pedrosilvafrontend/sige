@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
+  Component, ElementRef,
   inject,
   OnDestroy,
   OnInit,
@@ -46,12 +46,13 @@ import { UserType } from '@modules/users/users.model';
 import { User } from '@core/models/interface';
 import { ClassSelectComponent } from '@modules/classes/class-select/class-select.component';
 import { ActivatedRoute } from '@angular/router';
-import { Activity, Degree, LessonEvent, School, SchoolClass } from '@models';
+import { Activity, Degree, LessonEvent, Proof, School, SchoolClass } from '@models';
 import { AuthService, EventService, SchoolsService } from '@services';
 import { Button } from '@ui/button/button';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, map } from 'rxjs/operators';
 import { DegreesService } from '@services/degrees.service';
 import { LessonEventService } from '@services/lesson-event.service';
+import { ActivityService } from '@modules/config/activity/activity.service';
 
 @Component({
   selector: 'app-calendar',
@@ -89,11 +90,13 @@ export class CalendarComponent implements OnInit, OnDestroy {
   private schoolsService = inject(SchoolsService);
   private degreesService = inject(DegreesService);
   private lesEventService = inject(LesEventService);
+  private activityService = inject(ActivityService);
   private snackBar = inject(MatSnackBar);
   private translate = inject(TranslateService);
   private auth = inject(AuthService);
   private activatedRoute = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
+  private elementRef = inject(ElementRef);
 
   @ViewChild(FullCalendarComponent, { static: false }) calendarComponent!: FullCalendarComponent;
   calendar: Calendar | null;
@@ -107,6 +110,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   objectCompare = Util.objectCompare;
   private destroy$ = new Subject<void>();
   protected classHash = '';
+  public proofStatusClass: any = Proof.statusClass;
 
   calendarEvents: EventInput[] = [];
 
@@ -134,6 +138,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     school: {},
     schoolClass: {}
   }
+  activities: { [key: string]: Activity } = {};
 
   constructor() {
     this.dialogTitle = 'Add New Event';
@@ -223,6 +228,19 @@ export class CalendarComponent implements OnInit, OnDestroy {
       this.applyFilter();
     })
     this.applyFilter();
+    this.activities = await firstValueFrom(
+      this.activityService.getAll().pipe(
+        map(activities => {
+          return activities.reduce((acc: any, activity: Activity) => {
+            this.elementRef.nativeElement.style.setProperty(`--${activity.id.toLowerCase()}-color`, activity.color);
+            acc[activity.id] = activity;
+            return acc;
+          }, {});
+        })
+      )
+    );
+
+
   }
 
   refresh() {
@@ -261,7 +279,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
       select: this.handleDateSelect.bind(this),
       eventClick: this.handleEventClick.bind(this),
       eventsSet: this.handleEvents.bind(this),
-      locale: this.translate.currentLang,
+      locale: this.translate.getCurrentLang(),
       eventColor: '#a8a8a8',
       events: function(info, successCallback, failureCallback) {
         const classHash = self.classHash;
@@ -311,13 +329,19 @@ export class CalendarComponent implements OnInit, OnDestroy {
                     if (lesson.teacher?.fullName && !hasFilterTeacher) title.push(lesson.teacher.fullName);
                   }
                   item.title = title.join(' - ');
-                  if (item.activities) {
-                    item.activities.forEach((activity: any) => {
-                      item.className = `${item.className || ''} event-activity-${activity.id.toLowerCase()}`;
-                      item.borderColor = activity.color;
-                      item.backgroundColor = activity.color;
-                    });
-                  }
+                  const { proof, work } = item.evalTools || {};
+                  [['TEST', proof], ['WORK', work]].forEach(([key, evalTool]) => {
+                    if (evalTool?.id) {
+                      if (evalTool.status === 'APPROVED') {
+                        const color = self.activities[key]?.color || '';
+                        item.className = `${item.className || ''} event-activity-${key.toLowerCase()}`;
+                        item.borderColor = color;
+                        item.backgroundColor = color;
+                      } else if (evalTool.status) {
+                        item.className = `${item.className || ''} activity-status-${self.proofStatusClass[evalTool.status]}`;
+                      }
+                    }
+                  })
                   return self._filter(item);
                 }
               );
@@ -328,6 +352,11 @@ export class CalendarComponent implements OnInit, OnDestroy {
             }
           })
       },
+      // eventDidMount: function(info: any) {
+      //   if (info.event.extendedProps.activityColor) {
+      //     info.el.setAttribute('data-activity_color', info.event.extendedProps.activityColor);
+      //   }
+      // },
       ...this.calendarOptionsForm.value
     }
   })();

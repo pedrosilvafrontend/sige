@@ -113,14 +113,11 @@
     <div matDialogActions>
       <div class="dialog-buttons">
         <ui-button icon="book" color="default" (onClick)="planningModal.open()">Planejamento</ui-button>
-        <ui-button icon="grading" color="default" (onClick)="proofModal.open()">
+        <ui-button icon="grading" color="default" (onClick)="proofModal.open()" badge="" [badgeColor]="proofStatusClass[proof.status]">
           <div class="d-flex gap-1 align-items-center">
-                <span>
-                  {{ (proof && proof.id ? 'Proof' : 'Add proof') | translate }}
-                </span>
-            @if (proof && proof.status) {
-              <span class="circle" [ngClass]="'text-bg-'+proofStatusClass[proof.status]"></span>
-            }
+            <span>
+              {{ (proof && proof.id ? 'Proof' : 'Add proof') | translate }}
+            </span>
           </div>
         </ui-button>
         <ui-button color="neutral" (onClick)="close()" type="button">{{ 'close' | translate }}</ui-button>
