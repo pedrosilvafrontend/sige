@@ -7,17 +7,21 @@ import { Router } from '@angular/router';
 import { LocalStorageService } from '@services';
 import { Token, User } from '@models/interface';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { School } from '@models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   user$ = new BehaviorSubject<User>({});
+  school$ = new BehaviorSubject<School>(new School());
   private router = inject(Router);
   private store = inject(LocalStorageService);
   private loginService = inject(LoginService);
   private tokenService = inject(TokenService);
   private snackBar = inject(MatSnackBar);
+  userStoreKey = 'currentUser';
+  schoolStoreKey = 'currentSchool';
 
   private change$ = merge(
     this.tokenService.change(),
@@ -31,9 +35,9 @@ export class AuthService {
 
   constructor() {
     if (!this.tokenService.getBearerToken()) {
-      this.store.remove('currentUser');
+      this.store.remove(this.userStoreKey);
     }
-    this.user$.next(this.store.get('currentUser'));
+    this.user$.next(this.store.get(this.userStoreKey));
   }
 
   init() {
@@ -48,6 +52,15 @@ export class AuthService {
 
   check() {
     return this.tokenService.valid();
+  }
+
+  checkSession() {
+    const userStore = this.store.get(this.userStoreKey);
+    if (!userStore?.id) {
+      this.logout();
+      return;
+    }
+    this.user$.next(userStore);
   }
 
   async register(data: { email: string, password: string }) {
@@ -81,7 +94,7 @@ export class AuthService {
       user.permissions = this.tokenService.permissionArray;
 
       this.user$.next(user);
-      this.store.set('currentUser', user);
+      this.store.set(this.userStoreKey, user);
 
       this.router.navigate(['dashboard']);
     }
@@ -107,7 +120,7 @@ export class AuthService {
     //
     //     // Update user subject and store in local storage
     //     this.user$.next(user);
-    //     this.store.set('currentUser', user);
+    //     this.store.set(this.userStoreKey, user);
     //
     //     this.router.navigate(['dashboard/dashboard1']);
     //   },
@@ -131,7 +144,7 @@ export class AuthService {
 
           // Update the user$ BehaviorSubject and local storage
           this.user$.next(currentUser);
-          this.store.set('currentUser', currentUser);
+          this.store.set(this.userStoreKey, currentUser);
         }
 
         return of(response);
