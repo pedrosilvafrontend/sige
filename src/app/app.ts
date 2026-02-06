@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import defaultLanguage from '@assets/i18n/pt.json';
 import { LoadingService } from '@services/loading.service';
 import { Loader } from '@ui/loader/loader';
-import { AuthService } from '@services';
+import { AuthService, LocalStorageService } from '@services';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +17,7 @@ export class App implements OnInit {
   private translate = inject(TranslateService);
   private loading = inject(LoadingService);
   private auth = inject(AuthService);
+  private store = inject(LocalStorageService);
 
   constructor() {
     this.translate.use('pt');
@@ -25,8 +26,10 @@ export class App implements OnInit {
 
   @HostListener('window:storage', ['$event'])
   onStorageChange(event: StorageEvent) {
+    this.store.storageChange$.next(event);
     if (!event.key) {
       this.auth.checkSession();
+      return;
     }
     if (event.key === 'currentUser') {
       if (!event.newValue) {

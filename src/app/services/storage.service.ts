@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LocalStorageService {
+  storageChange$ = new Subject<StorageEvent>();
+
   get(key: string) {
     return JSON.parse(localStorage.getItem(key) || '{}') || {};
   }

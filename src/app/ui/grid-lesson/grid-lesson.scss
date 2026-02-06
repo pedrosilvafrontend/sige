@@ -28,6 +28,12 @@
       .mat-mdc-button-persistent-ripple {
         border-radius: 0;
       }
+      mat-icon {
+        visibility: hidden;
+      }
+      &:hover mat-icon {
+        visibility: visible;
+      }
     }
   }
   .w-first-col {

@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component,
+  Component, effect,
   forwardRef,
   inject,
   input,
@@ -56,6 +56,7 @@ export class ClassSelectComponent implements OnInit, OnDestroy, ControlValueAcce
   public objectCompare = Util.objectCompare;
   public noItemsMessage = 'No classes found';
   public showSchool = input(false);
+  public disabled = input(false);
   public control = new FormControl();
   public filteredOptions: SchoolClass[] = [];
   public destroy$: Subject<void> = new Subject<void>();
@@ -90,6 +91,12 @@ export class ClassSelectComponent implements OnInit, OnDestroy, ControlValueAcce
   }
 
   @Input() all = false;
+
+  constructor() {
+    effect(() => {
+      this.setDisabledState(this.disabled());
+    });
+  }
 
   checkSelected() {
     if (!this.filteredOptions.length) {

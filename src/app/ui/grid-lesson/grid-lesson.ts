@@ -1,4 +1,14 @@
-import { Component, effect, inject, input, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  effect,
+  HostListener,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewEncapsulation
+} from '@angular/core';
 import {
   CompactType,
   DisplayGrid,
@@ -9,20 +19,22 @@ import {
   GridType
 } from 'angular-gridster2';
 import { ClassSelectComponent } from '@modules/classes/class-select/class-select.component';
-import { AuthService, LessonsService } from '@services';
+import { AuthService, LessonsService, LocalStorageService } from '@services';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { firstValueFrom, Subject, take, takeUntil } from 'rxjs';
 import { Frequency, LessonBatch, SchoolClass, TimeSchedule } from '@models';
 import { TimeScheduleService } from '@services/time-schedule.service';
 import { Util } from '@util/util';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Button } from '@ui/button/button';
-import { JsonPipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { LessonsFormDialogComponent } from '@modules/lessons';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogActions, MatDialogContent, MatDialogTitle } from '@angular/material/dialog';
+import { map } from 'rxjs/operators';
+import { ModalComponent } from '@ui/modal/modal.component';
+import { Textarea } from '@ui/field/textarea/textarea';
 
 export type GridLessonItem = {
   lesson: LessonBatch,
@@ -33,7 +45,7 @@ export type GridLessonItem = {
 
 @Component({
   selector: 'app-grid-lesson',
-  imports: [Gridster, GridsterItem, ClassSelectComponent, ReactiveFormsModule, TranslatePipe, Button, MatIcon, MatIconButton, MatTooltip],
+  imports: [Gridster, GridsterItem, ClassSelectComponent, ReactiveFormsModule, TranslatePipe, Button, MatIcon, MatIconButton, MatTooltip, ModalComponent, MatDialogActions, MatDialogContent, MatDialogTitle, Textarea],
   templateUrl: './grid-lesson.html',
   styleUrl: './grid-lesson.scss',
   encapsulation: ViewEncapsulation.None,
@@ -43,8 +55,12 @@ export class GridLesson implements OnInit, OnDestroy {
   private lessonsService = inject(LessonsService);
   private timeService = inject(TimeScheduleService);
   private dialog = inject(MatDialog);
+  private store = inject(LocalStorageService);
+  private cdr = inject(ChangeDetectorRef);
+  gridLessonsKey = 'gridLessons';
   options!: GridsterConfig;
-  dashboard: Array<GridsterItemConfig> = [];
+  dashboard: GridsterItemConfig[] = [];
+  protected localDashboard = signal<GridsterItemConfig[]>([]);
   school = this.auth.school;
   user = this.auth.user$.value;
   schedules = signal<TimeSchedule[]>([]);
@@ -56,19 +72,54 @@ export class GridLesson implements OnInit, OnDestroy {
 
   constructor() {
     effect(() => {
-      if (this.school()) {
-        this.setSchedules(this.classControl.value);
+      const school = this.school();
+      if (school.id && school.id !== this.classControl.value?.schoolId) {
+        this.classControl.reset();
       }
+      // if (this.localDashboard()) {
+      //   this.setClassByLocal();
+      //   this.dashboard = this.localDashboard();
+      // }
     });
   }
 
-  edit(item: GridsterItemConfig) {
-    const data: GridLessonItem = item['data'];
+  setClassByLocal(): SchoolClass | null {
+    const localGrid = this.localDashboard();
+    if (!localGrid || !localGrid.length) {
+      return null;
+    }
+    const itemConfig = localGrid.find(
+      (item) => !!item['data']?.lesson?.curricularComponent?.id);
+    if (!itemConfig) {
+      return null;
+    }
+    const lesson = itemConfig['data']?.lesson;
+    if (!lesson) {
+      return null;
+    }
+    const schoolId = this.school()?.id;
+    const localClass = lesson.schoolClass;
+    const localSchoolId = lesson.school?.id;
+
+    if (schoolId && localSchoolId && localSchoolId !== schoolId) {
+      this.classControl.setValue(null, { emitEvent: false });
+      return null;
+    }
+    else if (localClass?.code && localClass.code !== this.classControl.value?.code) {
+      this.classControl.setValue(localClass, { emitEvent: false });
+      return localClass;
+    }
+
+    return null;
+  }
+
+  edit(itemConfig: GridsterItemConfig, item: GridsterItem) {
+    const data: GridLessonItem = itemConfig['data'];
     const lesson: LessonBatch = data ? data.lesson : new LessonBatch();
     const frequency = new Frequency();
     frequency.id = data.frequencyId || 0;
-    frequency.weekday = this.weekdays[item.x];
-    frequency.timeSchedule = this.schedules()[item.y];
+    frequency.weekday = this.weekdays[itemConfig.x];
+    frequency.timeSchedule = this.schedules()[itemConfig.y];
     lesson.frequencies = [frequency];
 
     if (!lesson.schoolClass?.id) {
@@ -79,23 +130,59 @@ export class GridLesson implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(LessonsFormDialogComponent, {
       width: '99vw',
       maxWidth: '1024px',
-      data: { table: lesson, action, blockSubmit: true },
+      data: { table: lesson, action, origin: 'grid' },
       autoFocus: false,
       disableClose: true
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.submit) {
-        console.log('The dialog was closed', result.value);
-        Object.assign(item['data']?.lesson, result.value);
+        Object.assign(itemConfig['data']?.lesson, result.value);
+        this.localSave();
       }
     });
   }
 
   save() {
+    // TODO: implementar
+    this.store.remove(this.gridLessonsKey);
+  }
+
+  cancel(callback?: () => void) {
+    this.store.remove(this.gridLessonsKey);
+    this.dashboard = [];
+    this.gridLessons = [];
+    this.localDashboard.set([]);
+    this.schedules.set([]);
+    this.classControl.setValue(null, { emitEvent: false });
+    callback?.();
+    this.cdr.detectChanges();
+  }
+
+  getLocalLessonsDashboard(): GridsterItemConfig[] {
+    const localGrid = this.store.get(this.gridLessonsKey);
+    if (localGrid && Array.isArray(localGrid)) {
+      return localGrid as GridsterItemConfig[];
+    }
+    return [] as GridsterItemConfig[];
+  }
+
+  localSave() {
+    this.store.set(this.gridLessonsKey, this.dashboard);
+    this.localDashboard.set(this.dashboard);
+    this.cdr.detectChanges();
   }
 
   setDashboard(): void {
+    let dashboard = this.getLocalLessonsDashboard();
+    if (dashboard.length) {
+      const classCode = this.getClassCodeOnDashboard(dashboard);
+      this.setSchedules(classCode || '');
+      this.localDashboard.set(dashboard);
+      this.dashboard = dashboard;
+      return;
+    }
+
     this.dashboard = [
       { cols: 1, rows: 1, y: 0, x: 0 },
       { cols: 1, rows: 1, y: 0, x: 1 },
@@ -128,17 +215,9 @@ export class GridLesson implements OnInit, OnDestroy {
     })
   }
 
-  tempItem: GridsterItemConfig | null = null;
-
   itemChange(itemConfig: GridsterItemConfig, item: GridsterItem) {
-    if (!this.tempItem) {
-      this.tempItem = itemConfig;
-      return;
-    }
-    const itemA = this.tempItem;
-    const itemB = itemConfig;
-    this.tempItem = null;
     console.log('itemChange Callback', arguments);
+    this.localSave();
   }
 
   getOptions(): GridsterConfig {
@@ -196,25 +275,47 @@ export class GridLesson implements OnInit, OnDestroy {
       disableWindowResize: false,
       disableWarnings: false,
       scrollToNewItems: false,
-      background: 'transparent',
     };
   }
 
-  filter(schoolClass: SchoolClass) {
-    const params = schoolClass.code ? { classCode: schoolClass.code } : {};
-    this.lessonsService.getAll(params).pipe(takeUntil(this.destroy$)).subscribe(lessons => {
-      this.setSchedules(schoolClass.code || '');
-      const gridLessons: GridLessonItem[][] = [];
-      (lessons || []).forEach((lesson: LessonBatch, index: number) => {
+  setToGridLessons(lessons: LessonBatch[]) {
+    const gridLessons: GridLessonItem[][] = [];
+    let classCode = lessons?.[0]?.schoolClass?.code || '';
+    this.setSchedules(classCode);
+    if (this.schedules().length) {
+      (lessons || []).forEach((lesson: LessonBatch) => {
         lesson.frequencies.forEach(frequency => {
           const x = this.weekdays.findIndex(day => day === frequency.weekday);
           const y = this.schedules().findIndex(schedule => schedule.id === frequency.timeSchedule?.id);
           if (!gridLessons[x]) { gridLessons[x] = [] as GridLessonItem[] }
           gridLessons[x][y] = { lesson, frequencyId: frequency.id, x, y }
         })
-      })
-      this.gridLessons = gridLessons;
-      this.setDashboard();
+      });
+    }
+    this.gridLessons = gridLessons;
+    this.setDashboard();
+  }
+
+  getClassCodeOnDashboard(dashboard: GridsterItemConfig[]) {
+    return dashboard.find(item => !!item['data']?.lesson?.curricularComponent?.id)?.['data']?.lesson?.schoolClass?.code;
+  }
+
+  filter(schoolClass: SchoolClass) {
+    if (this.localDashboard().length) {
+      this.setClassByLocal();
+      return;
+    }
+    if (!schoolClass) {
+      return;
+    }
+    // const validLocalClass = this.setClassByLocal();
+    // if (validLocalClass) {
+    //   schoolClass = validLocalClass;
+    // }
+    this.setSchedules(schoolClass?.code || '');
+    const params = schoolClass?.code ? { classCode: schoolClass.code } : {};
+    this.lessonsService.getAll(params).pipe(takeUntil(this.destroy$)).subscribe(lessons => {
+      this.setToGridLessons(lessons);
     })
   }
 
@@ -226,15 +327,34 @@ export class GridLesson implements OnInit, OnDestroy {
     this.schedules.set(schedules);
   }
 
-  ngOnInit(): void {
-    this.options = this.getOptions();
-    // this.dashboard = this.getData();
+  async setTimeSchedules() {
+    const request$ = this.timeService.getAll({schoolId: this.school()?.id})
+      .pipe(
+        take(1),
+        map((data: any) => {
+          this.timeSchedules = data || [];
+        })
+      );
 
-    this.timeService.getAll({schoolId: this.school()?.id}).pipe(takeUntil(this.destroy$)).subscribe(
-      (data: any) => {
-        this.timeSchedules = data || [];
-      }
-    )
+    return firstValueFrom(request$);
+  }
+
+  async ngOnInit() {
+    await this.setTimeSchedules();
+    // this.store.storageChange$.pipe(takeUntil(this.destroy$)).subscribe((event: StorageEvent) => {
+    //   if (event.key === this.gridLessonsKey) {
+    //     // let dashboard: GridsterItemConfig[] = JSON.parse(event.newValue || '[]');
+    //     // if (!Array.isArray(dashboard)) {
+    //     //   dashboard = [];
+    //     // }
+    //     // this.localDashboard.set(dashboard);
+    //     // this.dashboard = dashboard;
+    //     this.setDashboard();
+    //   }
+    // })
+    this.setDashboard();
+    this.options = this.getOptions();
+    this.setClassByLocal();
 
     this.classControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(this.filter.bind(this))
   }

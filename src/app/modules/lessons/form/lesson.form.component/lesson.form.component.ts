@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, input, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import {
-  FormBuilder,
+  FormBuilder, FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -92,6 +92,9 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   public configs!: ConfigData;
 
   @Input()
+  origin = '';
+
+  @Input()
   set data(data: LessonBatch) {
     this._data = data;
     if (data) {
@@ -115,8 +118,17 @@ export class LessonFormComponent implements OnInit, OnDestroy {
     this.dayShifts.length = 0;
     Object.assign(this.dayShifts, dayShifts);
 
+    this.formCheck();
     this.formObservables();
     this.cdr.detectChanges();
+  }
+
+  formCheck() {
+    if (this.origin != 'grid') {
+      return;
+    }
+    const { schoolClass, school, frequencies } = this.form.controls;
+    [schoolClass, school, frequencies].forEach((ctrl: any) => ctrl.disable?.());
   }
 
   async getClasses(schoolId?: number) {
@@ -163,17 +175,18 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   }
 
   createForm(data?: LessonBatch): FormGroup<ILessonForm> {
+    const isGridOrigin = this.origin === 'grid';
     const form = this.fb.group(
       {
         id: [data?.id],
-        schoolClass: this.fb.control(data?.schoolClass, [Validators.required]),
-        teacher: this.fb.control(data?.teacher, [Validators.required]),
-        curricularComponent: this.fb.control(data?.curricularComponent, [Validators.required]),
-        school: this.fb.control(data?.school, [Validators.required]),
-        date: this.fb.control(data?.date, [Validators.required]),
-        endDate: this.fb.control(data?.endDate, [Validators.required]),
+        schoolClass: this.fb.control({ value: data?.schoolClass, disabled: isGridOrigin }, [Validators.required]),
+        teacher: this.fb.control({ value: data?.teacher, disabled: false }, [Validators.required]),
+        curricularComponent: this.fb.control({ value: data?.curricularComponent, disabled: false }, [Validators.required]),
+        school: this.fb.control({ value: data?.school, disabled: isGridOrigin }, [Validators.required]),
+        date: this.fb.control({ value: data?.date, disabled: isGridOrigin }, [Validators.required]),
+        endDate: this.fb.control({ value: data?.endDate, disabled: isGridOrigin }, [Validators.required]),
         frequencies: this.fb.array([]),
-        description: this.fb.control(data?.description),
+        description: this.fb.control({ value: data?.description, disabled: false }),
       },
       {
         validators: [
@@ -190,6 +203,9 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   }
 
   addFrequency(data?: Frequency) {
+    if (this.origin == 'grid' && this.form.controls.frequencies.length > 0) {
+      return;
+    }
     const form = this.fb.group<ILessonFrequency>({
       id: this.fb.control(data?.id || 0),
       weekday: this.fb.control(data?.weekday || '', [Validators.required]),

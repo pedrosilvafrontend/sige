@@ -81,39 +81,21 @@
         <div class="col-sm-5">
           <app-time-schedule-select formControlName="timeSchedule" [schoolClass]="form.controls.schoolClass.value || {}"></app-time-schedule-select>
         </div>
-        <!--<div class="col-sm-3">
-          <mat-form-field appearance="outline" subscriptSizing="dynamic">
-            <mat-label>{{ 'Start hour' | translate }}</mat-label>
-            <input matInput formControlName="startHour" [mask]="'Hh:m0'" [leadZeroDateTime]="true" [outputTransformFn]="transformHour" >
-            @if (form.get('startHour')?.hasError('required')) {
-              <mat-error>
-                {{ 'validations.required' | translate }}
-              </mat-error>
-            }
-          </mat-form-field>
-        </div>
-        <div class="col-sm-3">
-          <mat-form-field appearance="outline" subscriptSizing="dynamic">
-            <mat-label>{{ 'End hour' | translate }}</mat-label>
-            <input matInput formControlName="endHour" [mask]="'Hh:m0'" [leadZeroDateTime]="true" [outputTransformFn]="transformHour">
-            @if (form.get('endHour')?.hasError('required')) {
-              <mat-error>
-                {{ 'validations.required' | translate }}
-              </mat-error>
-            }
-          </mat-form-field>
-        </div>-->
         <div class="col-sm-1 text-center align-content-center mb-3">
-          <button type="button" mat-icon-button (click)="removeFrequency(i)"
-                  class="tbl-header-btn text-red">
-            <mat-icon>delete_outline</mat-icon>
-          </button>
+          @if (origin != 'grid') {
+            <button type="button" mat-icon-button (click)="removeFrequency(i)"
+                    class="tbl-header-btn text-red">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          }
         </div>
       </div>
     }
-    <ui-button [disabled]="!form.controls.schoolClass.value" (onClick)="addFrequency()" class="text-nowrap mb-3 d-inline-block">
-      {{ 'Add frequency' | translate }}
-    </ui-button>
+    @if (origin != 'grid') {
+      <ui-button [disabled]="!form.controls.schoolClass.value" (onClick)="addFrequency()" class="text-nowrap mb-3 d-inline-block">
+        {{ 'Add frequency' | translate }}
+      </ui-button>
+    }
   </div>
 
   <div class="col-sm-12">

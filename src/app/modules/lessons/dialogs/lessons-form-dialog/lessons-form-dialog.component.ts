@@ -85,7 +85,7 @@ export class LessonsFormDialogComponent {
   }
 
   submit() {
-    if (this.dialogData.blockSubmit) {
+    if (this.dialogData.origin === 'grid') {
       this.dialogRef.close({ submit: true, value: this.form.getRawValue() });
       return;
     }
