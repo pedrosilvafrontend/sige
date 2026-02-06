@@ -13,9 +13,9 @@ export class LessonsService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getAll(): Observable<LessonBatch[]> {
+  getAll(params?: { classCode?: string }): Observable<LessonBatch[]> {
     return this.httpClient
-      .get<LessonBatch[]>(this.API_URL)
+      .get<LessonBatch[]>(this.API_URL, { params: params || {} })
       .pipe(catchError(this.handleError));
   }
 

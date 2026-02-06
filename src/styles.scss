@@ -471,6 +471,34 @@ fieldset {
   }
 }
 
+.hover-primary {
+  &:hover {
+    background-color: $primary !important;
+    color: #fff !important;
+  }
+}
+
+.hover-warn {
+  &:hover {
+    background-color: $warning !important;
+    color: #fff !important;
+  }
+}
+
+.hover-info {
+  &:hover {
+    background-color: $info !important;
+    color: #fff !important;
+  }
+}
+
+.hover-success {
+  &:hover {
+    background-color: $cool !important;
+    color: #fff !important;
+  }
+}
+
 .mat-mdc-radio-group {
   display: flex;
   gap: 0.8rem;
@@ -624,4 +652,13 @@ button.mdc-button[data-badgeColor="info"]::after {
     background: var(--test-color);
     color: $white;
   }
+}
+
+.ellipsis, .truncate {
+  max-width: 100%;
+  line-height: 1.4em;
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

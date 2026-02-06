@@ -43,6 +43,7 @@
     "@fullcalendar/timegrid": "^6.1.20",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
+    "angular-gridster2": "^21.0.1",
     "base64-js": "^1.5.1",
     "bootstrap": "^5.3.8",
     "date-fns": "^4.1.0",

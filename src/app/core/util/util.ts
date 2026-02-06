@@ -50,6 +50,11 @@ export class Util {
     return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
   }
 
+  static classCodeSplit(code: string) {
+    const [classCode,degreeId,year,dayShiftId,suffixId] = new RegExp('^([A-Z]{2})([0-9])([A-Z])([A-Z])$').exec(code) || [];
+    return {classCode,degreeId,year,dayShiftId,suffixId};
+  }
+
   // static utcToLocalKeepTime(date: MomentInput) {
   //   return moment.utc(date).local(true).format('YYYY-MM-DDTHH:mm:ssZ');
   // }

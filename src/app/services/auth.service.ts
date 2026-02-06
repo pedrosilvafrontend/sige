@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { effect, inject, Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, merge, of, firstValueFrom } from 'rxjs';
 import { catchError, share, switchMap } from 'rxjs/operators';
 import { TokenService } from './token.service';
@@ -14,14 +14,14 @@ import { School } from '@models';
 })
 export class AuthService {
   user$ = new BehaviorSubject<User>({});
-  school$ = new BehaviorSubject<School>(new School());
   private router = inject(Router);
   private store = inject(LocalStorageService);
   private loginService = inject(LoginService);
   private tokenService = inject(TokenService);
   private snackBar = inject(MatSnackBar);
   userStoreKey = 'currentUser';
-  schoolStoreKey = 'currentSchool';
+  schoolStoreKey = 'school';
+  school = signal(new School());
 
   private change$ = merge(
     this.tokenService.change(),
@@ -38,6 +38,23 @@ export class AuthService {
       this.store.remove(this.userStoreKey);
     }
     this.user$.next(this.store.get(this.userStoreKey));
+    this.checkSelectedSchool();
+
+    effect(() => {
+      if (this.school() && this.school().id !== this.store.get(this.schoolStoreKey)?.id) {
+        this.store.set(this.schoolStoreKey, this.school());
+      }
+    });
+  }
+
+  checkSelectedSchool() {
+    const schools = this.user$.getValue().schools || [];
+    const schoolStore: School | undefined = this.store.get(this.schoolStoreKey);
+    const has = schools.some(s => s.id === schoolStore?.id);
+    const school = has ? schoolStore : schools[0];
+    if (!school) return;
+    this.school.set(school);
+    this.store.set(this.schoolStoreKey, school);
   }
 
   init() {

@@ -85,6 +85,11 @@ export class LessonsFormDialogComponent {
   }
 
   submit() {
+    if (this.dialogData.blockSubmit) {
+      this.dialogRef.close({ submit: true, value: this.form.getRawValue() });
+      return;
+    }
+
     if (this.form.valid) {
       const data = this.form.value as LessonBatch;
       // if (data.frequency === 'UNIQUE') {

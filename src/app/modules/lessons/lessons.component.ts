@@ -19,7 +19,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LessonsFormDialogComponent } from './dialogs/lessons-form-dialog/lessons-form-dialog.component';
 import { LessonsService } from '@services';
@@ -30,6 +30,7 @@ import { LessonBatch } from '@models';
 import { Calendar } from '@modules/calendar/calendar.model';
 import { EventDialogComponent } from '@modules/calendar/dialogs/event-dialog/event-dialog.component';
 import { Util } from '@util/util';
+import { GridLesson } from '@ui/grid-lesson/grid-lesson';
 
 @Component({
   selector: 'app-classes',
@@ -60,6 +61,7 @@ import { Util } from '@util/util';
     MatPaginatorModule,
     DatePipe,
     TranslateModule,
+    GridLesson,
   ],
 })
 export class LessonsComponent implements OnInit, OnDestroy {

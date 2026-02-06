@@ -42,12 +42,12 @@
 
                   <div>
 
-                    <div class="curricular-component">
+                    <div class="curricular-component ellipsis">
                       {{ event.curricularComponent?.name }}
                     </div>
                     @if (event.lesson; as lesson) {
                       @if (user().role !== 'teacher') {
-                        <div class="teacher-name">
+                        <div class="teacher-name ellipsis">
                           {{ lesson.teacher?.fullName }}
                         </div>
                       }

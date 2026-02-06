@@ -1,5 +1,6 @@
 import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
 import { UserType } from '@models/users.model';
+import { School } from '@models/school.model';
 
 export interface User {
   [prop: string]: any;
@@ -14,6 +15,7 @@ export interface User {
   password?: string;
   roles?: string[];
   permissions?: string[];
+  schools?: School[];
 }
 
 export interface Token {

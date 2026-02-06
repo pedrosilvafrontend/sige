@@ -1,0 +1,75 @@
+<table class="w-100 mb-5 grid-lesson">
+  <tr>
+    <th class="w-first-col">
+      <app-class-select [formControl]="classControl" [schoolId]="school().id">
+      </app-class-select>
+    </th>
+    @for (day of weekdays; track day) {
+      <th>
+        <span [hidden]="!schedules().length">{{ day | translate }}</span>
+      </th>
+    }
+  </tr>
+  @for (schedule of schedules(); track schedule.id; let i = $index) {
+    <tr>
+      <th>
+        {{ schedule.startTime }} - {{ schedule.endTime }}
+      </th>
+      @if (i === 0) {
+        <td colspan="10" [attr.rowspan]="schedules().length">
+          <div class="wrap-grid">
+            <gridster [options]="options">
+              @for (item of dashboard; track item; let i = $index) {
+                @let lesson = item['data']?.lesson;
+                <gridster-item [item]="item">
+                  <div class="item">
+                    <div class="w-100 p-1">
+                      @if (lesson?.id) {
+                        <h3 class="ellipsis my-1">
+                          {{ lesson.curricularComponent?.name }}
+                        </h3>
+                        @if (user.role !== 'teacher') {
+                          <span class="ellipsis">
+                            {{ lesson.teacher?.fullName }}
+                          </span>
+                        }
+                      } @else {
+                        {{i}}
+                      }
+<!--                      <div>y:{{item.y}}, x:{{item.x}}</div>-->
+                    </div>
+                    @if (lesson?.id) {
+                      <button mat-icon-button color="accent"
+                              type="button"
+                              [matTooltip]="'Edit' | translate"
+                              (click)="edit(item)"
+                              class="grid-btn">
+                          <mat-icon>edit</mat-icon>
+                      </button>
+                    } @else {
+                      <button mat-icon-button color="accent"
+                              type="button"
+                              [matTooltip]="'Add' | translate"
+                              (click)="edit(item)"
+                              class="grid-btn">
+                        <mat-icon>add</mat-icon>
+                      </button>
+                    }
+                  </div>
+                </gridster-item>
+              }
+            </gridster>
+          </div>
+        </td>
+      }
+    </tr>
+  }
+</table>
+
+<div class="d-flex justify-content-end">
+  <ui-button type="button" (onClick)="save()">Salvar</ui-button>
+</div>
+
+<!--<pre>-->
+<!--  {{ dashboard | json }}-->
+<!--</pre>-->
