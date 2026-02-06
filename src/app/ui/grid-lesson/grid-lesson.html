@@ -33,13 +33,11 @@
                             {{ lesson.teacher?.fullName }}
                           </span>
                         }
-                      } @else {
-                        {{i}}
                       }
 <!--                      <div>y:{{item.y}}, x:{{item.x}}</div>-->
                     </div>
                     @if (lesson?.id) {
-                      <button mat-icon-button color="accent"
+                      <button (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()" mat-icon-button color="accent"
                               type="button"
                               [matTooltip]="'Edit' | translate"
                               (click)="edit(item)"
@@ -47,11 +45,11 @@
                           <mat-icon>edit</mat-icon>
                       </button>
                     } @else {
-                      <button mat-icon-button color="accent"
+                      <button (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()" mat-icon-button color="accent"
                               type="button"
                               [matTooltip]="'Add' | translate"
                               (click)="edit(item)"
-                              class="grid-btn">
+                              class="add-btn w-100 h-100 position-absolute top-0 start-0 rounded-0">
                         <mat-icon>add</mat-icon>
                       </button>
                     }

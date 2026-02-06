@@ -80,7 +80,7 @@ export class LessonsFormDialogComponent {
       this.data = this.dialogData.table;
     } else {
       this.dialogTitle = 'New record';
-      this.data = new LessonBatch();
+      this.data = Object.assign(new LessonBatch(), this.dialogData.table || {});
     }
   }
 

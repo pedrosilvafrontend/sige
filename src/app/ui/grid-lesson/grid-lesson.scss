@@ -14,6 +14,7 @@
     display: block;
   }
   gridster-item {
+    cursor: move;
     .item {
       display: flex;
       align-items: center;
@@ -22,6 +23,11 @@
     }
     &:hover .invisible {
       visibility: visible !important;
+    }
+    .add-btn {
+      .mat-mdc-button-persistent-ripple {
+        border-radius: 0;
+      }
     }
   }
   .w-first-col {

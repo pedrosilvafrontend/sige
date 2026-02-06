@@ -26,13 +26,14 @@ import { MatDialog } from '@angular/material/dialog';
 
 export type GridLessonItem = {
   lesson: LessonBatch,
+  frequencyId?: number,
   x: number,
   y: number
 }
 
 @Component({
   selector: 'app-grid-lesson',
-  imports: [Gridster, GridsterItem, ClassSelectComponent, ReactiveFormsModule, TranslatePipe, Button, JsonPipe, MatIcon, MatIconButton, MatTooltip],
+  imports: [Gridster, GridsterItem, ClassSelectComponent, ReactiveFormsModule, TranslatePipe, Button, MatIcon, MatIconButton, MatTooltip],
   templateUrl: './grid-lesson.html',
   styleUrl: './grid-lesson.scss',
   encapsulation: ViewEncapsulation.None,
@@ -62,18 +63,23 @@ export class GridLesson implements OnInit, OnDestroy {
   }
 
   edit(item: GridsterItemConfig) {
-    const data: LessonBatch = item['data']?.lesson || new LessonBatch();
-    data.frequencies.length = 0;
-    const weekday = this.weekdays[item.x];
-    const timeSchedule = this.schedules()[item.y];
-    const freq = new Frequency();
-    data.frequencies.push(freq);
+    const data: GridLessonItem = item['data'];
+    const lesson: LessonBatch = data ? data.lesson : new LessonBatch();
+    const frequency = new Frequency();
+    frequency.id = data.frequencyId || 0;
+    frequency.weekday = this.weekdays[item.x];
+    frequency.timeSchedule = this.schedules()[item.y];
+    lesson.frequencies = [frequency];
 
-    const action = data.id ? 'edit' : 'add';
+    if (!lesson.schoolClass?.id) {
+      lesson.schoolClass = this.classControl.value;
+    }
+
+    const action = lesson.id ? 'edit' : 'add';
     const dialogRef = this.dialog.open(LessonsFormDialogComponent, {
       width: '99vw',
       maxWidth: '1024px',
-      data: { table: data, action, blockSubmit: true },
+      data: { table: lesson, action, blockSubmit: true },
       autoFocus: false,
       disableClose: true
     });
@@ -204,7 +210,7 @@ export class GridLesson implements OnInit, OnDestroy {
           const x = this.weekdays.findIndex(day => day === frequency.weekday);
           const y = this.schedules().findIndex(schedule => schedule.id === frequency.timeSchedule?.id);
           if (!gridLessons[x]) { gridLessons[x] = [] as GridLessonItem[] }
-          gridLessons[x][y] = { lesson, x, y }
+          gridLessons[x][y] = { lesson, frequencyId: frequency.id, x, y }
         })
       })
       this.gridLessons = gridLessons;
