@@ -41,7 +41,8 @@ export class AuthService {
     this.checkSelectedSchool();
 
     effect(() => {
-      if (this.school() && this.school().id !== this.store.get(this.schoolStoreKey)?.id) {
+      const school = this.school();
+      if (school?.id && school.id !== this.store.get(this.schoolStoreKey)?.id) {
         this.store.set(this.schoolStoreKey, this.school());
       }
     });
@@ -52,7 +53,7 @@ export class AuthService {
     const schoolStore: School | undefined = this.store.get(this.schoolStoreKey);
     const has = schools.some(s => s.id === schoolStore?.id);
     const school = has ? schoolStore : schools[0];
-    if (!school) return;
+    if (!school?.id) return;
     this.school.set(school);
     this.store.set(this.schoolStoreKey, school);
   }
@@ -174,6 +175,10 @@ export class AuthService {
       if (!res.success) {
         this.tokenService.clear();
         this.store.clear();
+        if (!!window?.location?.reload) {
+          window?.location?.reload();
+          return;
+        }
         this.router.navigateByUrl('/login').then();
       }
     });

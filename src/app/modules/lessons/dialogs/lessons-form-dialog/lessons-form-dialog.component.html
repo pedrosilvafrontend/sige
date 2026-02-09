@@ -9,7 +9,7 @@
       <mat-icon>close</mat-icon>
     </button>
   </div>
-  <form class=" form-field-full" [formGroup]="form" (ngSubmit)="submit()">
+  <form class=" form-field-full" (ngSubmit)="submit()">
     <div mat-dialog-content>
       <div class="row m-b-24">
         <app-lesson-form [data]="data" [origin]="dialogData.origin" (form$)="setForm($event)"></app-lesson-form>
@@ -25,7 +25,13 @@
     <div matDialogActions>
       <div class="dialog-buttons">
         <ui-button color="neutral" mat-dialog-close tabindex="-1">{{ 'Cancel' | translate }}</ui-button>
-        <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>
+        @if (dialogData.origin == 'grid') {
+          <ui-button [disabled]="form && form.invalid" type="button" (onClick)="addToGrid()">
+            {{ (data.id ? 'Update' : 'Add') | translate }}
+          </ui-button>
+        } @else {
+          <ui-button [disabled]="form && form.invalid" type="submit">{{ 'Save' | translate }}</ui-button>
+        }
       </div>
     </div>
   </form>

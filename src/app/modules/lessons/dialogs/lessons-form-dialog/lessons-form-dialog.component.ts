@@ -4,7 +4,7 @@ import {
   MatDialogContent,
   MatDialogClose, MatDialogActions,
 } from '@angular/material/dialog';
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormsModule,
@@ -65,7 +65,7 @@ export class LessonsFormDialogComponent {
   public lessonsService = inject(LessonsService);
   public action: string;
   public dialogTitle: string;
-  public form!: FormGroup<ILessonForm>;
+  public form: FormGroup<ILessonForm> = this.dialogData.form as FormGroup<ILessonForm>;
   public data: LessonBatch;
   public url: string | null = null;
   public classes: SchoolClass[] = [];
@@ -84,12 +84,11 @@ export class LessonsFormDialogComponent {
     }
   }
 
-  submit() {
-    if (this.dialogData.origin === 'grid') {
-      this.dialogRef.close({ submit: true, value: this.form.getRawValue() });
-      return;
-    }
+  addToGrid() {
+    this.dialogRef.close({ submit: true, value: this.form.getRawValue() });
+  }
 
+  submit() {
     if (this.form.valid) {
       const data = this.form.value as LessonBatch;
       // if (data.frequency === 'UNIQUE') {
@@ -119,6 +118,7 @@ export class LessonsFormDialogComponent {
   }
 
   setForm(form: FormGroup<ILessonForm>) {
+    if (this.form) return;
     this.form = form;
   }
 }

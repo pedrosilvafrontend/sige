@@ -39,6 +39,7 @@ import { ConfigService } from '@modules/config/config/config.service';
 import { ConfigData } from '@models/config.model';
 import { TimeScheduleService } from '@services/time-schedule.service';
 import { TimeScheduleSelect } from '@modules/lessons/time-schedule-select/time-schedule-select';
+import { LessonForm } from '@form/lesson.form';
 
 @Component({
   selector: 'app-lesson-form',
@@ -79,7 +80,8 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   private configService = inject(ConfigService);
   private timeScheduleService = inject(TimeScheduleService);
   private cdr = inject(ChangeDetectorRef);
-  public form: FormGroup<ILessonForm> = this.createForm();
+  private _lessonForm: LessonForm = new LessonForm();
+  // public form: FormGroup<ILessonForm>;
   public dayShifts: DayShifts[] = [];
   public classes: SchoolClass[] = [];
   public timeSchedules: TimeSchedule[] = [];
@@ -92,13 +94,30 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   public configs!: ConfigData;
 
   @Input()
+  set lessonForm(lessonForm: LessonForm) {
+    this._lessonForm = lessonForm;
+    if (this.data) {
+      this.lessonForm.patchValue(this.data as any);
+    }
+    this.cdr.detectChanges();
+  }
+
+  get lessonForm(): LessonForm {
+    return this._lessonForm;
+  }
+
+  get form(): FormGroup<ILessonForm> {
+    return this.lessonForm?.form;
+  }
+
+  @Input()
   origin = '';
 
   @Input()
   set data(data: LessonBatch) {
     this._data = data;
-    if (data) {
-      this.patchValue(data as any);
+    if (this.lessonForm && data) {
+      this.lessonForm.patchValue(data as any);
     }
   }
   get data(): LessonBatch {
@@ -114,6 +133,10 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    if (!this.lessonForm) {
+      this.lessonForm = new LessonForm(this.data);
+    }
+
     const dayShifts = await firstValueFrom(this.dayShiftsService.getAll());
     this.dayShifts.length = 0;
     Object.assign(this.dayShifts, dayShifts);
@@ -166,66 +189,66 @@ export class LessonFormComponent implements OnInit, OnDestroy {
     this.timeSchedules = response || [];
   }
 
-  patchValue(data?: LessonBatch) {
-    this.form.patchValue(data as any);
-    this.form.controls.frequencies.clear();
-    (data?.frequencies || []).forEach(frequency => {
-      this.addFrequency(frequency);
-    })
-  }
+  // patchValue(data?: LessonBatch) {
+  //   this.form.patchValue(data as any);
+  //   this.form.controls.frequencies.clear();
+  //   (data?.frequencies || []).forEach(frequency => {
+  //     this.addFrequency(frequency);
+  //   })
+  // }
 
-  createForm(data?: LessonBatch): FormGroup<ILessonForm> {
-    const isGridOrigin = this.origin === 'grid';
-    const form = this.fb.group(
-      {
-        id: [data?.id],
-        schoolClass: this.fb.control({ value: data?.schoolClass, disabled: isGridOrigin }, [Validators.required]),
-        teacher: this.fb.control({ value: data?.teacher, disabled: false }, [Validators.required]),
-        curricularComponent: this.fb.control({ value: data?.curricularComponent, disabled: false }, [Validators.required]),
-        school: this.fb.control({ value: data?.school, disabled: isGridOrigin }, [Validators.required]),
-        date: this.fb.control({ value: data?.date, disabled: isGridOrigin }, [Validators.required]),
-        endDate: this.fb.control({ value: data?.endDate, disabled: isGridOrigin }, [Validators.required]),
-        frequencies: this.fb.array([]),
-        description: this.fb.control({ value: data?.description, disabled: false }),
-      },
-      {
-        validators: [
-          FormValidators.dateRange('date', 'endDate')
-        ]
-      }
-    );
-
-    (data?.frequencies || []).forEach(frequency => {
-      this.addFrequency(frequency);
-    })
-
-    return form as unknown as FormGroup<ILessonForm>;
-  }
-
-  addFrequency(data?: Frequency) {
-    if (this.origin == 'grid' && this.form.controls.frequencies.length > 0) {
-      return;
-    }
-    const form = this.fb.group<ILessonFrequency>({
-      id: this.fb.control(data?.id || 0),
-      weekday: this.fb.control(data?.weekday || '', [Validators.required]),
-      timeSchedule: this.fb.control(data?.timeSchedule || null, [Validators.required]),
-      startHour: this.fb.control(data?.startHour || '', [Validators.required]),
-      endHour: this.fb.control(data?.endHour || '', [Validators.required]),
-    })
-
-    const { startHour, endHour } = form.controls;
-    startHour.setValidators(FormValidators.rangeTimeCtrl(startHour, endHour))
-    endHour.setValidators(FormValidators.rangeTimeCtrl(startHour, endHour))
-
-    const frequencies = this.form.controls.frequencies as any;
-    frequencies.push(form);
-  }
-
-  removeFrequency(index: number) {
-    const frequencies = this.form.controls.frequencies as any;
-    frequencies.removeAt(index);
-  }
+  // createForm(data?: LessonBatch): FormGroup<ILessonForm> {
+  //   const isGridOrigin = this.origin === 'grid';
+  //   const form = this.fb.group(
+  //     {
+  //       id: [data?.id],
+  //       schoolClass: this.fb.control({ value: data?.schoolClass, disabled: isGridOrigin }, [Validators.required]),
+  //       teacher: this.fb.control({ value: data?.teacher, disabled: false }, [Validators.required]),
+  //       curricularComponent: this.fb.control({ value: data?.curricularComponent, disabled: false }, [Validators.required]),
+  //       school: this.fb.control({ value: data?.school, disabled: isGridOrigin }, [Validators.required]),
+  //       date: this.fb.control({ value: data?.date, disabled: isGridOrigin }, [Validators.required]),
+  //       endDate: this.fb.control({ value: data?.endDate, disabled: isGridOrigin }, [Validators.required]),
+  //       frequencies: this.fb.array([]),
+  //       description: this.fb.control({ value: data?.description, disabled: false }),
+  //     },
+  //     {
+  //       validators: [
+  //         FormValidators.dateRange('date', 'endDate')
+  //       ]
+  //     }
+  //   );
+  //
+  //   (data?.frequencies || []).forEach(frequency => {
+  //     this.addFrequency(frequency);
+  //   })
+  //
+  //   return form as unknown as FormGroup<ILessonForm>;
+  // }
+  //
+  // addFrequency(data?: Frequency) {
+  //   if (this.origin == 'grid' && this.form.controls.frequencies.length > 0) {
+  //     return;
+  //   }
+  //   const form = this.fb.group<ILessonFrequency>({
+  //     id: this.fb.control(data?.id || 0),
+  //     weekday: this.fb.control(data?.weekday || '', [Validators.required]),
+  //     timeSchedule: this.fb.control(data?.timeSchedule || null, [Validators.required]),
+  //     startHour: this.fb.control(data?.startHour || '', [Validators.required]),
+  //     endHour: this.fb.control(data?.endHour || '', [Validators.required]),
+  //   })
+  //
+  //   const { startHour, endHour } = form.controls;
+  //   startHour.setValidators(FormValidators.rangeTimeCtrl(startHour, endHour))
+  //   endHour.setValidators(FormValidators.rangeTimeCtrl(startHour, endHour))
+  //
+  //   const frequencies = this.form.controls.frequencies as any;
+  //   frequencies.push(form);
+  // }
+  //
+  // removeFrequency(index: number) {
+  //   const frequencies = this.form.controls.frequencies as any;
+  //   frequencies.removeAt(index);
+  // }
 
   checkDates() {
     if (this.configs && !this.form.controls.date.value) {

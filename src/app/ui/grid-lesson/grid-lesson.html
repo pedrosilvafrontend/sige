@@ -26,13 +26,13 @@
                   <div class="item">
                     <div class="w-100 p-1">
                       @if (!empty) {
-                        <h3 class="ellipsis my-1">
+                        <h3 class="ellipsis my-0">
                           {{ lesson.curricularComponent?.name }}
                         </h3>
                         @if (user.role !== 'teacher' && lesson.teacher) {
-                          <span class="ellipsis">
+                          <div class="ellipsis">
                             {{ lesson.teacher.fullName }}
-                          </span>
+                          </div>
                         }
                       }
                     </div>

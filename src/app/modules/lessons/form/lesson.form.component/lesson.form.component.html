@@ -83,7 +83,7 @@
         </div>
         <div class="col-sm-1 text-center align-content-center mb-3">
           @if (origin != 'grid') {
-            <button type="button" mat-icon-button (click)="removeFrequency(i)"
+            <button type="button" mat-icon-button (click)="lessonForm.removeFrequency(i)"
                     class="tbl-header-btn text-red">
               <mat-icon>delete_outline</mat-icon>
             </button>
@@ -92,7 +92,7 @@
       </div>
     }
     @if (origin != 'grid') {
-      <ui-button [disabled]="!form.controls.schoolClass.value" (onClick)="addFrequency()" class="text-nowrap mb-3 d-inline-block">
+      <ui-button [disabled]="!form.controls.schoolClass.value" (onClick)="lessonForm.addFrequency()" class="text-nowrap mb-3 d-inline-block">
         {{ 'Add frequency' | translate }}
       </ui-button>
     }

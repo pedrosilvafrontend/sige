@@ -2,7 +2,6 @@ import {
   ChangeDetectorRef,
   Component,
   effect,
-  HostListener,
   inject,
   OnDestroy,
   OnInit,
@@ -34,7 +33,7 @@ import { LessonsFormDialogComponent } from '@modules/lessons';
 import { MatDialog, MatDialogActions, MatDialogContent, MatDialogTitle } from '@angular/material/dialog';
 import { map } from 'rxjs/operators';
 import { ModalComponent } from '@ui/modal/modal.component';
-import { Textarea } from '@ui/field/textarea/textarea';
+import { LessonsMap } from '@modules/lessons/lessons.map';
 
 export type GridLessonItem = {
   lesson: LessonBatch,
@@ -45,7 +44,7 @@ export type GridLessonItem = {
 
 @Component({
   selector: 'app-grid-lesson',
-  imports: [Gridster, GridsterItem, ClassSelectComponent, ReactiveFormsModule, TranslatePipe, Button, MatIcon, MatIconButton, MatTooltip, ModalComponent, MatDialogActions, MatDialogContent, MatDialogTitle, Textarea],
+  imports: [Gridster, GridsterItem, ClassSelectComponent, ReactiveFormsModule, TranslatePipe, Button, MatIcon, MatIconButton, MatTooltip, ModalComponent, MatDialogActions, MatDialogContent, MatDialogTitle],
   templateUrl: './grid-lesson.html',
   styleUrl: './grid-lesson.scss',
   encapsulation: ViewEncapsulation.None,
@@ -65,6 +64,7 @@ export class GridLesson implements OnInit, OnDestroy {
   user = this.auth.user$.value;
   schedules = signal<TimeSchedule[]>([]);
   gridLessons: GridLessonItem[][] = [];
+  lessons = new LessonsMap();
   timeSchedules: TimeSchedule[] = [];
   classControl = new FormControl();
   destroy$ = new Subject<void>();
@@ -73,8 +73,13 @@ export class GridLesson implements OnInit, OnDestroy {
   constructor() {
     effect(() => {
       const school = this.school();
-      if (school.id && school.id !== this.classControl.value?.schoolId) {
-        this.classControl.reset();
+      if (school?.id) {
+        if (school.id !== this.classControl.value?.schoolId) {
+          this.classControl.reset();
+        }
+        if (this.timeSchedules.length === 0) {
+          this.setTimeSchedules().then();
+        }
       }
       // if (this.localDashboard()) {
       //   this.setClassByLocal();
@@ -113,14 +118,28 @@ export class GridLesson implements OnInit, OnDestroy {
     return null;
   }
 
-  edit(itemConfig: GridsterItemConfig, item: GridsterItem) {
+  itemConfigToLesson(itemConfig: GridsterItemConfig): LessonBatch {
     const data: GridLessonItem = itemConfig['data'];
-    const lesson: LessonBatch = data ? data.lesson : new LessonBatch();
-    const frequency = new Frequency();
-    frequency.id = data.frequencyId || 0;
-    frequency.weekday = this.weekdays[itemConfig.x];
-    frequency.timeSchedule = this.schedules()[itemConfig.y];
-    lesson.frequencies = [frequency];
+    let lesson: LessonBatch = data ? data.lesson : new LessonBatch();
+    if (!lesson.schoolClass?.id) {
+      lesson.schoolClass = this.classControl.value;
+    }
+    lesson = this.lessons.getLesson(lesson || new LessonBatch());
+    const weekday = this.weekdays[itemConfig.x];
+    const timeSchedule = this.schedules()[itemConfig.y];
+    let frequency: Frequency | undefined = lesson.frequencies.find(f => f.id === data.frequencyId || f.weekday === weekday && f.timeSchedule?.id === timeSchedule?.id);
+    if (!frequency) {
+      frequency = new Frequency();
+      frequency.id = data.frequencyId || 0;
+      frequency.weekday = weekday;
+      frequency.timeSchedule = timeSchedule;
+      lesson.frequencies.push(frequency);
+    }
+    return lesson;
+  }
+
+  edit(itemConfig: GridsterItemConfig, item: GridsterItem) {
+    const lesson: LessonBatch = this.itemConfigToLesson(itemConfig);
 
     if (!lesson.schoolClass?.id) {
       lesson.schoolClass = this.classControl.value;
@@ -137,7 +156,8 @@ export class GridLesson implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.submit) {
-        Object.assign(itemConfig['data']?.lesson, result.value);
+        const lesson = this.lessons.setLesson(result.value);
+        Object.assign(itemConfig['data']?.lesson, lesson);
         this.localSave();
       }
     });
@@ -145,13 +165,36 @@ export class GridLesson implements OnInit, OnDestroy {
 
   save() {
     // TODO: implementar
-    this.store.remove(this.gridLessonsKey);
+    // const toUpdate = new Map<number, LessonBatch>();
+    //
+    // const lessons = this.dashboard.reduce(
+    //   (acc, item) => {
+    //     const lesson = this.itemConfigToLesson(item);
+    //     if (lesson.id) {
+    //       toUpdate.set(lesson.id, lesson);
+    //     }
+    //     return acc;
+    //   },
+    //   [] as LessonBatch[]
+    // );
+
+    this.lessons.clear();
+    this.dashboard.forEach(item => {
+      const lesson = this.itemConfigToLesson(item);
+      this.lessons.setLesson(lesson);
+    })
+
+    const lessons: LessonBatch[] = this.lessons.list;
+    console.log('save', lessons);
+
+    // this.store.remove(this.gridLessonsKey);
   }
 
   cancel(callback?: () => void) {
     this.store.remove(this.gridLessonsKey);
     this.dashboard = [];
     this.gridLessons = [];
+    this.lessons.clear();
     this.localDashboard.set([]);
     this.schedules.set([]);
     this.classControl.setValue(null, { emitEvent: false });
@@ -174,6 +217,7 @@ export class GridLesson implements OnInit, OnDestroy {
   }
 
   setDashboard(): void {
+    // TODO: chave unica school, curricularComponent e teacher ids
     let dashboard = this.getLocalLessonsDashboard();
     if (dashboard.length) {
       const classCode = this.getClassCodeOnDashboard(dashboard);
@@ -280,11 +324,16 @@ export class GridLesson implements OnInit, OnDestroy {
 
   setToGridLessons(lessons: LessonBatch[]) {
     const gridLessons: GridLessonItem[][] = [];
-    let classCode = lessons?.[0]?.schoolClass?.code || '';
+    const classCode = this.classControl.value?.code || '';
+    this.lessons.clear();
     this.setSchedules(classCode);
     if (this.schedules().length) {
       (lessons || []).forEach((lesson: LessonBatch) => {
+        this.lessons.add(lesson);
         lesson.frequencies.forEach(frequency => {
+          if (lesson.schoolClass?.code !== classCode) {
+            return;
+          }
           const x = this.weekdays.findIndex(day => day === frequency.weekday);
           const y = this.schedules().findIndex(schedule => schedule.id === frequency.timeSchedule?.id);
           if (!gridLessons[x]) { gridLessons[x] = [] as GridLessonItem[] }
@@ -328,6 +377,9 @@ export class GridLesson implements OnInit, OnDestroy {
   }
 
   async setTimeSchedules() {
+    if (!this.school()?.id) {
+      return;
+    }
     const request$ = this.timeService.getAll({schoolId: this.school()?.id})
       .pipe(
         take(1),
