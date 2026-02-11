@@ -19,9 +19,9 @@ import {
 } from 'angular-gridster2';
 import { ClassSelectComponent } from '@modules/classes/class-select/class-select.component';
 import { AuthService, LessonsService, LocalStorageService } from '@services';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { firstValueFrom, Subject, take, takeUntil } from 'rxjs';
-import { Frequency, LessonBatch, SchoolClass, TimeSchedule } from '@models';
+import { Frequency, ILessonForm, LessonBatch, SchoolClass, TimeSchedule } from '@models';
 import { TimeScheduleService } from '@services/time-schedule.service';
 import { Util } from '@util/util';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -34,6 +34,7 @@ import { MatDialog, MatDialogActions, MatDialogContent, MatDialogTitle } from '@
 import { map } from 'rxjs/operators';
 import { ModalComponent } from '@ui/modal/modal.component';
 import { LessonsMap } from '@modules/lessons/lessons.map';
+import Swal from 'sweetalert2';
 
 export type GridLessonItem = {
   lesson: LessonBatch,
@@ -56,6 +57,7 @@ export class GridLesson implements OnInit, OnDestroy {
   private dialog = inject(MatDialog);
   private store = inject(LocalStorageService);
   private cdr = inject(ChangeDetectorRef);
+  private originalLessons: LessonBatch[] = [];
   gridLessonsKey = 'gridLessons';
   options!: GridsterConfig;
   dashboard: GridsterItemConfig[] = [];
@@ -110,36 +112,59 @@ export class GridLesson implements OnInit, OnDestroy {
       this.classControl.setValue(null, { emitEvent: false });
       return null;
     }
-    else if (localClass?.code && localClass.code !== this.classControl.value?.code) {
+    else if (localClass?.code) {
       this.classControl.setValue(localClass, { emitEvent: false });
+      this.setLessonsByLocal(localClass.code).then();
       return localClass;
     }
 
     return null;
   }
 
+  async setLessonsByLocal(classCode: string) {
+    const localGrid = this.localDashboard();
+    if (!classCode || !localGrid || !localGrid.length) {
+      return;
+    }
+    this.lessons.clear();
+    const lessons = await this.getLessons(classCode).then();
+    (lessons || []).forEach((lesson: LessonBatch) => {
+      this.setLesson(lesson);
+    });
+    (localGrid || []).forEach((item: GridsterItemConfig) => {
+      const lesson = this.itemConfigToLesson(item);
+      this.setLesson(lesson);
+    });
+  }
+
   itemConfigToLesson(itemConfig: GridsterItemConfig): LessonBatch {
     const data: GridLessonItem = itemConfig['data'];
-    let lesson: LessonBatch = data ? data.lesson : new LessonBatch();
+    let lesson: LessonBatch = data?.lesson ? data.lesson : new LessonBatch();
     if (!lesson.schoolClass?.id) {
       lesson.schoolClass = this.classControl.value;
     }
-    lesson = this.lessons.getLesson(lesson || new LessonBatch());
+    const les = this.lessons.getLesson(lesson);
+    if (les) lesson = les;
     const weekday = this.weekdays[itemConfig.x];
     const timeSchedule = this.schedules()[itemConfig.y];
-    let frequency: Frequency | undefined = lesson.frequencies.find(f => f.id === data.frequencyId || f.weekday === weekday && f.timeSchedule?.id === timeSchedule?.id);
-    if (!frequency) {
-      frequency = new Frequency();
-      frequency.id = data.frequencyId || 0;
-      frequency.weekday = weekday;
-      frequency.timeSchedule = timeSchedule;
-      lesson.frequencies.push(frequency);
-    }
+    // let frequency: Frequency | undefined = lesson.frequencies.find(f => f.id === data.frequencyId || f.weekday === weekday && f.timeSchedule?.id === timeSchedule?.id);
+    // if (!frequency) {
+    //   frequency = new Frequency();
+    // }
+    const frequency = new Frequency();
+    frequency.id = data.frequencyId || 0;
+    frequency.weekday = weekday;
+    frequency.timeSchedule = timeSchedule;
+    // if (!frequency) {
+    //   lesson.frequencies.push(frequency);
+    // }
+    lesson.frequencies = [frequency];
     return lesson;
   }
 
   edit(itemConfig: GridsterItemConfig, item: GridsterItem) {
     const lesson: LessonBatch = this.itemConfigToLesson(itemConfig);
+    console.log('edit', lesson);
 
     if (!lesson.schoolClass?.id) {
       lesson.schoolClass = this.classControl.value;
@@ -154,13 +179,54 @@ export class GridLesson implements OnInit, OnDestroy {
       disableClose: true
     });
 
+    const patchLesson = (form: FormGroup<ILessonForm>) => {
+      let lesson = form.getRawValue();
+      if (lesson.curricularComponent?.id && lesson.teacher?.id) {
+        let existingLesson = this.lessons.getLesson(lesson as any);
+        if (existingLesson) {
+          console.log('>>>>>>>> patchValue', existingLesson);
+          form.patchValue({...existingLesson, frequencies: []} as any, { emitEvent: false });
+        }
+        else {
+          form.patchValue({id: 0} as any, { emitEvent: false });
+        }
+      }
+      return null;
+    }
+
+    dialogRef.componentInstance.form$.subscribe(form => {
+      form.get('curricularComponent')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
+        patchLesson(form);
+      })
+      form.get('teacher')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
+        patchLesson(form);
+      })
+    })
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.submit) {
-        const lesson = this.lessons.setLesson(result.value);
-        Object.assign(itemConfig['data']?.lesson, lesson);
+        const lesson = this.setLesson(result.value);
+        if (itemConfig['data']?.lesson) {
+          itemConfig['data'].lesson = lesson;
+        }
         this.localSave();
       }
     });
+  }
+
+  setLesson(lesson: LessonBatch) {
+    const originalLesson = this.originalLessons.find(l => {
+      return (
+        l.curricularComponent?.id && l.curricularComponent.id === lesson.curricularComponent?.id
+        && l.teacher?.id && l.teacher.id === lesson.teacher?.id
+      );
+    });
+
+    if (originalLesson) {
+      lesson.id = originalLesson.id;
+    }
+
+    return this.lessons.setLesson(lesson);
   }
 
   save() {
@@ -181,23 +247,36 @@ export class GridLesson implements OnInit, OnDestroy {
     this.lessons.clear();
     this.dashboard.forEach(item => {
       const lesson = this.itemConfigToLesson(item);
-      this.lessons.setLesson(lesson);
+      if (lesson.curricularComponent?.id === 14) {
+        console.log('lesson', lesson.curricularComponent.name, lesson.frequencies);
+      }
+      this.setLesson(lesson);
     })
 
     const lessons: LessonBatch[] = this.lessons.list;
     console.log('save', lessons);
 
-    // this.store.remove(this.gridLessonsKey);
+    this.lessonsService.saveBatch(lessons).subscribe(lessons => {
+      Swal.fire("Salvo com sucesso", "", "success").then(r => {
+        this.reset(false);
+        this.filter(this.classControl.value).then();
+      });
+    })
   }
 
-  cancel(callback?: () => void) {
+  reset(refresh = false, callback?: () => void) {
     this.store.remove(this.gridLessonsKey);
     this.dashboard = [];
     this.gridLessons = [];
     this.lessons.clear();
     this.localDashboard.set([]);
     this.schedules.set([]);
-    this.classControl.setValue(null, { emitEvent: false });
+    if (refresh) {
+      this.filter(this.classControl.value).then();
+    }
+    else {
+      this.classControl.setValue(null, { emitEvent: false });
+    }
     callback?.();
     this.cdr.detectChanges();
   }
@@ -329,8 +408,8 @@ export class GridLesson implements OnInit, OnDestroy {
     this.setSchedules(classCode);
     if (this.schedules().length) {
       (lessons || []).forEach((lesson: LessonBatch) => {
-        this.lessons.add(lesson);
-        lesson.frequencies.forEach(frequency => {
+        this.setLesson(lesson);
+        lesson.frequencies?.forEach(frequency => {
           if (lesson.schoolClass?.code !== classCode) {
             return;
           }
@@ -349,7 +428,7 @@ export class GridLesson implements OnInit, OnDestroy {
     return dashboard.find(item => !!item['data']?.lesson?.curricularComponent?.id)?.['data']?.lesson?.schoolClass?.code;
   }
 
-  filter(schoolClass: SchoolClass) {
+  async filter(schoolClass: SchoolClass) {
     if (this.localDashboard().length) {
       this.setClassByLocal();
       return;
@@ -361,11 +440,22 @@ export class GridLesson implements OnInit, OnDestroy {
     // if (validLocalClass) {
     //   schoolClass = validLocalClass;
     // }
+    const lessons = await this.getLessons(schoolClass.code);
     this.setSchedules(schoolClass?.code || '');
-    const params = schoolClass?.code ? { classCode: schoolClass.code } : {};
-    this.lessonsService.getAll(params).pipe(takeUntil(this.destroy$)).subscribe(lessons => {
-      this.setToGridLessons(lessons);
-    })
+    this.setToGridLessons(lessons);
+
+    // const params = schoolClass?.code ? { classCode: schoolClass.code } : {};
+    // this.lessonsService.getAll(params).pipe(takeUntil(this.destroy$)).subscribe(lessons => {
+    //   this.setToGridLessons(lessons);
+    // })
+  }
+
+  async getLessons(classCode?: string | null): Promise<LessonBatch[]> {
+    if (!classCode) {return [] as LessonBatch[];}
+    const params = { classCode };
+    const lessons = await firstValueFrom(this.lessonsService.getAll(params));
+    this.originalLessons = Object.assign([], lessons);
+    return lessons;
   }
 
   setSchedules(classCode: string) {

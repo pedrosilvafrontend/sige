@@ -39,19 +39,11 @@ export class LessonForm {
   }
 
   getFrequencyForm(data?: Frequency): FormGroup<ILessonFrequency> {
-    const form = this.fb.group<ILessonFrequency>({
+    return this.fb.group<ILessonFrequency>({
       id: this.fb.control(data?.id || 0),
       weekday: this.fb.control(data?.weekday || '', [Validators.required]),
       timeSchedule: this.fb.control(data?.timeSchedule || null, [Validators.required]),
-      startHour: this.fb.control(data?.startHour || '', [Validators.required]),
-      endHour: this.fb.control(data?.endHour || '', [Validators.required]),
-    })
-
-    const { startHour, endHour } = form.controls;
-    startHour.setValidators(FormValidators.rangeTimeCtrl(startHour, endHour))
-    endHour.setValidators(FormValidators.rangeTimeCtrl(startHour, endHour))
-
-    return form;
+    });
   }
 
   addFrequency(data?: Frequency) {

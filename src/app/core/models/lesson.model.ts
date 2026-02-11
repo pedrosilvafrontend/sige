@@ -31,12 +31,11 @@ export interface ILessonFrequency {
   id?: FormControl<number | null>;
   weekday: FormControl<string | null>;
   timeSchedule: FormControl<TimeSchedule | null>;
-  startHour: FormControl<string | null>;
-  endHour: FormControl<string | null>;
 }
 
 export class LessonBatch {
   id?: number;
+  ref?: string;
   title?: string;
   curricularComponent: CurricularComponent | null;
   schoolClass: SchoolClass | null;
@@ -59,6 +58,7 @@ export class LessonBatch {
       this.date = lesson.date || '';
       this.endDate = lesson.endDate || undefined;
       this.description = lesson.description || '';
+      this.ref = lesson.ref || '';
     }
   }
 }
@@ -67,16 +67,12 @@ export class Frequency {
   id?: number;
   weekday: string;
   timeSchedule: TimeSchedule | null;
-  startHour: string;
-  endHour: string;
 
   constructor(lesson: Partial<Frequency> = {}) {
     {
       this.id = lesson.id;
       this.weekday = lesson.weekday || '';
       this.timeSchedule = lesson.timeSchedule || null;
-      this.startHour = lesson.startHour || '';
-      this.endHour = lesson.endHour || '';
     }
   }
 }

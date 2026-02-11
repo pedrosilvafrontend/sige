@@ -32,7 +32,7 @@ export class App implements OnInit {
     this.router.events.subscribe((event: any | Event) => {
       if (event instanceof NavigationStart) {
         console.log('Navigation started:', event);
-        if (event.url !== "/lessons" && this.store.get(this.gridLessonsKey)?.length > 0) {
+        if (!["/login", "/lessons"].includes(event.url) && this.store.get(this.gridLessonsKey)?.length > 0) {
           Swal.fire({
             title: "Oops...",
             text: 'Grade de aulas não salva, deseja continuar a edição?',

@@ -4,7 +4,7 @@ import {
   MatDialogContent,
   MatDialogClose, MatDialogActions,
 } from '@angular/material/dialog';
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, OnDestroy } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormsModule,
@@ -27,6 +27,7 @@ import { UserTable } from '../../../users/users.model';
 import { LessonFormComponent } from '@modules/lessons';
 import { LessonsService } from '@services';
 import { Button } from '@ui/button/button';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 export interface DialogData {
   id: number;
@@ -59,13 +60,14 @@ export interface DialogData {
     MatDialogActions
   ],
 })
-export class LessonsFormDialogComponent {
+export class LessonsFormDialogComponent implements OnDestroy {
   public dialogRef = inject(MatDialogRef<LessonsFormDialogComponent>);
   public dialogData = inject(MAT_DIALOG_DATA);
   public lessonsService = inject(LessonsService);
   public action: string;
   public dialogTitle: string;
   public form: FormGroup<ILessonForm> = this.dialogData.form as FormGroup<ILessonForm>;
+  public form$ = new BehaviorSubject<FormGroup<ILessonForm>>(this.form);
   public data: LessonBatch;
   public url: string | null = null;
   public classes: SchoolClass[] = [];
@@ -75,7 +77,8 @@ export class LessonsFormDialogComponent {
 
   constructor() {
     this.action = this.dialogData.action;
-    if (this.action === 'edit') {
+    const data = this.dialogData.table;
+    if (data.id) {
       this.dialogTitle = this.dialogData.table.curricularComponent?.name || '';
       this.data = this.dialogData.table;
     } else {
@@ -120,5 +123,11 @@ export class LessonsFormDialogComponent {
   setForm(form: FormGroup<ILessonForm>) {
     if (this.form) return;
     this.form = form;
+    this.form$.next(form);
+  }
+
+  ngOnDestroy() {
+    this.form$.complete();
+    this.form$.unsubscribe();
   }
 }

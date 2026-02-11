@@ -78,7 +78,7 @@
   <mat-dialog-actions>
     <div class="d-flex gap-2">
       <ui-button color="neutral" (onClick)="cancelModal.close()" cdkFocusInitial>Cancelar</ui-button>
-      <ui-button color="danger" (onClick)="cancel(cancelModal.close)">Confirmar</ui-button>
+      <ui-button color="danger" (onClick)="reset(false, cancelModal.close)">Confirmar</ui-button>
     </div>
   </mat-dialog-actions>
 </ng-template>

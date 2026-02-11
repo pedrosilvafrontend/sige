@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, take, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { LessonBatch } from '@models';
 import { environment } from '@env/environment';
@@ -25,17 +25,22 @@ export class LessonsService {
       .pipe(catchError(this.handleError));
   }
 
-  /** POST: Add a new advance table */
-  addItem(schoolClass: LessonBatch): Observable<LessonBatch> {
-    return this.httpClient.post<LessonBatch>(this.API_URL, schoolClass).pipe(
+  addItem(lesson: LessonBatch): Observable<LessonBatch> {
+    return this.httpClient.post<LessonBatch>(this.API_URL, lesson).pipe(
       map((response) => {
-        return Object.assign(schoolClass, response);
+        return Object.assign(lesson, response);
       }),
       catchError(this.handleError)
     );
   }
 
-  /** PUT: Update an existing advance table */
+  saveBatch(lessons: LessonBatch[]): Observable<LessonBatch[]> {
+    return this.httpClient.post<LessonBatch[]>(`${this.API_URL}/batch`, lessons).pipe(
+      take(1),
+      catchError(this.handleError)
+    );
+  }
+
   updateItem(schoolClass: LessonBatch): Observable<LessonBatch> {
     return this.httpClient
       .put<LessonBatch>(`${this.API_URL}/${schoolClass.id}`, schoolClass)

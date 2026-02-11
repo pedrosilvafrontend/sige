@@ -2,7 +2,7 @@
   <div class="modalHeader">
     <div class="avatarDetails">
       <div class="modalTitle">
-        {{(data.id ? 'Edit lesson' : 'New lesson') | translate}}
+        {{(form.controls.id.value ? 'Edit lesson #'+form.controls.id.value : 'New lesson') | translate}}
       </div>
     </div>
     <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
@@ -27,7 +27,7 @@
         <ui-button color="neutral" mat-dialog-close tabindex="-1">{{ 'Cancel' | translate }}</ui-button>
         @if (dialogData.origin == 'grid') {
           <ui-button [disabled]="form && form.invalid" type="button" (onClick)="addToGrid()">
-            {{ (data.id ? 'Update' : 'Add') | translate }}
+            {{ (form.controls.id.value ? 'Update' : 'Add') | translate }}
           </ui-button>
         } @else {
           <ui-button [disabled]="form && form.invalid" type="submit">{{ 'Save' | translate }}</ui-button>
