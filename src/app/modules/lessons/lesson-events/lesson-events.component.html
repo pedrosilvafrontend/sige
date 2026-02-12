@@ -151,17 +151,23 @@
                       </mat-cell>
                     </ng-container>
                   }
-                  @case ('description') {
+                  @case ('evalTools') {
                     <ng-container [matColumnDef]="column.def">
                       <mat-header-cell *matHeaderCellDef mat-sort-header>
-                        <span class="truncate-text">{{'activities' | translate}}</span>
+                        <span class="truncate-text">{{'evalTools' | translate}}</span>
                       </mat-header-cell>
                       <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
-                        <span class="mobile-label">{{'activities' | translate}}</span>
+                        <span class="mobile-label">{{'evalTools' | translate}}</span>
                         <span class="truncate-text">
-                          @for (activity of row.activities; track activity.id) {
-                            <span [className]="'badge m-x-2 badge-solid badge-activity-'+activity.id" [ngStyle]="{ 'background-color': activity.color }">{{ activity.name }}</span>
+                          @let proof = row.evalTools?.proof;
+                          @let work = row.evalTools?.work;
+                          @if (proof?.id) {
+                            <span class="badge badge-solid badge-activity-proof" [ngStyle]="{ 'background-color': activities.get('TEST')?.color }">{{'Proof' | translate}}</span>
                           }
+                          @if (work?.id) {
+                            <span class="badge badge-solid badge-activity-work" [ngStyle]="{ 'background-color': activities.get('WORK')?.color }">{{'Work' | translate}}</span>
+                          }
+
                         </span>
                       </mat-cell>
                     </ng-container>

@@ -14,9 +14,9 @@
                   @let status = event.evalTools.proof?.status || '';
                   @if (status === 'APPROVED') {
 <!--                   TODO: aplicar activity.color de acordo com a base de dados -->
-                    <span [className]="'badge m-x-2 activity-test'" [ngStyle]="{ 'background-color': '#e36520' }">{{ 'Proof' | translate }}</span>
+                    <span [className]="'badge m-x-2 activity-test'" [ngStyle]="{ 'background-color': activities.get('TEST')?.color }">{{ 'Proof' | translate }}</span>
                   } @else if (event.evalTools.work?.score) {
-                    <span [className]="'badge m-x-2 activity-work'" [ngStyle]="{ 'background-color': '#007bff' }">{{ 'Work' | translate }}</span>
+                    <span [className]="'badge m-x-2 activity-work'" [ngStyle]="{ 'background-color': activities.get('WORK')?.color }">{{ 'Work' | translate }}</span>
                   } @else {
                     <span class="badge badge-solid-gray dot-badge" [ngClass]="'dot-badge-'+proofStatusClass[status]">
 <!--                      <span class="dot-badge" [ngClass]="'text-bg-'+proofStatusClass[status]"></span>-->

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject, input, OnDestroy, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { firstValueFrom, Subject, takeUntil } from 'rxjs';
-import { LessonEvent, Proof, SchoolEvent } from '@models';
+import { Activity, LessonEvent, Proof, SchoolEvent } from '@models';
 import { DatePipe, LowerCasePipe, NgClass, NgStyle } from '@angular/common';
 import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { User } from '@core/models/interface';
@@ -16,6 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { LessonEventService } from '@services/lesson-event.service';
 import { UpdateService } from '@services/update.service';
 import { MatBadge } from '@angular/material/badge';
+import { ActivityService } from '@modules/config/activity/activity.service';
 
 @Component({
   selector: 'app-main-dashboard',
@@ -46,12 +47,14 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   private translatePipe = inject(TranslatePipe);
   private snack = inject(MatSnackBar);
   private updateService = inject(UpdateService);
+  private activityService = inject(ActivityService);
   private destroy$: Subject<void> = new Subject<void>();
   private pendingUpdate = false;
   user = input.required<User>();
   events: LessonEvent[] = [];
   dateFormat = 'dd/MM/yyyy';
-  public proofStatusClass: any = Proof.statusClass;
+  proofStatusClass: any = Proof.statusClass;
+  activities: Map<string, Activity> = new Map();
 
   async ngOnInit() {
     await this.getEvents();
@@ -59,6 +62,8 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     this.updateService.proof$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.getEvents().then();
     });
+
+    this.activities = await this.activityService.getMap();
   }
 
   async getEvents() {

@@ -39,9 +39,11 @@ import {
 import { Calendar } from '@modules/calendar/calendar.model';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { Button } from '@ui/button/button';
-import { LessonBatch, LessonEvent } from '@models';
+import { Activity, LessonBatch, LessonEvent } from '@models';
 import { LessonEventService } from '@services/lesson-event.service';
 import { UpdateService } from '@services/update.service';
+import { map } from 'rxjs/operators';
+import { ActivityService } from '@modules/config/activity/activity.service';
 
 @Component({
   selector: 'app-lesson-events',
@@ -101,8 +103,9 @@ export class LessonEventsComponent extends BaseListComponent<LessonEvent> implem
   private translatePipe = inject(TranslatePipe);
   private auth = inject(AuthService);
   private updateService = inject(UpdateService);
+  private activityService = inject(ActivityService);
   public authRole: string = '';
-
+  public activities: Map<string, Activity> = new Map();
   public lesson!: LessonBatch;
   public lessonId: number = 0;
   public eventCategories: string[] = [];
@@ -121,7 +124,7 @@ export class LessonEventsComponent extends BaseListComponent<LessonEvent> implem
 
   constructor() {
     super();
-    this.columnsLabels = ['title', 'date', 'time', 'description', 'actions'];
+    this.columnsLabels = ['title', 'date', 'time', 'evalTools', 'actions'];
   }
 
   addNew() {
@@ -334,6 +337,8 @@ export class LessonEventsComponent extends BaseListComponent<LessonEvent> implem
         this.loadData({ lessonId: this.lessonId }).then();
       }
     });
+
+    this.activities = await this.activityService.getMap();
   }
 
   observeRouteParams() {
