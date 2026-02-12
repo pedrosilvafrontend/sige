@@ -33,7 +33,7 @@ import { Util } from '@util/util';
 import { GridLesson } from '@ui/grid-lesson/grid-lesson';
 
 @Component({
-  selector: 'app-classes',
+  selector: 'app-lessons',
   standalone: true,
   templateUrl: './lessons.component.html',
   styleUrl: './lessons.component.scss',

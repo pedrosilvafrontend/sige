@@ -38,7 +38,6 @@ export class AuthService {
       this.store.remove(this.userStoreKey);
     }
     this.user$.next(this.store.get(this.userStoreKey));
-    this.checkSelectedSchool();
 
     effect(() => {
       const school = this.school();
@@ -46,6 +45,7 @@ export class AuthService {
         this.store.set(this.schoolStoreKey, this.school());
       }
     });
+    this.checkSelectedSchool();
   }
 
   checkSelectedSchool() {
@@ -53,7 +53,7 @@ export class AuthService {
     const schoolStore: School | undefined = this.store.get(this.schoolStoreKey);
     const has = schools.some(s => s.id === schoolStore?.id);
     const school = has ? schoolStore : schools[0];
-    if (!school?.id) return;
+    if (!school?.id || this.school().id === school.id) return;
     this.school.set(school);
     this.store.set(this.schoolStoreKey, school);
   }
@@ -147,6 +147,7 @@ export class AuthService {
     //     console.error(error);
     //   },
     // });
+    this.checkSelectedSchool();
   }
   refresh() {
     return this.loginService.refresh().pipe(
