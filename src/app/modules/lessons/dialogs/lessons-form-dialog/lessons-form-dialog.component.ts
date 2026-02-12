@@ -78,7 +78,7 @@ export class LessonsFormDialogComponent implements OnDestroy {
   constructor() {
     this.action = this.dialogData.action;
     const data = this.dialogData.table;
-    if (data.id) {
+    if (data?.id) {
       this.dialogTitle = this.dialogData.table.curricularComponent?.name || '';
       this.data = this.dialogData.table;
     } else {
