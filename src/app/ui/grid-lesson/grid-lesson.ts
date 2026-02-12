@@ -258,8 +258,7 @@ export class GridLesson implements OnInit, OnDestroy {
 
     this.lessonsService.saveBatch(lessons).subscribe(lessons => {
       Swal.fire("Salvo com sucesso", "", "success").then(r => {
-        this.reset(false);
-        this.filter(this.classControl.value).then();
+        this.reset(true);
       });
     })
   }
