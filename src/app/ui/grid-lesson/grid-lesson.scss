@@ -17,6 +17,10 @@
   }
   gridster-item {
     cursor: move;
+    &.conflict {
+      background-color: $danger;
+      color: white;
+    }
     .item {
       display: flex;
       align-items: center;

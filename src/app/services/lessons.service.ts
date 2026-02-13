@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, take, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { LessonBatch } from '@models';
+import { Frequency, LessonBatch } from '@models';
 import { environment } from '@env/environment';
 
 @Injectable({
@@ -30,6 +30,13 @@ export class LessonsService {
       map((response) => {
         return Object.assign(lesson, response);
       }),
+      catchError(this.handleError)
+    );
+  }
+
+  conflicts(lessons: LessonBatch[]): Observable<Frequency[]> {
+    return this.httpClient.post<Frequency[]>(`${this.API_URL}/conflicts`, lessons).pipe(
+      take(1),
       catchError(this.handleError)
     );
   }

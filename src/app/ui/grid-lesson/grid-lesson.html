@@ -22,7 +22,7 @@
               @for (item of dashboard; track item; let i = $index) {
                 @let lesson = item['data']?.lesson;
                 @let empty = !lesson?.curricularComponent?.name;
-                <gridster-item #gridsterItem [item]="item">
+                <gridster-item #gridsterItem [item]="item" [ngClass]="{ conflict: item['conflict'] }">
                   <div class="item">
                     <div class="w-100 p-1">
                       @if (!empty) {
@@ -66,7 +66,11 @@
 
 <div class="d-flex gap-2 justify-content-end">
   <ui-button type="button" color="neutral" (onClick)="cancelModal.open()" [disabled]="!localDashboard().length">Cancelar</ui-button>
-  <ui-button type="button" (onClick)="save()" [disabled]="!localDashboard().length">Salvar</ui-button>
+  @if (conflicts.length) {
+    <ui-button type="button" color="danger" (onClick)="save(true)" [disabled]="!localDashboard().length">Salvar e sobrescrever</ui-button>
+  } @else {
+    <ui-button type="button" (onClick)="save()" [disabled]="!localDashboard().length">Salvar</ui-button>
+  }
 </div>
 
 <ui-modal #cancelModal [template]="cancelTemplate"></ui-modal>
