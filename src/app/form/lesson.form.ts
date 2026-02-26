@@ -1,26 +1,27 @@
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Frequency, ILessonForm, ILessonFrequency, LessonBatch } from '@models';
+import { Frequency, ILessonForm, ILessonFrequency, LessonBatch, User } from '@models';
 import { FormValidators } from '@form/form-validators';
 
 export class LessonForm {
   private fb = new FormBuilder();
   public form: FormGroup<ILessonForm>;
 
-  constructor(data?: LessonBatch, origin?: string) {
-    this.form = this.createForm(data, origin);
+  constructor(auth?: User | null, data?: LessonBatch, origin?: string) {
+    this.form = this.createForm(auth, data, origin);
   }
 
-  createForm(data?: LessonBatch, origin?: string): FormGroup<ILessonForm> {
+  createForm(auth?: User | null, data?: LessonBatch, origin?: string): FormGroup<ILessonForm> {
     const isGridOrigin = origin === 'grid';
+    const isTeacher = auth?.role === 'teacher';
     const form = this.fb.group(
       {
         id: [data?.id],
-        schoolClass: this.fb.control({ value: data?.schoolClass, disabled: isGridOrigin }, [Validators.required]),
-        teacher: this.fb.control({ value: data?.teacher, disabled: false }, [Validators.required]),
-        curricularComponent: this.fb.control({ value: data?.curricularComponent, disabled: false }, [Validators.required]),
-        school: this.fb.control({ value: data?.school, disabled: isGridOrigin }, [Validators.required]),
-        date: this.fb.control({ value: data?.date, disabled: isGridOrigin }, [Validators.required]),
-        endDate: this.fb.control({ value: data?.endDate, disabled: isGridOrigin }, [Validators.required]),
+        schoolClass: this.fb.control({ value: data?.schoolClass, disabled:  isTeacher || isGridOrigin }, [Validators.required]),
+        teacher: this.fb.control({ value: data?.teacher, disabled: isTeacher }, [Validators.required]),
+        curricularComponent: this.fb.control({ value: data?.curricularComponent, disabled: isTeacher }, [Validators.required]),
+        school: this.fb.control({ value: data?.school, disabled: isTeacher || isGridOrigin }, [Validators.required]),
+        date: this.fb.control({ value: data?.date, disabled: isTeacher || isGridOrigin }, [Validators.required]),
+        endDate: this.fb.control({ value: data?.endDate, disabled: isTeacher || isGridOrigin }, [Validators.required]),
         frequencies: this.fb.array([] as FormGroup<ILessonFrequency>[]),
         description: this.fb.control({ value: data?.description, disabled: false }),
       },

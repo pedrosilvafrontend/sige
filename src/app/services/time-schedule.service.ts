@@ -12,4 +12,8 @@ export class TimeScheduleService extends BaseService<TimeSchedule> {
     super('time-schedules');
   }
 
+  getByTeacher(teacherId: number) {
+    return this.http.get<TimeSchedule[]>(`${this.apiURL}/teacher/${teacherId}`);
+  }
+
 }

@@ -17,10 +17,10 @@ import {
   DayShifts,
   ILessonForm,
   LessonBatch,
-  ILessonFrequency, Frequency, TimeSchedule
+  ILessonFrequency, Frequency, TimeSchedule, User
 } from '@models';
 import { DayShiftsService } from '../../../config/day-shifts/day-shifts.service';
-import { ClassesService } from '@services';
+import { AuthService, ClassesService } from '@services';
 import { Util } from '@util/util';
 import { SchoolSelectComponent } from '@modules/schools/school-select/school-select.component';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
@@ -80,7 +80,9 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   private configService = inject(ConfigService);
   private timeScheduleService = inject(TimeScheduleService);
   private cdr = inject(ChangeDetectorRef);
-  private _lessonForm: LessonForm = new LessonForm();
+  private authService = inject(AuthService);
+  public auth: User = this.authService.user$.value;
+  private _lessonForm: LessonForm = new LessonForm(this.auth);
   // public form: FormGroup<ILessonForm>;
   public dayShifts: DayShifts[] = [];
   public classes: SchoolClass[] = [];
@@ -134,7 +136,7 @@ export class LessonFormComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     if (!this.lessonForm) {
-      this.lessonForm = new LessonForm(this.data);
+      this.lessonForm = new LessonForm(this.auth, this.data);
     }
 
     const dayShifts = await firstValueFrom(this.dayShiftsService.getAll());
@@ -167,7 +169,11 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   }
 
   async getConfigs(schoolId?: number) {
-    const configs = await firstValueFrom(this.configService.getConfig());
+    const params: any = {};
+    if (schoolId) {
+      params.schoolId = schoolId;
+    }
+    const configs = await firstValueFrom(this.configService.getConfig(params));
     this.configs = {
       ...configs.school,
       startFirstSemester: configs.school.startFirstSemester || configs.association.startFirstSemester,
@@ -273,7 +279,6 @@ export class LessonFormComponent implements OnInit, OnDestroy {
 
     schoolClass.valueChanges.pipe(takeUntil(this.sub))
       .subscribe((classData) => {
-        console.log('>>> classData', classData);
         if (classData) {
           this.getTimeSchedule(classData).then();
         }

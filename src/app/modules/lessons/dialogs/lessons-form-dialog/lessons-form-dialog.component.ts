@@ -4,7 +4,7 @@ import {
   MatDialogContent,
   MatDialogClose, MatDialogActions,
 } from '@angular/material/dialog';
-import { Component, inject, input, OnDestroy } from '@angular/core';
+import { Component, inject, input, OnDestroy, OnInit } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormsModule,
@@ -25,9 +25,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { School, SchoolClass, CurricularComponent, LessonBatch, ILessonForm } from '@models';
 import { UserTable } from '../../../users/users.model';
 import { LessonFormComponent } from '@modules/lessons';
-import { LessonsService } from '@services';
+import { AuthService, LessonsService } from '@services';
 import { Button } from '@ui/button/button';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, merge, Subject, takeUntil } from 'rxjs';
 
 export interface DialogData {
   id: number;
@@ -60,10 +60,13 @@ export interface DialogData {
     MatDialogActions
   ],
 })
-export class LessonsFormDialogComponent implements OnDestroy {
+export class LessonsFormDialogComponent implements OnInit, OnDestroy {
   public dialogRef = inject(MatDialogRef<LessonsFormDialogComponent>);
   public dialogData = inject(MAT_DIALOG_DATA);
-  public lessonsService = inject(LessonsService);
+  private lessonsService = inject(LessonsService);
+  private authService = inject(AuthService);
+  public user = this.authService.user$.value;
+  public isTeacher = this.user.role === 'teacher';
   public action: string;
   public dialogTitle: string;
   public form: FormGroup<ILessonForm> = this.dialogData.form as FormGroup<ILessonForm>;
@@ -72,18 +75,18 @@ export class LessonsFormDialogComponent implements OnDestroy {
   public url: string | null = null;
   public classes: SchoolClass[] = [];
   public teachers: UserTable[] = [];
-  public curricularComponents: CurricularComponent[] = [];
   public schools: School[] = [];
 
   constructor() {
-    this.action = this.dialogData.action;
     const data = this.dialogData.table;
     if (data?.id) {
       this.dialogTitle = this.dialogData.table.curricularComponent?.name || '';
       this.data = this.dialogData.table;
+      this.action = 'edit';
     } else {
       this.dialogTitle = 'New record';
       this.data = Object.assign(new LessonBatch(), this.dialogData.table || {});
+      this.action = 'add';
     }
   }
 
@@ -123,7 +126,38 @@ export class LessonsFormDialogComponent implements OnDestroy {
   setForm(form: FormGroup<ILessonForm>) {
     if (this.form) return;
     this.form = form;
+    // this.formChanges();
     this.form$.next(form);
+  }
+
+  // formChanges() {
+  //   const form = this.form;
+  //   const fieldChange = () => {
+  //     const { school, schoolClass, teacher, curricularComponent } = form.getRawValue();
+  //     if (school?.id && schoolClass?.code && teacher?.id && curricularComponent?.id) {
+  //       this.lessonsService.getAll({
+  //         schoolId: school.id,
+  //         classCode: schoolClass.code,
+  //         curricularComponentId: curricularComponent.id,
+  //         teacherId: teacher.id,
+  //       }).subscribe(response => {
+  //         if (!response?.[0]) return;
+  //         this.form.patchValue(response[0] as any, { emitEvent: false });
+  //       })
+  //     }
+  //   }
+  //   if (!form) return;
+  //   const { school, schoolClass, teacher, curricularComponent } = this.form.controls;
+  //   school?.valueChanges.pipe(takeUntil(this.form$)).subscribe(fieldChange.bind(this));
+  //   schoolClass?.valueChanges.pipe(takeUntil(this.form$)).subscribe(fieldChange.bind(this));
+  //   teacher?.valueChanges.pipe(takeUntil(this.form$)).subscribe(fieldChange.bind(this));
+  //   curricularComponent?.valueChanges.pipe(takeUntil(this.form$)).subscribe(fieldChange.bind(this));
+  // }
+
+  ngOnInit() {
+    // if (this.dialogData.form) {
+    //   this.formChanges();
+    // }
   }
 
   ngOnDestroy() {

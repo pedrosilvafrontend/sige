@@ -5,6 +5,13 @@ import { catchError, map } from 'rxjs/operators';
 import { Frequency, LessonBatch } from '@models';
 import { environment } from '@env/environment';
 
+export interface LessonGetAllParams {
+  schoolId?: number;
+  classCode?: string;
+  teacherId?: number;
+  curricularComponentId?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -13,9 +20,9 @@ export class LessonsService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getAll(params?: { classCode?: string }): Observable<LessonBatch[]> {
+  getAll(params?: LessonGetAllParams): Observable<LessonBatch[]> {
     return this.httpClient
-      .get<LessonBatch[]>(this.API_URL, { params: params || {} })
+      .get<LessonBatch[]>(this.API_URL, { params: params as any || {} })
       .pipe(catchError(this.handleError));
   }
 

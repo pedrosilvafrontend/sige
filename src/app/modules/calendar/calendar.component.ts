@@ -47,12 +47,13 @@ import { User } from '@core/models/interface';
 import { ClassSelectComponent } from '@modules/classes/class-select/class-select.component';
 import { ActivatedRoute } from '@angular/router';
 import { Activity, Degree, LessonEvent, Proof, School, SchoolClass } from '@models';
-import { AuthService, EventService, SchoolsService } from '@services';
+import { AuthService, EventService, LessonsService, SchoolsService } from '@services';
 import { Button } from '@ui/button/button';
 import { debounceTime, map } from 'rxjs/operators';
 import { DegreesService } from '@services/degrees.service';
 import { LessonEventService } from '@services/lesson-event.service';
 import { ActivityService } from '@modules/config/activity/activity.service';
+import { LessonsFormDialogComponent } from '@modules/lessons';
 
 @Component({
   selector: 'app-calendar',
@@ -97,6 +98,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private elementRef = inject(ElementRef);
+  private lessonsService = inject(LessonsService);
 
   @ViewChild(FullCalendarComponent, { static: false }) calendarComponent!: FullCalendarComponent;
   calendar: Calendar | null;
@@ -367,6 +369,55 @@ export class CalendarComponent implements OnInit, OnDestroy {
       return;
     }
     // this.addNewEvent();
+  }
+
+  addLesson() {
+    const lesson = this.calendar?.lesson;
+    const dialogRef = this.dialog.open(LessonsFormDialogComponent, {
+      width: '99vw',
+      maxWidth: '1024px',
+      data: { table: this.calendar?.lesson, origin: 'calendar' },
+      autoFocus: false,
+      disableClose: true
+    });
+    const form$ = dialogRef.componentInstance.form$;
+
+    form$.subscribe(form => {
+      // formChanges() {
+      //   const form = this.form;
+      if (!form) return;
+      const fieldChange = () => {
+        const { school, schoolClass, teacher, curricularComponent } = form.getRawValue();
+        if (school?.id && schoolClass?.code && teacher?.id && curricularComponent?.id) {
+          this.lessonsService.getAll({
+            schoolId: school.id,
+            classCode: schoolClass.code,
+            curricularComponentId: curricularComponent.id,
+            teacherId: teacher.id,
+          }).subscribe(response => {
+            if (!response?.[0]) return;
+            form.patchValue(response[0] as any, { emitEvent: false });
+          })
+        }
+      }
+      const { school, schoolClass, teacher, curricularComponent } = form.controls;
+      school?.valueChanges.pipe(takeUntil(form$)).subscribe(fieldChange.bind(this));
+      schoolClass?.valueChanges.pipe(takeUntil(form$)).subscribe(fieldChange.bind(this));
+      teacher?.valueChanges.pipe(takeUntil(form$)).subscribe(fieldChange.bind(this));
+      curricularComponent?.valueChanges.pipe(takeUntil(form$)).subscribe(fieldChange.bind(this));
+      // }
+    })
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        const action = lesson?.id ? 'edit' : 'add';
+        this.showNotification(
+          action === 'add' ? 'snackbar-success' : 'black',
+          `${action === 'add' ? 'Salvo' : 'Alterado'} com sucesso!`,
+        );
+        this.refresh();
+      }
+    });
   }
 
   addNewEvent() {

@@ -25,9 +25,10 @@
     <div matDialogActions>
       <div class="dialog-buttons">
         <ui-button color="neutral" mat-dialog-close tabindex="-1">{{ 'Cancel' | translate }}</ui-button>
-        @if (dialogData.origin == 'grid') {
+        @if (!isTeacher && dialogData.origin == 'grid') {
           <ui-button [disabled]="form && form.invalid" type="button" (onClick)="addToGrid()">
-            {{ (form.controls.id.value ? 'Update' : 'Add') | translate }}
+            Adicionar alteração a grade
+<!--            {{ (form.controls.id.value ? 'Update' : 'Add') | translate }}-->
           </ui-button>
         } @else {
           <ui-button [disabled]="form && form.invalid" type="submit">{{ 'Save' | translate }}</ui-button>

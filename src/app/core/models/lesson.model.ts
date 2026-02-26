@@ -14,7 +14,7 @@ import { ISchoolForm, IUserForm } from '@form';
 
 export interface ILessonForm {
   id: FormControl<number>;
-  curricularComponent: FormGroup<EntityForm | null>;
+  curricularComponent: FormGroup<EntityForm<number> | null>;
   schoolClass: FormGroup<ClassForm | null>;
   dayShiftId: FormGroup<EntityForm | null>;
   teacher: FormGroup<IUserForm>;

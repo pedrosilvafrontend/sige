@@ -22,7 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LessonsFormDialogComponent } from './dialogs/lessons-form-dialog/lessons-form-dialog.component';
-import { LessonsService } from '@services';
+import { AuthService, LessonsService } from '@services';
 import { LessonsDialogComponent } from './dialogs/lessons-delete-dialog/lessons-delete.component';
 import { Router } from '@angular/router';
 import { LessonStateService } from '@services';
@@ -31,6 +31,7 @@ import { Calendar } from '@modules/calendar/calendar.model';
 import { EventDialogComponent } from '@modules/calendar/dialogs/event-dialog/event-dialog.component';
 import { Util } from '@util/util';
 import { GridLesson } from '@ui/grid-lesson/grid-lesson';
+import { GridTeacherLesson } from '@ui/grid-teacher-lessons/grid-teacher-lesson';
 
 @Component({
   selector: 'app-lessons',
@@ -62,6 +63,7 @@ import { GridLesson } from '@ui/grid-lesson/grid-lesson';
     DatePipe,
     TranslateModule,
     GridLesson,
+    GridTeacherLesson,
   ],
 })
 export class LessonsComponent implements OnInit, OnDestroy {
@@ -72,7 +74,8 @@ export class LessonsComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   private lessonStateService = inject(LessonStateService);
-
+  private auth = inject(AuthService);
+  user = this.auth.user$.value
 
   columnsLabels = ['curricularComponent', 'class', 'teacher', 'school',  'actions'].map((key: string) => this.translate.instant(key));
 

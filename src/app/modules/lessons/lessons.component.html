@@ -1,6 +1,10 @@
 <ui-page-header></ui-page-header>
 
-<app-grid-lesson></app-grid-lesson>
+@if (user.role === 'teacher') {
+  <app-grid-teacher-lesson></app-grid-teacher-lesson>
+} @else {
+  <app-grid-lesson></app-grid-lesson>
+}
 <!--<mat-card>-->
 <!--  <mat-card-header>-->
     <div class="table-header-toolbar">

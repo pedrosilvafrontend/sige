@@ -1,0 +1,95 @@
+<!--<div class="row" [formGroup]="form">
+  <div class="col-2">
+    <app-class-select [formControl]="classControl" [schoolId]="school().id" [disabled]="!!localDashboard().length">
+    </app-class-select>
+  </div>
+  <div class="col-2">
+    <mat-form-field class="mat-mdc-form-field"  appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'degree' | translate }}</mat-label>
+      <mat-select formControlName="degreeId">
+        @for (item of degrees; track item.id) {
+          <mat-option [value]="item.id">
+            {{ item.name }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>-->
+<table class="w-100 mb-5 grid-lesson">
+  <tr>
+    <th class="w-first-col">
+
+    </th>
+    @for (day of weekdays; track day) {
+      <th>
+        <span [hidden]="!schedules().length">{{ day | translate }}</span>
+      </th>
+    }
+  </tr>
+  @for (schedule of schedules(); track schedule.id; let i = $index) {
+    <tr>
+      <th>
+        {{ schedule.startTime }} - {{ schedule.endTime }}
+      </th>
+      @if (i === 0) {
+        <td colspan="10" [attr.rowspan]="schedules().length">
+          <div class="wrap-grid">
+            <gridster [options]="options">
+              @for (item of dashboard; track item) {
+                @let lesson = item['data']?.lesson;
+                @let empty = !lesson?.curricularComponent?.name;
+                <gridster-item #gridsterItem
+                               [item]="item"
+                               [ngClass]="{ conflict: item['conflict'], 'cursor-pointer': !empty }"
+                               (click)="edit(item, gridsterItem)">
+                  <div class="item">
+                    <div class="w-100 p-1">
+                      @if (!empty) {
+                        <h3 class="ellipsis my-0">
+                          {{ lesson.curricularComponent?.name }}
+                        </h3>
+                        @if (this.multiSchools) {
+                          <div class="ellipsis">
+                            {{ lesson.school?.acronym || '' }} - {{ lesson.school?.name || '' }}
+                          </div>
+                        }
+                      }
+                    </div>
+                  </div>
+                </gridster-item>
+              }
+            </gridster>
+          </div>
+        </td>
+      }
+    </tr>
+  }
+</table>
+
+<div class="d-flex gap-2 justify-content-end">
+  <ui-button type="button" color="neutral" (onClick)="cancelModal.open()" [disabled]="!localDashboard().length">Cancelar</ui-button>
+  @if (conflicts.length) {
+    <ui-button type="button" color="danger" (onClick)="save(true)" [disabled]="!localDashboard().length">Salvar e sobrescrever</ui-button>
+  } @else {
+    <ui-button type="button" (onClick)="save()" [disabled]="!localDashboard().length">Salvar grade</ui-button>
+  }
+</div>
+
+<ui-modal #cancelModal [template]="cancelTemplate"></ui-modal>
+<ng-template #cancelTemplate>
+  <h3 mat-dialog-title>Sair da edição</h3>
+  <mat-dialog-content>
+    <strong>Você perderá os dados alterados, confirma?</strong>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <div class="d-flex gap-2">
+      <ui-button color="neutral" (onClick)="cancelModal.close()" cdkFocusInitial>Cancelar</ui-button>
+      <ui-button color="danger" (onClick)="reset(false, cancelModal.close)">Confirmar</ui-button>
+    </div>
+  </mat-dialog-actions>
+</ng-template>
+
+<!--<pre>-->
+<!--  {{ dashboard | json }}-->
+<!--</pre>-->
