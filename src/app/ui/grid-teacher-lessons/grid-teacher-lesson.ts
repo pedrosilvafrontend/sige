@@ -135,7 +135,7 @@ export class GridTeacherLesson implements OnInit, OnDestroy {
       return null;
     }
 
-    dialogRef.componentInstance.form$.subscribe(form => {
+    dialogRef.componentInstance.lessonForm$.subscribe(({form}) => {
       form.get('curricularComponent')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
         patchLesson(form);
       })

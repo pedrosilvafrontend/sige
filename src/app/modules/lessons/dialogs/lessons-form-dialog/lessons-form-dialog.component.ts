@@ -4,7 +4,7 @@ import {
   MatDialogContent,
   MatDialogClose, MatDialogActions,
 } from '@angular/material/dialog';
-import { Component, inject, input, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, input, OnDestroy, OnInit, output } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormsModule,
@@ -28,6 +28,7 @@ import { LessonFormComponent } from '@modules/lessons';
 import { AuthService, LessonsService } from '@services';
 import { Button } from '@ui/button/button';
 import { BehaviorSubject, merge, Subject, takeUntil } from 'rxjs';
+import { LessonForm } from '@form/lesson.form';
 
 export interface DialogData {
   id: number;
@@ -70,7 +71,7 @@ export class LessonsFormDialogComponent implements OnInit, OnDestroy {
   public action: string;
   public dialogTitle: string;
   public form: FormGroup<ILessonForm> = this.dialogData.form as FormGroup<ILessonForm>;
-  public form$ = new BehaviorSubject<FormGroup<ILessonForm>>(this.form);
+  public lessonForm$ = output<LessonForm>();
   public data: LessonBatch;
   public url: string | null = null;
   public classes: SchoolClass[] = [];
@@ -123,11 +124,9 @@ export class LessonsFormDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  setForm(form: FormGroup<ILessonForm>) {
-    if (this.form) return;
-    this.form = form;
-    // this.formChanges();
-    this.form$.next(form);
+  setLessonForm(lessonForm: LessonForm) {
+    this.lessonForm$.emit(lessonForm);
+    this.form = lessonForm.form;
   }
 
   // formChanges() {
@@ -161,7 +160,5 @@ export class LessonsFormDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.form$.complete();
-    this.form$.unsubscribe();
   }
 }

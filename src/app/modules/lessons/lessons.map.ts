@@ -1,5 +1,6 @@
 import { Frequency, LessonBatch } from '@models';
 import Swal from 'sweetalert2'
+import { Util } from '@util/util';
 
 export class LessonsMap {
   private lessons: Map<string, LessonBatch> = new Map();
@@ -11,9 +12,7 @@ export class LessonsMap {
   }
 
   uk(lesson: LessonBatch): string {
-    const ids = [lesson.school?.id, lesson.schoolClass?.code, lesson.curricularComponent?.id, lesson.teacher?.id];
-    if (ids.some(id => !id)) return '';
-    return ids.join('|');
+    return Util.lessonUK(lesson);
   }
 
   add(lesson: LessonBatch) {

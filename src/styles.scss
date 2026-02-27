@@ -662,3 +662,7 @@ button.mdc-button[data-badgeColor="info"]::after {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.swal2-shown .cdk-overlay-container {
+  display: none;
+}

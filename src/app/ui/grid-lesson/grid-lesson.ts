@@ -170,7 +170,6 @@ export class GridLesson implements OnInit, OnDestroy {
       if (lesson.curricularComponent?.id && lesson.teacher?.id) {
         let existingLesson = this.lessons.getLesson(lesson as any);
         if (existingLesson) {
-          console.log('>>>>>>>> patchValue', existingLesson);
           form.patchValue({...existingLesson, frequencies: []} as any, { emitEvent: false });
         }
         else {
@@ -180,7 +179,7 @@ export class GridLesson implements OnInit, OnDestroy {
       return null;
     }
 
-    dialogRef.componentInstance.form$.subscribe(form => {
+    dialogRef.componentInstance.lessonForm$.subscribe(({form}) => {
       form.get('curricularComponent')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
         patchLesson(form);
       })

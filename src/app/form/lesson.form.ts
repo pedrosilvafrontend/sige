@@ -47,9 +47,9 @@ export class LessonForm {
     });
   }
 
-  addFrequency(data?: Frequency) {
+  addFrequency(data?: Frequency, options?: {onlySelf?: boolean, emitEvent?: boolean}) {
     const frequencies = this.form.controls.frequencies as FormArray;
-    frequencies.push(this.getFrequencyForm(data));
+    frequencies.push(this.getFrequencyForm(data), options);
   }
 
   removeFrequency(index: number) {
@@ -57,11 +57,16 @@ export class LessonForm {
     frequencies.removeAt(index);
   }
 
-  patchValue(data?: LessonBatch) {
-    this.form.patchValue(data as any);
+  clearFrequencies() {
+    const frequencies = this.form.controls.frequencies;
+    frequencies.clear();
+  }
+
+  patchValue(data?: LessonBatch, options?: {onlySelf?: boolean, emitEvent?: boolean}) {
+    this.form.patchValue(data as any, options);
     this.form.controls.frequencies.clear();
     (data?.frequencies || []).forEach(frequency => {
-      this.addFrequency(frequency);
+      this.addFrequency(frequency, options);
     })
   }
 

@@ -8,6 +8,7 @@ import { Observable, throwError } from 'rxjs';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import Swal from 'sweetalert2';
 
 export enum STATUS {
   UNAUTHORIZED = 401,
@@ -43,7 +44,8 @@ const getHandleError = (router: Router, snack: MatSnackBar) => {
     if (regexCode.test(message)) {
       message = message.replace(regexCode, '');
       logError(error);
-      snack.open(message, 'x');
+      Swal.fire('', message, 'error').then()
+      // snack.open(message, 'x');
       return err();
     }
     else if (error.status === STATUS.INTERNAL_SERVER_ERROR) {
@@ -57,7 +59,8 @@ const getHandleError = (router: Router, snack: MatSnackBar) => {
       });
     } else {
       logError(error);
-      snack.open(getMessage(error));
+      const message = getMessage(error);
+      Swal.fire('', message, 'error').then()
       handleUnauthorizedAccess(error);
     }
 

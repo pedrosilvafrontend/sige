@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, input, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, input, Input, OnDestroy, OnInit, output, Output } from '@angular/core';
 import {
   FormBuilder, FormControl,
   FormGroup,
@@ -20,7 +20,7 @@ import {
   ILessonFrequency, Frequency, TimeSchedule, User
 } from '@models';
 import { DayShiftsService } from '../../../config/day-shifts/day-shifts.service';
-import { AuthService, ClassesService } from '@services';
+import { AuthService, ClassesService, LessonsService } from '@services';
 import { Util } from '@util/util';
 import { SchoolSelectComponent } from '@modules/schools/school-select/school-select.component';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
@@ -81,8 +81,9 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   private timeScheduleService = inject(TimeScheduleService);
   private cdr = inject(ChangeDetectorRef);
   private authService = inject(AuthService);
+  private lessonsService = inject(LessonsService);
   public auth: User = this.authService.user$.value;
-  private _lessonForm: LessonForm = new LessonForm(this.auth);
+  public lessonForm: LessonForm = new LessonForm(this.auth);
   // public form: FormGroup<ILessonForm>;
   public dayShifts: DayShifts[] = [];
   public classes: SchoolClass[] = [];
@@ -90,26 +91,29 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   public schools: School[] = [];
   public frequencies: string[] = ['UNIQUE', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
   public objectCompare = Util.objectCompare;
-  private sub = new Subject<void>();
+  private destroy$ = new Subject<void>();
   public schoolId: number | null = null;
   private _data!: LessonBatch;
   public configs!: ConfigData;
+  public lessonKey = '';
 
-  @Input()
-  set lessonForm(lessonForm: LessonForm) {
-    this._lessonForm = lessonForm;
-    if (this.data) {
-      this.lessonForm.patchValue(this.data as any);
-    }
-    this.cdr.detectChanges();
-  }
+  public lessonForm$ = output<LessonForm>();
 
-  get lessonForm(): LessonForm {
-    return this._lessonForm;
-  }
+  // @Input()
+  // set lessonForm(lessonForm: LessonForm) {
+  //   this._lessonForm = lessonForm;
+  //   if (this.data) {
+  //     this.lessonForm.patchValue(this.data as any);
+  //   }
+  //   this.cdr.detectChanges();
+  // }
+
+  // get lessonForm(): LessonForm {
+  //   return this._lessonForm;
+  // }
 
   get form(): FormGroup<ILessonForm> {
-    return this.lessonForm?.form;
+    return this.lessonForm.form;
   }
 
   @Input()
@@ -126,18 +130,16 @@ export class LessonFormComponent implements OnInit, OnDestroy {
     return this._data || {} as LessonBatch;
   }
 
-  @Output()
-  public form$ = new BehaviorSubject(this.form);
-
   selectClass(classData: SchoolClass) {
     const { id, code, degreeId, yearId, suffixId } = classData as any || {};
     this.form.patchValue({ schoolClass: { id, code, degreeId, yearId, suffixId } });
   }
 
   async ngOnInit() {
-    if (!this.lessonForm) {
-      this.lessonForm = new LessonForm(this.auth, this.data);
-    }
+    // if (!this.lessonForm) {
+    //   this.lessonForm = new LessonForm(this.auth, this.data);
+    // }
+    this.lessonForm$.emit(this.lessonForm);
 
     const dayShifts = await firstValueFrom(this.dayShiftsService.getAll());
     this.dayShifts.length = 0;
@@ -185,15 +187,17 @@ export class LessonFormComponent implements OnInit, OnDestroy {
     this.checkDates();
   }
 
-  async getTimeSchedule(classData: Partial<SchoolClass>) {
-    const params = {
-      schoolId: classData?.school?.id,
-      degreeId: classData?.degreeId,
-      dayShiftId: classData?.dayShiftId
-    }
-    const response = await firstValueFrom(this.timeScheduleService.getAll(params));
-    this.timeSchedules = response || [];
-  }
+  // async getTimeSchedule(classData: Partial<SchoolClass>) {
+  //   // const data = this.form.value;
+  //   const params = {
+  //     classId: classData?.id,
+  //     // schoolId: classData?.school?.id,
+  //     // degreeId: classData?.degreeId,
+  //     // dayShiftId: classData?.dayShiftId
+  //   }
+  //   const response = await firstValueFrom(this.timeScheduleService.getAll(params));
+  //   this.timeSchedules = response || [];
+  // }
 
   // patchValue(data?: LessonBatch) {
   //   this.form.patchValue(data as any);
@@ -275,21 +279,29 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   }
 
   formObservables() {
-    const { school, schoolClass } = this.form.controls;
+    const { school, schoolClass, teacher, curricularComponent } = this.form.controls;
 
-    schoolClass.valueChanges.pipe(takeUntil(this.sub))
+    const checkLesson = Util.debounce(this.checkExistingLesson.bind(this), 400);
+
+    schoolClass.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe((classData) => {
         if (classData) {
-          this.getTimeSchedule(classData).then();
+          checkLesson();
+          // const hasLesson = await this.checkExistingLesson();
+          // if (hasLesson) return;
+          // this.getTimeSchedule(classData).then();
         }
       })
 
     school?.valueChanges
       .pipe(
-        takeUntil(this.sub),
+        takeUntil(this.destroy$),
         startWith({ id: this.data.school?.id })
       )
-      .subscribe((schoolData) => {
+      .subscribe(async (schoolData) => {
+        checkLesson();
+        // const hasLesson = await this.checkExistingLesson();
+        // if (hasLesson) return;
         const id = schoolData?.id || 0;
         this.onSchoolChange(id).then();
       });
@@ -299,6 +311,42 @@ export class LessonFormComponent implements OnInit, OnDestroy {
     //   this.getConfigs(id).then();
     //   this.getClasses(id).then();
     // }
+
+    teacher?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(checkLesson);
+    curricularComponent?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(checkLesson);
+  }
+
+  timeCheck = 0;
+
+  async checkExistingLesson() {
+    if (!this.lessonForm?.form) return;
+    this.timeCheck = setTimeout(() => {
+
+    })
+    const form = this.lessonForm.form;
+    const formValue = form.getRawValue() as unknown as LessonBatch;
+    const { school, schoolClass, teacher, curricularComponent } = formValue;
+    if (school?.id && schoolClass?.code && teacher?.id && curricularComponent?.id) {
+      if (this.lessonKey === Util.lessonUK(formValue)) return;
+      const params = {
+        schoolId: school.id,
+        classCode: schoolClass.code,
+        curricularComponentId: curricularComponent.id,
+        teacherId: teacher.id,
+      };
+      const lessons = await firstValueFrom(this.lessonsService.getAll(params));
+      if (!lessons?.[0]) return;
+      const lessonKey = Util.lessonUK(lessons[0]);
+      this.lessonForm.patchValue(lessons[0] as any);
+      this.lessonKey = lessonKey;
+      return true;
+    }
+    else {
+      this.lessonKey = '';
+      this.form.controls.id.setValue(0);
+      this.lessonForm.clearFrequencies();
+    }
+    return false;
   }
 
   transformHour(time: string | number | null | undefined) {
@@ -319,8 +367,8 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.form$.complete();
-    this.sub.complete();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 }

@@ -23,13 +23,13 @@ export class LessonsService {
   getAll(params?: LessonGetAllParams): Observable<LessonBatch[]> {
     return this.httpClient
       .get<LessonBatch[]>(this.API_URL, { params: params as any || {} })
-      .pipe(catchError(this.handleError));
+      .pipe(take(1), catchError(this.handleError));
   }
 
   getById(id: number): Observable<LessonBatch> {
     return this.httpClient
       .get<LessonBatch>(`${this.API_URL}/${id}`)
-      .pipe(catchError(this.handleError));
+      .pipe(take(1), catchError(this.handleError));
   }
 
   addItem(lesson: LessonBatch): Observable<LessonBatch> {
@@ -37,6 +37,7 @@ export class LessonsService {
       map((response) => {
         return Object.assign(lesson, response);
       }),
+      take(1),
       catchError(this.handleError)
     );
   }
@@ -59,6 +60,7 @@ export class LessonsService {
     return this.httpClient
       .put<LessonBatch>(`${this.API_URL}/${schoolClass.id}`, schoolClass)
       .pipe(
+        take(1),
         map((response) => {
           return Object.assign(schoolClass, response);
         }),
@@ -69,6 +71,7 @@ export class LessonsService {
   /** DELETE: Remove an advance table by ID */
   deleteItem(id: number): Observable<number> {
     return this.httpClient.delete<void>(`${this.API_URL}/${id}`).pipe(
+      take(1),
       map((response) => {
         return id; // return response from API
       }),

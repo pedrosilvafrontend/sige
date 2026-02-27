@@ -2,17 +2,18 @@
   <div class="modalHeader">
     <div class="avatarDetails">
       <div class="modalTitle">
-        {{(form.controls.id.value ? 'Edit lesson #'+form.controls.id.value : 'New lesson') | translate}}
+        @let lesssonId = form?.controls?.id?.value || 0;
+        {{(lesssonId ? 'Edit lesson #'+lesssonId : 'New lesson') | translate}}
       </div>
     </div>
     <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
       <mat-icon>close</mat-icon>
     </button>
   </div>
-  <form class=" form-field-full" (ngSubmit)="submit()">
+  <form class="form-field-full" (ngSubmit)="submit()">
     <div mat-dialog-content>
       <div class="row m-b-24">
-        <app-lesson-form [data]="data" [origin]="dialogData.origin" (form$)="setForm($event)"></app-lesson-form>
+        <app-lesson-form [data]="data" [origin]="dialogData.origin" (lessonForm$)="setLessonForm($event)"></app-lesson-form>
 <!--        <div class="col-sm-12">-->
 <!--          <div class="d-flex gap-1 justify-content-end">-->
 <!--            <button mat-flat-button color="primary" [disabled]="!form.valid" type="submit">{{ 'save' | translate }}</button>-->

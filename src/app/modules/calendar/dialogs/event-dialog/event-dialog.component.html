@@ -25,7 +25,7 @@
   <!--      @if (form.get('category')?.value?.name === 'LESSON') {-->
   <!--        <app-lesson-form [data]="lessonData" (form$)="form.addControl('lesson', $event)"></app-lesson-form>-->
   <!--      }-->
-        <app-lesson-form [hidden]="form.get('category')?.value !== 'LESSON'" [data]="lessonData" (form$)="addLesson($event)"></app-lesson-form>
+        <app-lesson-form [hidden]="form.get('category')?.value !== 'LESSON'" [data]="lessonData" (lessonForm$)="addLesson($event)"></app-lesson-form>
 
         @if (form.get('category')?.value !== 'LESSON') {
           <div class="row">

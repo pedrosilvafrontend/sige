@@ -1,3 +1,5 @@
+import { LessonBatch } from '@models';
+
 export class Util {
   static objectCompare(option: any, value: any) : boolean {
     return option.id && (option.id === value?.id);
@@ -58,5 +60,32 @@ export class Util {
   // static utcToLocalKeepTime(date: MomentInput) {
   //   return moment.utc(date).local(true).format('YYYY-MM-DDTHH:mm:ssZ');
   // }
+
+  static lessonUK(lesson: LessonBatch): string {
+    const ids = [lesson.school?.id, lesson.schoolClass?.code, lesson.curricularComponent?.id, lesson.teacher?.id];
+    if (ids.some(id => !id)) return '';
+    return ids.join('|');
+  }
+
+  static lastCall(fn: Function, timeout: number = 1000) {
+    let time = 0;
+    return () => {
+      clearTimeout(time);
+      time = setTimeout(() => {
+        return fn();
+      }, timeout);
+    }
+  }
+
+  static debounce(fn: (...args: any[]) => Promise<any>, delay: number = 1000, callback?: (...args: any[]) => void) {
+    let timer: ReturnType<typeof setTimeout>;
+
+    return (...args: any[]) => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        fn(...args).then(callback);
+      }, delay);
+    };
+  }
 
 }

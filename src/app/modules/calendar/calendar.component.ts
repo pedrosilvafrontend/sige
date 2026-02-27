@@ -99,6 +99,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private elementRef = inject(ElementRef);
   private lessonsService = inject(LessonsService);
+  private lastLessonKey = '';
 
   @ViewChild(FullCalendarComponent, { static: false }) calendarComponent!: FullCalendarComponent;
   calendar: Calendar | null;
@@ -380,33 +381,38 @@ export class CalendarComponent implements OnInit, OnDestroy {
       autoFocus: false,
       disableClose: true
     });
-    const form$ = dialogRef.componentInstance.form$;
+    const lessonForm$ = dialogRef.componentInstance.lessonForm$;
+    console.log('>>> calendar lessonForm$', lessonForm$);
 
-    form$.subscribe(form => {
-      // formChanges() {
-      //   const form = this.form;
-      if (!form) return;
-      const fieldChange = () => {
-        const { school, schoolClass, teacher, curricularComponent } = form.getRawValue();
-        if (school?.id && schoolClass?.code && teacher?.id && curricularComponent?.id) {
-          this.lessonsService.getAll({
-            schoolId: school.id,
-            classCode: schoolClass.code,
-            curricularComponentId: curricularComponent.id,
-            teacherId: teacher.id,
-          }).subscribe(response => {
-            if (!response?.[0]) return;
-            form.patchValue(response[0] as any, { emitEvent: false });
-          })
-        }
-      }
-      const { school, schoolClass, teacher, curricularComponent } = form.controls;
-      school?.valueChanges.pipe(takeUntil(form$)).subscribe(fieldChange.bind(this));
-      schoolClass?.valueChanges.pipe(takeUntil(form$)).subscribe(fieldChange.bind(this));
-      teacher?.valueChanges.pipe(takeUntil(form$)).subscribe(fieldChange.bind(this));
-      curricularComponent?.valueChanges.pipe(takeUntil(form$)).subscribe(fieldChange.bind(this));
-      // }
-    })
+    // TODO: verificar porque não funciona os valueChanges
+    // lessonForm$.subscribe(lessonForm => {
+    //   console.log('>>> calendar', lessonForm);
+    //   // formChanges() {
+    //   const form = lessonForm.form;
+    //   if (!lessonForm?.form) return;
+    //   const fieldChange = () => {
+    //     const { school, schoolClass, teacher, curricularComponent } = form.getRawValue();
+    //     if (school?.id && schoolClass?.code && teacher?.id && curricularComponent?.id) {
+    //       this.lessonsService.getAll({
+    //         schoolId: school.id,
+    //         classCode: schoolClass.code,
+    //         curricularComponentId: curricularComponent.id,
+    //         teacherId: teacher.id,
+    //       }).subscribe(response => {
+    //         if (!response?.[0]) return;
+    //         const lessonKey = Util.lessonUK(response[0]);
+    //         if (lessonKey === this.lastLessonKey) return;
+    //         lessonForm.patchValue(response[0] as any);
+    //         this.lastLessonKey = lessonKey;
+    //       })
+    //     }
+    //   }
+    //   const { school, schoolClass, teacher, curricularComponent } = form.controls;
+    //   school?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(fieldChange.bind(this));
+    //   schoolClass?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(fieldChange.bind(this));
+    //   teacher?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(fieldChange.bind(this));
+    //   curricularComponent?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(fieldChange.bind(this));
+    // })
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {

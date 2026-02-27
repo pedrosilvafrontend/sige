@@ -40,12 +40,14 @@ export class TimeScheduleSelect extends BaseSelect<TimeSchedule> {
   private timeScheduleService = inject(TimeScheduleService);
 
     schoolClass = input({} as Partial<SchoolClass>);
+    lastClassId = 0;
 
     constructor() {
       super();
 
       effect(() => {
-        if (this.schoolClass()?.school?.id) {
+        const classId = this.schoolClass()?.id;
+        if (classId) {
           this.getData(this.schoolClass()).then();
         } else {
           this.data.length = 0;
@@ -54,11 +56,16 @@ export class TimeScheduleSelect extends BaseSelect<TimeSchedule> {
     }
 
     override async getData(classData: Partial<SchoolClass>) {
-      const params = {
-        schoolId: classData?.school?.id,
-        degreeId: classData?.degreeId,
-        dayShiftId: classData?.dayShiftId
+      const classId = classData?.id;
+      if (!classId) {
+        this.data = [];
+        return;
       }
+      if (this.lastClassId === classId) {
+        return;
+      }
+      this.lastClassId = classId;
+      const params = { classId }
       const response = await firstValueFrom(this.timeScheduleService.getAll(params));
       this.data = response || [];
     }

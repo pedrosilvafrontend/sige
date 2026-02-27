@@ -38,6 +38,7 @@ import { Util } from '@core/util/util';
 import { Datepicker } from '@ui/field/datepicker/datepicker';
 import { Button } from '@ui/button/button';
 import { ILessonForm, LessonBatch } from '@models';
+import { LessonForm } from '@form/lesson.form';
 
 export interface DialogData {
   lessonId?: number;
@@ -168,8 +169,8 @@ export class EventDialogComponent implements OnInit, OnDestroy {
 
   }
 
-  addLesson(lessonForm: FormGroup<ILessonForm>) {
-    this.form.addControl('lesson', lessonForm);
+  addLesson(lessonForm: LessonForm) {
+    this.form.addControl('lesson', lessonForm.form);
   }
 
   ngOnInit() {
