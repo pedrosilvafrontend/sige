@@ -2,8 +2,8 @@
   <div class="modalHeader">
     <div class="avatarDetails">
       <div class="modalTitle">
-        @let lesssonId = form?.controls?.id?.value || 0;
-        {{(lesssonId ? 'Edit lesson #'+lesssonId : 'New lesson') | translate}}
+        @let lessonId = form?.controls?.id?.value || 0;
+        {{(lessonId ? 'Edit lesson #'+lessonId : 'New lesson') | translate}}
       </div>
     </div>
     <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
@@ -26,14 +26,14 @@
     <div matDialogActions>
       <div class="dialog-buttons">
         <ui-button color="neutral" mat-dialog-close tabindex="-1">{{ 'Cancel' | translate }}</ui-button>
-        @if (!isTeacher && dialogData.origin == 'grid') {
-          <ui-button [disabled]="form && form.invalid" type="button" (onClick)="addToGrid()">
-            Adicionar alteração a grade
-<!--            {{ (form.controls.id.value ? 'Update' : 'Add') | translate }}-->
-          </ui-button>
-        } @else {
+<!--        @if (!isTeacher && dialogData.origin == 'grid') {-->
+<!--          <ui-button [disabled]="form && form.invalid" type="button" (onClick)="addToGrid()">-->
+<!--            Adicionar alteração a grade-->
+<!--&lt;!&ndash;            {{ (form.controls.id.value ? 'Update' : 'Add') | translate }}&ndash;&gt;-->
+<!--          </ui-button>-->
+<!--        } @else {-->
           <ui-button [disabled]="form && form.invalid" type="submit">{{ 'Save' | translate }}</ui-button>
-        }
+<!--        }-->
       </div>
     </div>
   </form>

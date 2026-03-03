@@ -69,20 +69,20 @@ export class MenuComponent implements OnInit {
     this.allowMenu.configs = this._allowMenu('configs');
     this.allowMenu.teachers = this._allowMenu('teachers');
 
-    this.activityService.getCountActivities().pipe(take(1)).subscribe((data: any) => {
-      // console.log('Total activities:', count);
-      (data || []).forEach((item: any) => {
-        if (!item.tests) {
-          const message = `Não há prova de ${item.curricularComponent.name} para a turma ${item.class.code} no mes atual`;
-          this.notifications.push({ item, message });
-        }
-        if (!item.works) {
-          const message = `Não há trabalho de ${item.curricularComponent.name} para a turma ${item.class.code} no mes atual`;
-          this.notifications.push({ item, message });
-        }
-      })
-      this.cdr.detectChanges();
-    });
+    // this.activityService.getCountActivities().pipe(take(1)).subscribe((data: any) => {
+    //   // console.log('Total activities:', count);
+    //   (data || []).forEach((item: any) => {
+    //     if (!item.tests) {
+    //       const message = `Não há prova de ${item.curricularComponent.name} para a turma ${item.class.code} no mes atual`;
+    //       this.notifications.push({ item, message });
+    //     }
+    //     if (!item.works) {
+    //       const message = `Não há trabalho de ${item.curricularComponent.name} para a turma ${item.class.code} no mes atual`;
+    //       this.notifications.push({ item, message });
+    //     }
+    //   })
+    //   this.cdr.detectChanges();
+    // });
   }
 
   _allowMenu(route: string) {

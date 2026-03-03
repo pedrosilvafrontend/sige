@@ -66,11 +66,11 @@
 
 <div class="d-flex gap-2 justify-content-end">
   <ui-button type="button" color="neutral" (onClick)="cancelModal.open()" [disabled]="!localDashboard().length">Cancelar</ui-button>
-  @if (conflicts.length) {
-    <ui-button type="button" color="danger" (onClick)="save(true)" [disabled]="!localDashboard().length">Salvar e sobrescrever</ui-button>
-  } @else {
-    <ui-button type="button" (onClick)="save()" [disabled]="!localDashboard().length">Salvar</ui-button>
-  }
+<!--  @if (conflicts.length) {-->
+<!--    <ui-button type="button" color="danger" (onClick)="save(true)" [disabled]="!localDashboard().length">Salvar e sobrescrever</ui-button>-->
+<!--  } @else {-->
+<!--    <ui-button type="button" (onClick)="save()" [disabled]="!localDashboard().length">Salvar</ui-button>-->
+<!--  }-->
 </div>
 
 <ui-modal #cancelModal [template]="cancelTemplate"></ui-modal>

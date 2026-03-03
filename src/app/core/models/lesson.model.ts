@@ -68,11 +68,11 @@ export class Frequency {
   weekday: string;
   timeSchedule: TimeSchedule | null;
 
-  constructor(lesson: Partial<Frequency> = {}) {
+  constructor(frequency: Partial<Frequency> = {}) {
     {
-      this.id = lesson.id;
-      this.weekday = lesson.weekday || '';
-      this.timeSchedule = lesson.timeSchedule || null;
+      this.id = frequency.id;
+      this.weekday = frequency.weekday || '';
+      this.timeSchedule = frequency.timeSchedule || null;
     }
   }
 }

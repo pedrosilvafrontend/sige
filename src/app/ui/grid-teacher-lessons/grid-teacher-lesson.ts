@@ -266,9 +266,9 @@ export class GridTeacherLesson implements OnInit, OnDestroy {
   }
 
   localSave() {
-    this.store.set(this.gridLessonsKey, this.dashboard);
-    this.localDashboard.set(this.dashboard);
-    this.cdr.detectChanges();
+    // this.store.set(this.gridLessonsKey, this.dashboard);
+    // this.localDashboard.set(this.dashboard);
+    // this.cdr.detectChanges();
   }
 
   setDashboard(): void {

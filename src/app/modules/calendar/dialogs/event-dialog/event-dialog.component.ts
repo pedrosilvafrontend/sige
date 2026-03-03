@@ -135,7 +135,8 @@ export class EventDialogComponent implements OnInit, OnDestroy {
   formObservables() {
 
     const { category, title, lesson } = this.form.controls;
-    const checkCategory = (cat: string) => {
+    const checkCategory = (cat?: string) => {
+      if (!cat) return;
       const isLesson = cat === 'LESSON';
       const action = isLesson ? 'enable' : 'disable';
       lesson?.[action]();
@@ -144,7 +145,8 @@ export class EventDialogComponent implements OnInit, OnDestroy {
       }
       this.cdr.detectChanges();
     }
-    const checkLesson = (lesson: LessonBatch) => {
+    const checkLesson = (lesson?: LessonBatch) => {
+      if (!lesson) return;
       const isLesson = category.value?.name === 'LESSON';
       const { fullName } = lesson.teacher || {};
       const teacherName = `${fullName || ''}`.trim();

@@ -57,8 +57,17 @@ export class LessonForm {
     frequencies.removeAt(index);
   }
 
-  clearFrequencies() {
+  clearFrequencies(withIdOnly?: boolean) {
     const frequencies = this.form.controls.frequencies;
+
+    if (withIdOnly) {
+      for (let i = frequencies.length - 1; i >= 0; i--) {
+        if (frequencies.at(i)?.value.id) {
+          frequencies.removeAt(i);
+        }
+      }
+      return;
+    }
     frequencies.clear();
   }
 

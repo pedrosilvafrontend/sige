@@ -165,37 +165,49 @@ export class GridLesson implements OnInit, OnDestroy {
       disableClose: true
     });
 
-    const patchLesson = (form: FormGroup<ILessonForm>) => {
-      let lesson = form.getRawValue();
-      if (lesson.curricularComponent?.id && lesson.teacher?.id) {
-        let existingLesson = this.lessons.getLesson(lesson as any);
-        if (existingLesson) {
-          form.patchValue({...existingLesson, frequencies: []} as any, { emitEvent: false });
-        }
-        else {
-          form.patchValue({id: 0} as any, { emitEvent: false });
-        }
-      }
-      return null;
-    }
+    // const patchLesson = (form: FormGroup<ILessonForm>) => {
+    //   let lesson = form.getRawValue();
+    //   if (lesson.curricularComponent?.id && lesson.teacher?.id) {
+    //     let existingLesson = this.lessons.getLesson(lesson as any);
+    //     if (existingLesson) {
+    //       form.patchValue({...existingLesson, frequencies: []} as any, { emitEvent: false });
+    //     }
+    //     else {
+    //       form.patchValue({id: 0} as any, { emitEvent: false });
+    //     }
+    //   }
+    //   return null;
+    // }
+    //
+    // dialogRef.componentInstance.lessonForm$.subscribe(({form}) => {
+    //   form.get('curricularComponent')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
+    //     patchLesson(form);
+    //   })
+    //   form.get('teacher')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
+    //     patchLesson(form);
+    //   })
+    // })
 
-    dialogRef.componentInstance.lessonForm$.subscribe(({form}) => {
-      form.get('curricularComponent')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
-        patchLesson(form);
-      })
-      form.get('teacher')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
-        patchLesson(form);
-      })
-    })
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result?.submit) {
-        const lesson = this.setLesson(result.value);
-        if (itemConfig['data']?.lesson) {
-          itemConfig['data'].lesson = lesson;
+    dialogRef.afterClosed().subscribe((les: LessonBatch) => {
+      if (les?.curricularComponent?.id && les?.teacher?.id) {
+        const originalFrequency = lesson.frequencies.at(0);
+        const hasFrequency = (les.frequencies || []).some(f => {
+          return f.weekday === originalFrequency?.weekday && f.timeSchedule?.id === originalFrequency?.timeSchedule?.id;
+        })
+        if (hasFrequency) {
+          itemConfig['data'].lesson = les;
+        } else {
+          itemConfig['data'].lesson = new LessonBatch();
         }
         this.localSave();
       }
+      // if (result?.submit) {
+      //   const lesson = this.setLesson(result.value);
+      //   if (itemConfig['data']?.lesson) {
+      //     itemConfig['data'].lesson = lesson;
+      //   }
+      //   this.localSave();
+      // }
     });
   }
 
@@ -215,6 +227,25 @@ export class GridLesson implements OnInit, OnDestroy {
     return this.lessons.setLesson(lesson);
   }
 
+  async checkConflicts() {
+    const lessons = this.dashboard.reduce((acc, item) => {
+      const lesson: LessonBatch = item['data']?.lesson;
+      if (lesson?.curricularComponent?.id && lesson.teacher?.id) {
+        acc.push(this.itemConfigToLesson(item));
+      }
+      return acc;
+    }, [] as LessonBatch[]);
+    // const lessons: LessonBatch[] = this.lessons.list;
+    const conflicts = (await firstValueFrom(this.lessonsService.conflicts(lessons))) || [];
+    if (conflicts.length) {
+      Swal.fire("Há conflito de horários", "", "error").then();
+      this.setConflicts(conflicts);
+      this.cdr.detectChanges();
+      return true;
+    }
+    return false;
+  }
+
   async save(force = false) {
     this.lessons.clear();
     this.dashboard.forEach(item => {
@@ -225,11 +256,8 @@ export class GridLesson implements OnInit, OnDestroy {
     console.log('save', lessons);
 
     if (!force) {
-      const conflicts = (await firstValueFrom(this.lessonsService.conflicts(lessons))) || [];
-      if (conflicts.length) {
-        Swal.fire("Há conflito de horários", "", "error").then();
-        this.setConflicts(conflicts);
-        this.cdr.detectChanges();
+      const hasConflict = await this.checkConflicts();
+      if (hasConflict) {
         return;
       }
     }
@@ -272,17 +300,6 @@ export class GridLesson implements OnInit, OnDestroy {
     })
   }
 
-  async checkConflicts() {
-    const lessons: LessonBatch[] = this.lessons.list;
-    const conflicts = (await firstValueFrom(this.lessonsService.conflicts(lessons))) || [];
-    if (conflicts.length) {
-      Swal.fire("Há conflito de horários", "", "error").then();
-      this.setConflicts(conflicts);
-      this.cdr.detectChanges();
-      return;
-    }
-  }
-
   reset(refresh = false, callback?: () => void) {
     this.store.remove(this.gridLessonsKey);
     this.dashboard = [];
@@ -310,9 +327,9 @@ export class GridLesson implements OnInit, OnDestroy {
   }
 
   localSave() {
-    this.store.set(this.gridLessonsKey, this.dashboard);
-    this.localDashboard.set(this.dashboard);
-    this.cdr.detectChanges();
+    // this.store.set(this.gridLessonsKey, this.dashboard);
+    // this.localDashboard.set(this.dashboard);
+    // this.cdr.detectChanges();
   }
 
   setDashboard(): void {
@@ -358,12 +375,39 @@ export class GridLesson implements OnInit, OnDestroy {
     })
   }
 
+  toCheckConflicts = Util.debounce(this.checkConflicts.bind(this), 1000);
+
   itemChange(itemConfig: GridsterItemConfig, item: GridsterItem) {
     console.log('itemChange Callback', arguments);
+
+    // TODO: switch lessons: alterar uma aula pela outra
+    const lesson = itemConfig['data']?.lesson;
+    if (lesson) {
+      // const frequencies: Frequency[] = lesson.frequencies || [];
+      // const frequency = frequencies.find(f => f.weekday === this.weekdays[itemConfig.x] && f.timeSchedule?.id === this.schedules()[itemConfig.y]?.id);
+      // if (frequency) {
+      //   frequency.weekday = this.weekdays[itemConfig.x];
+      //   frequency.timeSchedule = this.schedules()[itemConfig.y];
+      // }
+      // else {
+      //   const newFrequency = new Frequency();
+      //   newFrequency.weekday = this.weekdays[itemConfig.x];
+      //   newFrequency.timeSchedule = this.schedules()[itemConfig.y];
+      // }
+
+      const frequency = new Frequency({
+        id: lesson.frequencies[0]?.id,
+        weekday: this.weekdays[itemConfig.x],
+        timeSchedule: this.schedules()[itemConfig.y],
+      });
+    }
+
+
     itemConfig['conflict'] = false;
     if (this.conflicts.length) {
       this.conflicts.length = 0;
     }
+    this.toCheckConflicts();
     this.localSave();
   }
 
@@ -407,7 +451,7 @@ export class GridLesson implements OnInit, OnDestroy {
       emptyCellDragMaxRows: 50,
       ignoreMarginInRow: false,
       draggable: {
-        enabled: true,
+        enabled: false,
       },
       resizable: {
         enabled: false,

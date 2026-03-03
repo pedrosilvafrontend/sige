@@ -45,6 +45,9 @@ export class ActivityService extends BaseService<Activity> {
         take(1),
         catchError(this.handleError),
         map(activities => {
+          if (!activities) {
+            activities = [];
+          }
           this.activities.length = 0;
           this.activities.push(...activities);
           this.expires = Date.now() + 1000 * 60 * 5;

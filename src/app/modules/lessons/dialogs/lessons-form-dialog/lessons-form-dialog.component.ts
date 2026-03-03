@@ -4,7 +4,7 @@ import {
   MatDialogContent,
   MatDialogClose, MatDialogActions,
 } from '@angular/material/dialog';
-import { Component, inject, input, OnDestroy, OnInit, output } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, input, OnDestroy, OnInit, output } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormsModule,
@@ -66,6 +66,7 @@ export class LessonsFormDialogComponent implements OnInit, OnDestroy {
   public dialogData = inject(MAT_DIALOG_DATA);
   private lessonsService = inject(LessonsService);
   private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
   public user = this.authService.user$.value;
   public isTeacher = this.user.role === 'teacher';
   public action: string;
@@ -92,17 +93,18 @@ export class LessonsFormDialogComponent implements OnInit, OnDestroy {
   }
 
   addToGrid() {
-    this.dialogRef.close({ submit: true, value: this.form.getRawValue() });
+    // this.dialogRef.close({ submit: true, value: this.form.getRawValue() });
+    this.submit();
   }
 
   submit() {
     if (this.form.valid) {
-      const data = this.form.value as LessonBatch;
+      const data = this.form.getRawValue() as unknown as LessonBatch;
       // if (data.frequency === 'UNIQUE') {
       //   data.endDate = undefined;
       // }
 
-      if (this.action === 'edit') {
+      if (data.id) {
         this.lessonsService.updateItem(data).subscribe({
           next: (response) => {
             this.dialogRef.close(response);

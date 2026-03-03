@@ -89,7 +89,7 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   public classes: SchoolClass[] = [];
   public timeSchedules: TimeSchedule[] = [];
   public schools: School[] = [];
-  public frequencies: string[] = ['UNIQUE', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+  public frequencies: string[] = ['MON', 'TUE', 'WED', 'THU', 'FRI'];
   public objectCompare = Util.objectCompare;
   private destroy$ = new Subject<void>();
   public schoolId: number | null = null;
@@ -151,11 +151,11 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   }
 
   formCheck() {
-    if (this.origin != 'grid') {
-      return;
-    }
-    const { schoolClass, school, frequencies } = this.form.controls;
-    [schoolClass, school, frequencies].forEach((ctrl: any) => ctrl.disable?.());
+    // if (this.origin != 'grid') {
+    //   return;
+    // }
+    // const { schoolClass, school, frequencies } = this.form.controls;
+    // [schoolClass, school, frequencies].forEach((ctrl: any) => ctrl.disable?.());
   }
 
   async getClasses(schoolId?: number) {
@@ -316,13 +316,24 @@ export class LessonFormComponent implements OnInit, OnDestroy {
     curricularComponent?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(checkLesson);
   }
 
-  timeCheck = 0;
+
+  mergeFrequencies(frequenciesA: Frequency[], frequenciesB: Frequency[]): Frequency[] {
+    const frequencies = new Map<string, Frequency>();
+    const uk = (frequency: Frequency) => {
+      if (!frequency.weekday || !frequency.timeSchedule?.id) return '';
+      return `${frequency.weekday}|${frequency.timeSchedule?.id}`
+    };
+    const addFrequency = (frequency: Frequency) => {
+      const key = uk(frequency);
+      if (!key) return;
+      frequencies.set(key, frequency);
+    }
+    (frequenciesA || []).concat(frequenciesB || []).forEach(addFrequency);
+    return Array.from(frequencies.values());
+  }
 
   async checkExistingLesson() {
     if (!this.lessonForm?.form) return;
-    this.timeCheck = setTimeout(() => {
-
-    })
     const form = this.lessonForm.form;
     const formValue = form.getRawValue() as unknown as LessonBatch;
     const { school, schoolClass, teacher, curricularComponent } = formValue;
@@ -335,17 +346,21 @@ export class LessonFormComponent implements OnInit, OnDestroy {
         teacherId: teacher.id,
       };
       const lessons = await firstValueFrom(this.lessonsService.getAll(params));
-      if (!lessons?.[0]) return;
-      const lessonKey = Util.lessonUK(lessons[0]);
-      this.lessonForm.patchValue(lessons[0] as any);
-      this.lessonKey = lessonKey;
-      return true;
+      if (lessons?.[0]) {
+        const lessonKey = Util.lessonUK(lessons[0]);
+        const lesson = lessons[0] as LessonBatch;
+        const frequencies = this.data.frequencies.filter(f => !f.id);
+        lesson.frequencies = this.mergeFrequencies(frequencies, lesson.frequencies);
+        this.lessonForm.patchValue(lesson);
+        this.lessonKey = lessonKey;
+        return true;
+      }
     }
-    else {
-      this.lessonKey = '';
-      this.form.controls.id.setValue(0);
-      this.lessonForm.clearFrequencies();
-    }
+
+    this.lessonKey = '';
+    this.form.controls.id.setValue(0);
+    this.lessonForm.clearFrequencies(true);
+
     return false;
   }
 

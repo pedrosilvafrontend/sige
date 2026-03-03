@@ -79,6 +79,12 @@ export class LessonsService {
     );
   }
 
+  deleteFrequency(frequencyId: number): Observable<any> {
+    return this.httpClient.delete<void>(`${this.API_URL}/frequency/${frequencyId}`).pipe(
+      take(1),
+    )
+  }
+
   getFrequencies(): Observable<string[]> {
     return this.httpClient.get<string[]>(`${environment.baseUrl}/events/frequencies`)
       .pipe(catchError(this.handleError));
