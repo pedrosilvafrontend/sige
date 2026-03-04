@@ -46,6 +46,7 @@ export class MenuComponent implements OnInit {
   public menu$ = this.menuService.getAll();
   public menu: Menu[] = [];
   public notifications: {item: any, message: string}[] = [];
+  public user = this.auth.user$.value;
 
   public allowMenu = {
     managers: false,
