@@ -3,7 +3,11 @@
     <div class="avatarDetails">
       <div class="modalTitle">
         @let lessonId = form?.controls?.id?.value || 0;
-        {{(lessonId ? 'Edit lesson #'+lessonId : 'New lesson') | translate}}
+        @if (lessonId) {
+          <span>{{'Edit lesson' | translate}} #{{lessonId}}</span>
+        } @else {
+          <span>{{'New lesson' | translate}}</span>
+        }
       </div>
     </div>
     <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">

@@ -152,6 +152,16 @@
                               </div>
                             </mat-cell>
                           </ng-container>
+                        } @else if (column.def === 'code') {
+                          <ng-container [matColumnDef]="column.def">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                              <span class="truncate-text">{{ column.label }}</span>
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
+                              <span class="mobile-label">{{ column.label }}:</span>
+                              <span class="truncate-text">{{ row.id }}</span>
+                            </mat-cell>
+                          </ng-container>
                         } @else {
                           <ng-container [matColumnDef]="column.def">
                             <mat-header-cell *matHeaderCellDef mat-sort-header>

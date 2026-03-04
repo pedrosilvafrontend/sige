@@ -83,6 +83,7 @@ export class MenuComponent implements OnInit {
     //   })
     //   this.cdr.detectChanges();
     // });
+    this.cdr.detectChanges();
   }
 
   _allowMenu(route: string) {

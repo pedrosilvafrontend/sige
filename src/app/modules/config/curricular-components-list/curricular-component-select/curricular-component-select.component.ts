@@ -89,7 +89,7 @@ export class CurricularComponentSelectComponent implements OnInit, OnDestroy, Co
   }
 
   displayFn(data: CurricularComponent) {
-    return data?.code ? data.code + ' - ' + data.name : (data?.name || '');
+    return data.id + ' - ' + (data?.name || '');
   }
 
   private _filter(value: string | CurricularComponent): CurricularComponent[] {
@@ -101,7 +101,7 @@ export class CurricularComponentSelectComponent implements OnInit, OnDestroy, Co
       return this.curricularComponents.slice() as CurricularComponent[];
     }
     return this.curricularComponents.filter(item => {
-      const codeName = ((item.code || '') + ' - ' + (item.name || ''));
+      const codeName = ((item.id || '') + ' - ' + (item.name || ''));
       return Util.toCompare(codeName).includes(Util.toCompare(filterValue));
     });
   }
