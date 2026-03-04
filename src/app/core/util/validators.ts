@@ -5,7 +5,7 @@ export class FValidators {
 
   static phone(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      return !Util.isPhone(control.value) ? {phone: {value: control.value}} : null;
+      return control.value && !Util.isPhone(control.value) ? {phone: {value: control.value}} : null;
     };
   }
 

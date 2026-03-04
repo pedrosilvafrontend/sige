@@ -34,7 +34,7 @@
       <div class="row m-b-24">
         <div class="col-sm-12">
           <mat-label class="msr-3">{{ 'gender' | translate }}:</mat-label>
-          <mat-radio-group aria-label="Select gender" formControlName="gender" required>
+          <mat-radio-group aria-label="Select gender" formControlName="gender">
             <mat-radio-button value="M" color="primary">{{ 'male' | translate }}</mat-radio-button>
             <mat-radio-button value="F" color="primary">{{ 'female' | translate }}</mat-radio-button>
             @if (form.get('gender')?.hasError('required')) {
@@ -49,7 +49,7 @@
         <div class="col-sm-6">
           <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
             <mat-label>{{ 'email' | translate }}</mat-label>
-            <input matInput formControlName="email" required>
+            <input matInput formControlName="email">
             <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>email</mat-icon>
             @if (form.get('email')?.hasError('required') || form.get('email')?.touched) {
             <mat-error>
@@ -131,7 +131,8 @@
     <div matDialogActions>
       <div class="dialog-buttons">
         <ui-button color="neutral" mat-dialog-close tabindex="-1">{{ 'Cancel' | translate }}</ui-button>
-        <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>
+<!--        <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>-->
+        <ui-button type="submit">{{ 'Save' | translate }}</ui-button>
       </div>
     </div>
   </form>

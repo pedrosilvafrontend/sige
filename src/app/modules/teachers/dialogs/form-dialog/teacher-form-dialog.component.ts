@@ -154,10 +154,9 @@ export class TeacherFormDialogComponent implements OnDestroy {
       gender: [gender],
       birthDate: [
         birthDate ? fns.format(birthDate, 'yyyy-MM-dd') : '',
-        [Validators.required],
       ],
-      mobile: [mobile, [Validators.required, V.phone()]],
-      role: [role, [Validators.required]],
+      mobile: [mobile, [V.phone()]],
+      role: [role],
       schools
     });
   }

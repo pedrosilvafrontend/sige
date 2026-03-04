@@ -22,7 +22,10 @@
               @for (item of dashboard; track item; let i = $index) {
                 @let lesson = item['data']?.lesson;
                 @let empty = !lesson?.curricularComponent?.name;
-                <gridster-item #gridsterItem [item]="item" [ngClass]="{ conflict: item['conflict'] }">
+                @let styles = lesson?.curricularComponent?.styles || {};
+                <gridster-item #gridsterItem [item]="item"
+                               [ngClass]="{conflict: item['conflict']}"
+                               [ngStyle]="styles">
                   <div class="item">
                     <div class="w-100 p-1">
                       @if (!empty) {

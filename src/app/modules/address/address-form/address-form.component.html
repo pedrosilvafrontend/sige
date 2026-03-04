@@ -63,7 +63,7 @@
     <div class="col-sm-6">
       <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
         <mat-label>{{ 'state' | translate }}</mat-label>
-        <mat-select formControlName="state" [compareWith]="compare" required>
+        <mat-select formControlName="state" [compareWith]="compare">
           <mat-option [value]="'AC'">Acre</mat-option>
           <mat-option [value]="'AL'">Alagoas</mat-option>
           <mat-option [value]="'AP'">Amapá</mat-option>

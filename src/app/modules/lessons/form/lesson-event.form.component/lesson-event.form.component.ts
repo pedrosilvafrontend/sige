@@ -160,7 +160,7 @@ export class LessonEventFormComponent implements OnInit, OnDestroy {
       return [
         masterAccess ? event.school.acronym : '',
         event.schoolClass.code || '',
-        event.curricularComponent.code+' '+event.curricularComponent.name,
+        event.curricularComponent.id+' '+event.curricularComponent.name,
         managerAccess ? event.lesson.teacher?.fullName : '',
       ].filter(v => !!v).join(' - ')
     }

@@ -7,12 +7,12 @@ export class FormUtil {
   static addressForm(data?: Address): UntypedFormGroup {
     const form = this.fb.group({
       id: [0],
-      address: ['', Validators.required],
-      number: ['', Validators.required],
-      city: ['', Validators.required],
-      state: ['', Validators.required],
-      country: ['Brasil', Validators.required],
-      postalCode: ['', Validators.required],
+      address: [''],
+      number: [''],
+      city: [''],
+      state: [''],
+      country: ['Brasil'],
+      postalCode: [''],
     });
 
     form.patchValue(data || {});
@@ -27,4 +27,5 @@ export class FormUtil {
   static objectCompare( option: any, value: any ) : boolean {
     return option.id === value.id;
   }
+
 }

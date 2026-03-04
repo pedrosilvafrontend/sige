@@ -10,7 +10,7 @@
   <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
     @for (item of filteredOptions | async; track item.id) {
       <mat-option [value]="item">
-        {{ item.code ? item.code+' - ' : '' }}{{ item.name }}
+        {{ item.id+' - ' }}{{ item.name }}
       </mat-option>
     }
     @if (!classYearId()) {

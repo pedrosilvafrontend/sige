@@ -35,18 +35,21 @@ import { map } from 'rxjs/operators';
 import { ModalComponent } from '@ui/modal/modal.component';
 import { LessonsMap } from '@modules/lessons/lessons.map';
 import Swal from 'sweetalert2';
-import { NgClass } from '@angular/common';
+import { NgClass, NgStyle } from '@angular/common';
+import { Color } from '@util/color';
+import { MergeObjectsPipe } from '@util/object.pipe';
 
 export type GridLessonItem = {
   lesson: LessonBatch,
   frequencyId?: number,
+  colorClass?: string,
   x: number,
   y: number
 }
 
 @Component({
   selector: 'app-grid-lesson',
-  imports: [Gridster, GridsterItem, ClassSelectComponent, ReactiveFormsModule, TranslatePipe, Button, MatIcon, MatIconButton, MatTooltip, ModalComponent, MatDialogActions, MatDialogContent, MatDialogTitle, NgClass],
+  imports: [Gridster, GridsterItem, ClassSelectComponent, ReactiveFormsModule, TranslatePipe, Button, MatIcon, MatIconButton, MatTooltip, ModalComponent, MatDialogActions, MatDialogContent, MatDialogTitle, NgClass, NgStyle, MergeObjectsPipe],
   templateUrl: './grid-lesson.html',
   styleUrl: './grid-lesson.scss',
   encapsulation: ViewEncapsulation.None,
@@ -474,11 +477,18 @@ export class GridLesson implements OnInit, OnDestroy {
     const classCode = this.classControl.value?.code || '';
     this.lessons.clear();
     this.setSchedules(classCode);
+    const ccColors = new Map<number, string>();
+    const numColors = Array(24).fill(0).map((_, i) => i+13);
     if (this.schedules().length) {
       (lessons || []).forEach((lesson: LessonBatch) => {
         this.setLesson(lesson);
+        const ccId = lesson.curricularComponent?.id || 0;
+        if (ccId && !ccColors.has(ccId)) {
+          const i = numColors.shift() || 0;
+          ccColors.set(ccId, `bg-color-${i}`)
+        }
         const frequencies = lesson.frequencies || [];
-        frequencies.forEach(frequency => {
+        frequencies.forEach((frequency, i) => {
           if (lesson.schoolClass?.code !== classCode) {
             return;
           }
@@ -486,7 +496,9 @@ export class GridLesson implements OnInit, OnDestroy {
           const y = this.schedules().findIndex(schedule => schedule.id === frequency.timeSchedule?.id);
           if (!gridLessons[x]) { gridLessons[x] = [] as GridLessonItem[] }
           lesson.frequencies = [frequency];
-          gridLessons[x][y] = { lesson, frequencyId: frequency.id, x, y }
+          // const color = Color.hsl(`${lesson.curricularComponent?.name || ''}|${lesson.teacher?.fullName || ''}`);
+          const colorClass = ccColors.get(ccId) || 'bg-color-?';
+          gridLessons[x][y] = { lesson, frequencyId: frequency.id, x, y, colorClass }
         })
       });
     }
