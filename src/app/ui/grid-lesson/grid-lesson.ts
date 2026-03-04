@@ -11,7 +11,7 @@ import {
 import {
   CompactType,
   DisplayGrid,
-  Gridster,
+  Gridster, GridsterApi,
   GridsterConfig,
   GridsterItem,
   GridsterItemConfig,
@@ -49,7 +49,7 @@ export type GridLessonItem = {
 
 @Component({
   selector: 'app-grid-lesson',
-  imports: [Gridster, GridsterItem, ClassSelectComponent, ReactiveFormsModule, TranslatePipe, Button, MatIcon, MatIconButton, MatTooltip, ModalComponent, MatDialogActions, MatDialogContent, MatDialogTitle, NgClass, NgStyle, MergeObjectsPipe],
+  imports: [Gridster, GridsterItem, ClassSelectComponent, ReactiveFormsModule, TranslatePipe, Button, MatIcon, MatIconButton, MatTooltip, ModalComponent, MatDialogActions, MatDialogContent, MatDialogTitle, NgClass, NgStyle],
   templateUrl: './grid-lesson.html',
   styleUrl: './grid-lesson.scss',
   encapsulation: ViewEncapsulation.None,
@@ -152,7 +152,7 @@ export class GridLesson implements OnInit, OnDestroy {
     return lesson;
   }
 
-  edit(itemConfig: GridsterItemConfig, item: GridsterItem) {
+  edit(itemConfig: GridsterItemConfig, item: GridsterItem, api: GridsterApi) {
     const lesson: LessonBatch = this.itemConfigToLesson(itemConfig);
 
     if (!lesson.schoolClass?.id) {
@@ -203,7 +203,10 @@ export class GridLesson implements OnInit, OnDestroy {
           itemConfig['data'].lesson = new LessonBatch();
         }
         this.localSave();
+        api.resize();
       }
+      this.cdr.detectChanges();
+      // this.options['api']?.optionsChanged();
       // if (result?.submit) {
       //   const lesson = this.setLesson(result.value);
       //   if (itemConfig['data']?.lesson) {
@@ -414,6 +417,10 @@ export class GridLesson implements OnInit, OnDestroy {
     this.localSave();
   }
 
+  gridsterInit() {
+    this.options['api']?.optionsChanged();
+  }
+
   getOptions(): GridsterConfig {
     return {
       itemChangeCallback: this.itemChange.bind(this),
@@ -469,6 +476,7 @@ export class GridLesson implements OnInit, OnDestroy {
       disableWindowResize: false,
       disableWarnings: false,
       scrollToNewItems: false,
+      initCallback: this.gridsterInit.bind(this)
     };
   }
 
@@ -477,16 +485,9 @@ export class GridLesson implements OnInit, OnDestroy {
     const classCode = this.classControl.value?.code || '';
     this.lessons.clear();
     this.setSchedules(classCode);
-    const ccColors = new Map<number, string>();
-    const numColors = Array(24).fill(0).map((_, i) => i+13);
     if (this.schedules().length) {
       (lessons || []).forEach((lesson: LessonBatch) => {
         this.setLesson(lesson);
-        const ccId = lesson.curricularComponent?.id || 0;
-        if (ccId && !ccColors.has(ccId)) {
-          const i = numColors.shift() || 0;
-          ccColors.set(ccId, `bg-color-${i}`)
-        }
         const frequencies = lesson.frequencies || [];
         frequencies.forEach((frequency, i) => {
           if (lesson.schoolClass?.code !== classCode) {
@@ -496,9 +497,7 @@ export class GridLesson implements OnInit, OnDestroy {
           const y = this.schedules().findIndex(schedule => schedule.id === frequency.timeSchedule?.id);
           if (!gridLessons[x]) { gridLessons[x] = [] as GridLessonItem[] }
           lesson.frequencies = [frequency];
-          // const color = Color.hsl(`${lesson.curricularComponent?.name || ''}|${lesson.teacher?.fullName || ''}`);
-          const colorClass = ccColors.get(ccId) || 'bg-color-?';
-          gridLessons[x][y] = { lesson, frequencyId: frequency.id, x, y, colorClass }
+          gridLessons[x][y] = { lesson, frequencyId: frequency.id, x, y }
         })
       });
     }

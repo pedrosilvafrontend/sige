@@ -89,7 +89,10 @@ export class CurricularComponentSelectComponent implements OnInit, OnDestroy, Co
   }
 
   displayFn(data: CurricularComponent) {
-    return data.id + ' - ' + (data?.name || '');
+    if (!data) {
+      return '';
+    }
+    return data.id + ' - ' + (data.name || '');
   }
 
   private _filter(value: string | CurricularComponent): CurricularComponent[] {

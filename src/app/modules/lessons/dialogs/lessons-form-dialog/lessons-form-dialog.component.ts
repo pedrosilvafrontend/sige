@@ -4,7 +4,7 @@ import {
   MatDialogContent,
   MatDialogClose, MatDialogActions,
 } from '@angular/material/dialog';
-import { ChangeDetectorRef, Component, inject, input, OnDestroy, OnInit, output } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, output } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormsModule,
@@ -27,14 +27,7 @@ import { UserTable } from '../../../users/users.model';
 import { LessonFormComponent } from '@modules/lessons';
 import { AuthService, LessonsService } from '@services';
 import { Button } from '@ui/button/button';
-import { BehaviorSubject, merge, Subject, takeUntil } from 'rxjs';
 import { LessonForm } from '@form/lesson.form';
-
-export interface DialogData {
-  id: number;
-  action: string;
-  table: LessonBatch;
-}
 
 @Component({
   selector: 'app-lessons-form-dialog',
@@ -68,7 +61,6 @@ export class LessonsFormDialogComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
   public user = this.authService.user$.value;
-  public isTeacher = this.user.role === 'teacher';
   public action: string;
   public dialogTitle: string;
   public form: FormGroup<ILessonForm> = this.dialogData.form as FormGroup<ILessonForm>;
@@ -92,17 +84,9 @@ export class LessonsFormDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  addToGrid() {
-    // this.dialogRef.close({ submit: true, value: this.form.getRawValue() });
-    this.submit();
-  }
-
   submit() {
     if (this.form.valid) {
       const data = this.form.getRawValue() as unknown as LessonBatch;
-      // if (data.frequency === 'UNIQUE') {
-      //   data.endDate = undefined;
-      // }
 
       if (data.id) {
         this.lessonsService.updateItem(data).subscribe({
@@ -131,34 +115,8 @@ export class LessonsFormDialogComponent implements OnInit, OnDestroy {
     this.form = lessonForm.form;
   }
 
-  // formChanges() {
-  //   const form = this.form;
-  //   const fieldChange = () => {
-  //     const { school, schoolClass, teacher, curricularComponent } = form.getRawValue();
-  //     if (school?.id && schoolClass?.code && teacher?.id && curricularComponent?.id) {
-  //       this.lessonsService.getAll({
-  //         schoolId: school.id,
-  //         classCode: schoolClass.code,
-  //         curricularComponentId: curricularComponent.id,
-  //         teacherId: teacher.id,
-  //       }).subscribe(response => {
-  //         if (!response?.[0]) return;
-  //         this.form.patchValue(response[0] as any, { emitEvent: false });
-  //       })
-  //     }
-  //   }
-  //   if (!form) return;
-  //   const { school, schoolClass, teacher, curricularComponent } = this.form.controls;
-  //   school?.valueChanges.pipe(takeUntil(this.form$)).subscribe(fieldChange.bind(this));
-  //   schoolClass?.valueChanges.pipe(takeUntil(this.form$)).subscribe(fieldChange.bind(this));
-  //   teacher?.valueChanges.pipe(takeUntil(this.form$)).subscribe(fieldChange.bind(this));
-  //   curricularComponent?.valueChanges.pipe(takeUntil(this.form$)).subscribe(fieldChange.bind(this));
-  // }
-
   ngOnInit() {
-    // if (this.dialogData.form) {
-    //   this.formChanges();
-    // }
+    this.cdr.detectChanges();
   }
 
   ngOnDestroy() {

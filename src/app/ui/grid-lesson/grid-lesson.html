@@ -18,7 +18,7 @@
       @if (i === 0) {
         <td colspan="10" [attr.rowspan]="schedules().length">
           <div class="wrap-grid">
-            <gridster [options]="options">
+            <gridster [options]="options" #gridster>
               @for (item of dashboard; track item; let i = $index) {
                 @let lesson = item['data']?.lesson;
                 @let empty = !lesson?.curricularComponent?.name;
@@ -43,7 +43,7 @@
                       <button (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()" mat-icon-button color="accent"
                               type="button"
                               [matTooltip]="'Edit' | translate"
-                              (click)="edit(item, gridsterItem)"
+                              (click)="edit(item, gridsterItem, gridster.api)"
                               class="grid-btn">
                           <mat-icon>edit</mat-icon>
                       </button>
@@ -51,7 +51,7 @@
                       <button (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()" mat-icon-button color="accent"
                               type="button"
                               [matTooltip]="'Add' | translate"
-                              (click)="edit(item, gridsterItem)"
+                              (click)="edit(item, gridsterItem, gridster.api)"
                               class="add-btn w-100 h-100 position-absolute top-0 start-0 rounded-0">
                         <mat-icon>add</mat-icon>
                       </button>

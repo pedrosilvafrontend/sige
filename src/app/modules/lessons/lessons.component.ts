@@ -203,6 +203,7 @@ export class LessonsComponent implements OnInit, OnDestroy {
     );
     if (index !== -1) {
       this.dataSource.data[index] = updatedRecord;
+      this.cdr.detectChanges();
       this.dataSource._updateChangeSubscription();
     }
   }
