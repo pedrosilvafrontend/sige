@@ -9,11 +9,14 @@ import {
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { TokenService } from '@services';
+import { LocalStorageService, TokenService } from '@services';
+import { School } from '@models';
 
 export const tokenInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
   const tokenService = inject(TokenService);
   const router = inject(Router);
+  const store = inject(LocalStorageService);
+  const schoolStoreKey = 'school';
   const handler = () => {
     if (request.url.includes('/logout')) {
       router.navigateByUrl('/login').then();
@@ -23,12 +26,18 @@ export const tokenInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown
   const shouldAppendToken = (url: string) => !hasHttpScheme(url);
 
   if (tokenService.valid() && shouldAppendToken(request.url)) {
+    let headers = request.headers.append(
+      'Authorization',
+      tokenService.getBearerToken()
+    )
+    let school: School | undefined = store.get(schoolStoreKey);
+    if (school) {
+      headers = headers.append('X-School-ID', String(school.id));
+    }
+    // headers = headers.append('X-School-ID', store.get(schoolStoreKey) || '');
     return next(
         request.clone({
-          headers: request.headers.append(
-            'Authorization',
-            tokenService.getBearerToken()
-          ),
+          headers,
           withCredentials: true,
         })
       )
