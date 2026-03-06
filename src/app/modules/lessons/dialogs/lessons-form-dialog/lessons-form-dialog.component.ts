@@ -70,16 +70,18 @@ export class LessonsFormDialogComponent implements OnInit, OnDestroy {
   public classes: SchoolClass[] = [];
   public teachers: UserTable[] = [];
   public schools: School[] = [];
+  public lessonId = 0;
 
   constructor() {
-    const data = this.dialogData.table;
+    this.lessonId = this.dialogData.lessonId || 0;
+    const data = Object.assign(new LessonBatch(), this.dialogData.lesson || { id: this.lessonId });
     if (data?.id) {
-      this.dialogTitle = this.dialogData.table.curricularComponent?.name || '';
-      this.data = this.dialogData.table;
+      this.dialogTitle = data.curricularComponent?.name || '';
+      this.data = data;
       this.action = 'edit';
     } else {
       this.dialogTitle = 'New record';
-      this.data = Object.assign(new LessonBatch(), this.dialogData.table || {});
+      this.data = data;
       this.action = 'add';
     }
   }

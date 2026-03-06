@@ -49,6 +49,9 @@
                         <h3 class="ellipsis my-0">
                           {{ lesson.curricularComponent?.name }}
                         </h3>
+                        <div class="ellipsis">
+                          {{ lesson.schoolClass?.code || '' }}
+                        </div>
                         @if (this.multiSchools) {
                           <div class="ellipsis">
                             {{ lesson.school?.acronym || '' }} - {{ lesson.school?.name || '' }}

@@ -121,10 +121,14 @@ export class LessonFormComponent implements OnInit, OnDestroy {
 
   @Input()
   set data(data: LessonBatch) {
-    this._data = data;
-    if (this.lessonForm && data) {
-      this.lessonForm.patchValue(data as any);
+    if (data && data.id && !data.curricularComponent?.id) {
+      this.getLesson(data.id).then();
+      return;
     }
+    this._data = data;
+    // if (this.lessonForm && data) {
+    //   this.lessonForm.patchValue(data as any);
+    // }
   }
   get data(): LessonBatch {
     return this._data || {} as LessonBatch;
@@ -136,6 +140,9 @@ export class LessonFormComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    if (this.data.id) {
+      this.lessonForm.patchValue(this.data as any);
+    }
     // if (!this.lessonForm) {
     //   this.lessonForm = new LessonForm(this.auth, this.data);
     // }
@@ -332,6 +339,13 @@ export class LessonFormComponent implements OnInit, OnDestroy {
     return Array.from(frequencies.values());
   }
 
+  async getLesson(id: number) {
+    const lesson = await firstValueFrom(this.lessonsService.getById(id));
+    if (!lesson.curricularComponent) return;
+    this.data = lesson as LessonBatch;
+    this.lessonForm.patchValue(this.data as any, { emitEvent: false });
+  }
+
   async checkExistingLesson() {
     if (!this.lessonForm?.form) return;
     const form = this.lessonForm.form;
@@ -347,8 +361,8 @@ export class LessonFormComponent implements OnInit, OnDestroy {
       };
       const lessons = await firstValueFrom(this.lessonsService.getAll(params));
       if (lessons?.[0]) {
-        const lessonKey = Util.lessonUK(lessons[0]);
         const lesson = lessons[0] as LessonBatch;
+        const lessonKey = Util.lessonUK(lesson);
         const frequencies = this.data.frequencies.filter(f => !f.id);
         lesson.frequencies = this.mergeFrequencies(frequencies, lesson.frequencies);
         this.lessonForm.patchValue(lesson);

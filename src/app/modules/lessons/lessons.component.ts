@@ -140,7 +140,7 @@ export class LessonsComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(LessonsFormDialogComponent, {
       width: '99vw',
       maxWidth: '1024px',
-      data: { table: data, action },
+      data: { lesson: data, action },
       autoFocus: false,
       disableClose: true,
     });
@@ -162,6 +162,16 @@ export class LessonsComponent implements OnInit, OnDestroy {
   }
 
 
+
+  openLessonFormDialog(lessonId: number) {
+    const dialogRef = this.dialog.open(LessonsFormDialogComponent, {
+      width: '99vw',
+      maxWidth: '1024px',
+      data: { lessonId: lessonId, action: 'edit', origin: 'grid' },
+      autoFocus: false,
+      disableClose: true
+    });
+  }
 
   openLessonBatchDialog(lessonId: number) {
     const eventData = new Calendar({

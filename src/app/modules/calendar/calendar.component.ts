@@ -377,7 +377,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(LessonsFormDialogComponent, {
       width: '99vw',
       maxWidth: '1024px',
-      data: { table: this.calendar?.lesson, origin: 'calendar' },
+      data: { lesson: this.calendar?.lesson, origin: 'calendar' },
       autoFocus: false,
       disableClose: true
     });

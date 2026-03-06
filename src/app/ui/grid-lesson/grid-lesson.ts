@@ -163,7 +163,7 @@ export class GridLesson implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(LessonsFormDialogComponent, {
       width: '99vw',
       maxWidth: '1024px',
-      data: { table: lesson, action, origin: 'grid' },
+      data: { lesson: lesson, action, origin: 'grid' },
       autoFocus: false,
       disableClose: true
     });

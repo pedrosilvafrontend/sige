@@ -116,33 +116,33 @@ export class GridTeacherLesson implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(LessonsFormDialogComponent, {
       width: '99vw',
       maxWidth: '1024px',
-      data: { table: lesson, action, origin: 'grid' },
+      data: { lesson: lesson, action, origin: 'grid' },
       autoFocus: false,
       disableClose: true
     });
 
-    const patchLesson = (form: FormGroup<ILessonForm>) => {
-      let lesson = form.getRawValue();
-      if (lesson.curricularComponent?.id && lesson.teacher?.id) {
-        let existingLesson = this.lessons.getLesson(lesson as any);
-        if (existingLesson) {
-          form.patchValue({...existingLesson, frequencies: []} as any, { emitEvent: false });
-        }
-        else {
-          form.patchValue({id: 0} as any, { emitEvent: false });
-        }
-      }
-      return null;
-    }
+    // const patchLesson = (form: FormGroup<ILessonForm>) => {
+    //   let lesson = form.getRawValue();
+    //   if (lesson.curricularComponent?.id && lesson.teacher?.id) {
+    //     let existingLesson = this.lessons.getLesson(lesson as any);
+    //     if (existingLesson) {
+    //       form.patchValue({...existingLesson, frequencies: []} as any, { emitEvent: false });
+    //     }
+    //     else {
+    //       form.patchValue({id: 0} as any, { emitEvent: false });
+    //     }
+    //   }
+    //   return null;
+    // }
 
-    dialogRef.componentInstance.lessonForm$.subscribe(({form}) => {
-      form.get('curricularComponent')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
-        patchLesson(form);
-      })
-      form.get('teacher')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
-        patchLesson(form);
-      })
-    })
+    // dialogRef.componentInstance.lessonForm$.subscribe(({form}) => {
+    //   form.get('curricularComponent')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
+    //     patchLesson(form);
+    //   })
+    //   form.get('teacher')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(value => {
+    //     patchLesson(form);
+    //   })
+    // })
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.submit) {

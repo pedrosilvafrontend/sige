@@ -209,7 +209,7 @@
             <mat-cell *matCellDef="let row; let i=index;" class="pr-0">
               <button mat-icon-button color="accent"
                       [matTooltip]="'Edit' | translate"
-                      (click)="$event.stopPropagation();openLessonBatchDialog(row.id)"
+                      (click)="$event.stopPropagation();openLessonFormDialog(row.id)"
                       class="tbl-action-btn">
                 <mat-icon>edit</mat-icon>
               </button>
@@ -228,7 +228,7 @@
             </mat-cell>
           </ng-container>
           <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: getDisplayedColumns();" (click)="openLessonBatchDialog(row.id)"
+          <mat-row *matRowDef="let row; columns: getDisplayedColumns();" (click)="openLessonFormDialog(row.id)"
                    [style.cursor]="'pointer'" matRipple>
           </mat-row>
         </table>
@@ -250,7 +250,7 @@
             <mat-icon>add_circle_outline</mat-icon>
             <span>Add Record</span>
           </button>
-          <button mat-menu-item (click)="openLessonBatchDialog(item.id)">
+          <button mat-menu-item (click)="openLessonFormDialog(item.id)">
             <mat-icon class="material-icons-outlined">mode_edit</mat-icon>
             <span>Edit Record</span>
           </button>
