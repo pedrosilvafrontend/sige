@@ -7,7 +7,7 @@ import {
   input, OnDestroy,
   OnInit,
 } from '@angular/core';
-import { CurricularComponentsListService } from '@modules/config/curricular-components-list/curricular-components-list.service';
+import { CurricularComponentsService } from '@services/curricular-components.service';
 import { Util } from '@core/util/util';
 import {
   ControlValueAccessor,
@@ -53,7 +53,7 @@ import { map } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CurricularComponentSelectComponent implements OnInit, OnDestroy, ControlValueAccessor {
-  private curricularComponentListService = inject(CurricularComponentsListService);
+  private ccService = inject(CurricularComponentsService);
   private fb = inject(FormBuilder);
   public destroy$: Subject<void> = new Subject<void>();
   public objectCompare = Util.objectCompare;
@@ -110,7 +110,7 @@ export class CurricularComponentSelectComponent implements OnInit, OnDestroy, Co
   }
 
   async getCurricularComponent(classYearId: string) {
-    this.curricularComponents = await firstValueFrom(this.curricularComponentListService.getAll(classYearId)) || [];
+    this.curricularComponents = await firstValueFrom(this.ccService.getAll(classYearId)) || [];
 
     if (!this.filteredOptions) {
       this.filteredOptions = this.control.valueChanges.pipe(

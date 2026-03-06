@@ -5,7 +5,7 @@ import {
   MatDialogClose, MatDialogActions,
 } from '@angular/material/dialog';
 import { Component, Inject } from '@angular/core';
-import { CurricularComponentsListService } from '../../curricular-components-list.service';
+import { CurricularComponentsService } from '@services/curricular-components.service';
 import {
   UntypedFormControl,
   Validators,
@@ -73,7 +73,7 @@ export class CurricularComponentFormDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<CurricularComponentFormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    public service: CurricularComponentsListService,
+    public service: CurricularComponentsService,
     private fb: FormBuilder
   ) {
     // Set the defaults

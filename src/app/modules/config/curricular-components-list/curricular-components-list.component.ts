@@ -22,7 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CurricularComponentFormDialogComponent } from '@modules/config/curricular-components-list/dialogs/curricular-component-form-dialog/curricular-component-form-dialog.component';
-import { CurricularComponentsListService } from './curricular-components-list.service';
+import { CurricularComponentsService } from '@services/curricular-components.service';
 import { CurricularComponent } from '@models/curricular-component.model';
 import { rowsAnimation } from '@util';
 import {
@@ -64,7 +64,7 @@ import {
 export class CurricularComponentsListComponent implements OnInit, OnDestroy {
 
   private dialog = inject(MatDialog);
-  private curricularComponentsService = inject(CurricularComponentsListService);
+  private curricularComponentsService = inject(CurricularComponentsService);
   private snackBar = inject(MatSnackBar);
   public translate = inject(TranslateService);
 

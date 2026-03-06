@@ -19,3 +19,4 @@ export * from './schools.service';
 export * from './menu.service';
 export * from './lessons.service';
 export * from './lesson-state.service';
+export * from './curricular-components.service';

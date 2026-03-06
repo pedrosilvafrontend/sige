@@ -9,7 +9,7 @@ import {
 import { Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { CurricularComponentsListService } from '../../curricular-components-list.service';
+import { CurricularComponentsService } from '@services/curricular-components.service';
 
 export interface ClassDialogData {
   id: number;
@@ -36,7 +36,7 @@ export class CurricularComponentDeleteDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<CurricularComponentDeleteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ClassDialogData,
-    public service: CurricularComponentsListService
+    public service: CurricularComponentsService
   ) {}
   confirmDelete(): void {
     this.service.deleteItem(this.data.id).subscribe({

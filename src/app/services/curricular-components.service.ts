@@ -8,7 +8,7 @@ import { environment } from '@env/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class CurricularComponentsListService {
+export class CurricularComponentsService {
   private readonly API_URL = `${environment.baseUrl}/curricular-components`;
 
   constructor(private httpClient: HttpClient) {}

@@ -1,12 +1,6 @@
 <div class="dialogContainer">
   <div class="modalHeader">
     <div class="avatarDetails">
-<!--      <label class="hoverable" for="tableFileInput">-->
-<!--        <img [src]="url ? url : user.img" alt="image">-->
-<!--        <div class="hover-text">Upload</div>-->
-<!--        <div class="background"></div>-->
-<!--      </label>-->
-<!--      <input id="tableFileInput" type='file' (change)="onImageUpload($event)">-->
       <div class="modalTitle">
         {{ dialogTitle | translate }}
       </div>
@@ -22,7 +16,6 @@
           <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
             <mat-label>{{ 'fullName' | translate }}</mat-label>
             <input matInput formControlName="fullName">
-            <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>face</mat-icon>
             @if (form.get('fullName')?.hasError('required')) {
             <mat-error>
               {{ 'validations.required' | translate }}
@@ -49,7 +42,6 @@
           <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
             <mat-label>{{ 'email' | translate }}</mat-label>
             <input matInput formControlName="email" required>
-            <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>email</mat-icon>
             @if (form.get('email')?.hasError('required') || form.get('email')?.touched) {
             <mat-error>
               {{ 'validations.email' | translate }}
@@ -86,7 +78,6 @@
           <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
             <mat-label>{{ 'mobile' | translate }}</mat-label>
             <input matInput formControlName="mobile">
-            <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>phone</mat-icon>
             @if (form.get('mobile')?.hasError('phone')) {
             <mat-error>
               {{ 'validations.phone' | translate }}
@@ -101,12 +92,6 @@
         </div>
       </div>
       <div class="row m-b-24">
-        <!--<div class="col-sm-6">
-          <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
-            <mat-label>{{ 'schools' | translate }}</mat-label>
-            <input matInput formControlName="schools">
-          </mat-form-field>
-        </div>-->
         <div class="col-sm-12">
           <fieldset>
             <legend>{{ 'schools' | translate }}</legend>
@@ -115,7 +100,6 @@
                     [matTooltip]="school.name"
                     (click)="openSchoolSelection()">
                 {{ school.acronym }}
-<!--                <mat-icon (click)="form.controls.schools.removeAt(form.controls.schools.value.indexOf(school))">close</mat-icon>-->
               </span>
             }
             @if (!form.controls.schools.value.length) {
@@ -123,20 +107,9 @@
                 {{ 'Adicionar' | translate }}
               </span>
             }
-            <!--<app-school-select (form$)="schoolSelect($event)"
-                               [getParams]="{class:true}"></app-school-select>-->
           </fieldset>
         </div>
       </div>
-<!--      <div class="row m-b-24">-->
-<!--        <div class="col-sm-12">-->
-<!--          <div class="example-button-row">-->
-<!--            <button mat-flat-button color="primary" [disabled]="!form.valid" type="submit">{{ 'save' | translate }}</button>-->
-<!--            <button mat-flat-button color="warn" mat-dialog-close tabindex="-1">{{ 'cancel' | translate }}</button>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <pre>{{ form.value | json }}</pre>-->
     </div>
     <div matDialogActions>
       <div class="dialog-buttons">
