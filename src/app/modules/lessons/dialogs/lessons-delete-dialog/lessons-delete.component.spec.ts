@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SchoolDeleteDialogComponent } from './lessons-delete.component';
+import { LessonsDialogComponent } from '@modules/lessons';
 
-describe('SchoolDeleteComponent', () => {
-  let component: SchoolDeleteDialogComponent;
-  let fixture: ComponentFixture<SchoolDeleteDialogComponent>;
+describe('LessonsDialogComponent', () => {
+  let component: LessonsDialogComponent;
+  let fixture: ComponentFixture<LessonsDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [SchoolDeleteDialogComponent]
+    imports: [LessonsDialogComponent]
 })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SchoolDeleteDialogComponent);
+    fixture = TestBed.createComponent(LessonsDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

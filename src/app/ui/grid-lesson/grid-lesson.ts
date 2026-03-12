@@ -19,9 +19,9 @@ import {
 } from 'angular-gridster2';
 import { ClassSelectComponent } from '@modules/classes/class-select/class-select.component';
 import { AuthService, LessonsService, LocalStorageService } from '@services';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { firstValueFrom, Subject, take, takeUntil } from 'rxjs';
-import { Frequency, ILessonForm, LessonBatch, SchoolClass, TimeSchedule } from '@models';
+import { Frequency, LessonBatch, SchoolClass, TimeSchedule } from '@models';
 import { TimeScheduleService } from '@services/time-schedule.service';
 import { Util } from '@util/util';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -36,8 +36,6 @@ import { ModalComponent } from '@ui/modal/modal.component';
 import { LessonsMap } from '@modules/lessons/lessons.map';
 import Swal from 'sweetalert2';
 import { NgClass, NgStyle } from '@angular/common';
-import { Color } from '@util/color';
-import { MergeObjectsPipe } from '@util/object.pipe';
 
 export type GridLessonItem = {
   lesson: LessonBatch,

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FormDialogComponent } from './event-dialog.component';
+import { DayShiftsFormDialogComponent } from './day-shifts-form-dialog.component';
 
-describe('FormDialogComponent', () => {
-  let component: FormDialogComponent;
-  let fixture: ComponentFixture<FormDialogComponent>;
+describe('DayShiftsFormDialogComponent', () => {
+  let component: DayShiftsFormDialogComponent;
+  let fixture: ComponentFixture<DayShiftsFormDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [FormDialogComponent]
+    imports: [DayShiftsFormDialogComponent]
 })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FormDialogComponent);
+    fixture = TestBed.createComponent(DayShiftsFormDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

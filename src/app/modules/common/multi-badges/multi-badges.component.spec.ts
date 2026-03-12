@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MultiBadgesComponent } from './multi-badges.component';
 
 describe('MultiBadgesComponent', () => {
-  let component: MultiBadgesComponent;
-  let fixture: ComponentFixture<MultiBadgesComponent>;
+  let component: MultiBadgesComponent<any>;
+  let fixture: ComponentFixture<MultiBadgesComponent<any>>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

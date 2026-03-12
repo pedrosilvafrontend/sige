@@ -1,4 +1,4 @@
-import { FormGroupEntriesPipe } from './form-group-to-list.pipe';
+import { FormGroupEntriesPipe } from './form-group-entries.pipe';
 
 describe('FormGroupToListPipe', () => {
   it('create an instance', () => {
