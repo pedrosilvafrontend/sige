@@ -1,0 +1,10 @@
+node_modules
+dist
+Dockerfile
+.git
+.idea
+.junie
+.vscode
+.angular
+.dockerignore
+.gitignore

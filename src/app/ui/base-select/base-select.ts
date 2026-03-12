@@ -10,6 +10,7 @@ import {
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { startWith, Subject, takeUntil } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-base-select',
@@ -47,7 +48,7 @@ export abstract class BaseSelect<T> implements ControlValueAccessor, OnInit, OnD
     this.cdr.detectChanges();
 
     this.control.valueChanges.pipe(
-      takeUntil(this.destroy$),
+      takeUntilDestroyed(),
       startWith(''),
       map((value: any) => this.filter(value || '')),
     ).subscribe((data: T[]) => {

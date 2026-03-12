@@ -27,3 +27,6 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expõe a porta padrão do Nginx
 EXPOSE 80
+
+
+CMD ["npm", "run", "start"]
