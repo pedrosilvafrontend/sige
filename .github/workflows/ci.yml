@@ -9,17 +9,19 @@ jobs:
   build:
     name: "Build and Push"
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [ 24 ]
+#    strategy:
+#      matrix:
+#        node: [ 18, 20, 24 ]
 
     steps:
       - uses: actions/checkout@v6.0.2
 
-      - name: Setup node | ${{ matrix.node }}
+#      - name: Setup node | ${{ matrix.node }}
+      - name: Setup node
         uses: actions/setup-node@v6.3.0
         with:
-          node-version: ${{ matrix.node }}
+          # node-version: ${{ matrix.node }}
+          node-version: 20
           cache: 'npm'
       - run: npm i
 #      - run: npm run test
@@ -36,8 +38,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/sige-frontend:${{ steps.generate_tag.outputs.sha }} .
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+#          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/sige-frontend:${{ steps.generate_tag.outputs.sha }},${{ secrets.DOCKERHUB_USERNAME }}/sige-frontend:latest
+#          add-hosts: '["registry.npmjs.org:443": "172.16.17.32"]'
 
-      - name: Push image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/sige-frontend:${{ steps.generate_tag.outputs.sha }}
+#      - name: Build docker image
+#        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/sige-frontend:${{ steps.generate_tag.outputs.sha }} .
+#
+#      - name: Push image
+#        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/sige-frontend:${{ steps.generate_tag.outputs.sha }}
