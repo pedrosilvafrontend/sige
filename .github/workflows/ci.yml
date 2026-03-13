@@ -63,6 +63,8 @@ jobs:
 
       - name: Deploy to App Runner
         uses: awslabs/amazon-app-runner-deploy@main
+        env:
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
         with:
           service: sige-app
           image: ${{ steps.build-image.outputs.image }}
@@ -71,6 +73,8 @@ jobs:
           cpu: 1
           memory: 2
           port: 80
+          copy-env-vars: |
+            BACKEND_URL
 #
 #      - name: Push image
 #        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/sige-frontend:${{ steps.generate_tag.outputs.sha }}

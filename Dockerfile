@@ -16,14 +16,14 @@ RUN npm run build -- --output-path=./dist/out --base-href=/
 # Estágio de execução (servir com Nginx)
 FROM nginx:1.25.5-alpine
 
-# Remove a configuração padrão do Nginx
-RUN rm /etc/nginx/conf.d/default.conf
+# URL padrão do backend (pode ser sobrescrita no App Runner)
+ENV BACKEND_URL=http://127.0.0.1:8080
 
 # Copia os arquivos da build do Angular para o diretório de serviço do Nginx
 COPY --from=build /app/dist/out/browser /usr/share/nginx/html
 
-# Copia uma configuração customizada do Nginx
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copia um template de configuração customizada do Nginx
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 
 # Expõe a porta padrão do Nginx
 EXPOSE 80
