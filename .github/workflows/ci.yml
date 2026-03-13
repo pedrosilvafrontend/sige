@@ -70,7 +70,7 @@ jobs:
           region: us-east-2
           cpu: 1
           memory: 2
-          port: 4200
+          port: 80
 #
 #      - name: Push image
 #        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/sige-frontend:${{ steps.generate_tag.outputs.sha }}
