@@ -62,14 +62,14 @@ jobs:
           echo "image=$IMAGE" >> $GITHUB_OUTPUT
 
       - name: Deploy to App Runner
-        uses: awslabs/amazon-apprunner-deploy@main
+        uses: awslabs/amazon-app-runner-deploy@main
         with:
           service: sige-app
           image: ${{ steps.build-image.outputs.image }}
-          accessRoleArn: arn:aws:iam::137140610965:role/app-runner-role
+          access-role-arn: arn:aws:iam::137140610965:role/app-runner-role
           region: us-east-2
           cpu: 1
-          memory: 1
+          memory: 2
           port: 4200
 #
 #      - name: Push image
