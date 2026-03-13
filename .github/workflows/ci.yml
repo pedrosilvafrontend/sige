@@ -51,12 +51,26 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build docker image
+        id: build-image
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           TAG: ${{ steps.generate_tag.outputs.sha }}
         run: |
           docker build -t $REGISTRY/tride-ci:$TAG .
           docker push $REGISTRY/tride-ci:$TAG
+          IMAGE=$(echo $REGISTRY/tride-ci:$TAG)
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+
+      - name: Deploy to App Runner
+        uses: awslabs/amazon-apprunner-deploy@main
+        with:
+          service: sige-app
+          image: ${{ steps.build-image.outputs.image }}
+          accessRoleArn: arn:aws:iam::137140610965:role/app-runner-role
+          region: us-east-2
+          cpu: 1
+          memory: 1
+          port: 4200
 #
 #      - name: Push image
 #        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/sige-frontend:${{ steps.generate_tag.outputs.sha }}
