@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/pedrosilvafrontend/sige/compare/v1.0.0...v1.0.1) (2026-03-13)
+
+
+### Bug Fixes
+
+* config AWS credentials ([01b3149](https://github.com/pedrosilvafrontend/sige/commit/01b314907ec6cbe77501ee2bca384dee5756a339))
+
 # 1.0.0 (2026-03-13)
 
 
