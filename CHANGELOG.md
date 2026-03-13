@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/pedrosilvafrontend/sige/compare/v1.0.2...v1.0.3) (2026-03-13)
+
+
+### Bug Fixes
+
+* CI variables ([37d445c](https://github.com/pedrosilvafrontend/sige/commit/37d445c89c24b28cef8e28759018daf99f6c277a))
+
 ## [1.0.2](https://github.com/pedrosilvafrontend/sige/compare/v1.0.1...v1.0.2) (2026-03-13)
 
 
