@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-node@v6.3.0
         with:
           # node-version: ${{ matrix.node }}
-          node-version: 20
+          node-version: 24
           cache: 'npm'
       - run: npm i
 #      - run: npm run test
@@ -32,19 +32,31 @@ jobs:
           SHA=$(echo "$GITHUB_SHA" | head -c 7)
           echo "sha=$SHA" >> $GITHUB_OUTPUT
 
-      - name: Login into the container registry
-        uses: docker/login-action@v3
+      - name: Configure AWD credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+#          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: arn:aws:iam::137140610965:role/ecr-role
+          aws-region: us-east-2
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Build and Push
-        uses: docker/build-push-action@v5
-        with:
-#          context: .
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/sige-frontend:${{ steps.generate_tag.outputs.sha }},${{ secrets.DOCKERHUB_USERNAME }}/sige-frontend:latest
-#          add-hosts: '["registry.npmjs.org:443": "172.16.17.32"]'
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+#      - name: Login into the container registry
+#        uses: docker/login-action@v3
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+#      - name: Build and Push
+#        uses: docker/build-push-action@v5
+#        with:
+#          push: true
+#          tags: ${{ secrets.DOCKERHUB_USERNAME }}/sige-frontend:${{ steps.generate_tag.outputs.sha }},${{ secrets.DOCKERHUB_USERNAME }}/sige-frontend:latest
 
 #      - name: Build docker image
 #        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/sige-frontend:${{ steps.generate_tag.outputs.sha }} .
