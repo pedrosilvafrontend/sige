@@ -1,3 +1,10 @@
+## [1.0.7](https://github.com/pedrosilvafrontend/sige/compare/v1.0.6...v1.0.7) (2026-03-15)
+
+
+### Bug Fixes
+
+* update Dockerfile and entrypoint script ([b6bfc2e](https://github.com/pedrosilvafrontend/sige/commit/b6bfc2ea31d5918083f84ed5088a6d0fa853d658))
+
 ## [1.0.6](https://github.com/pedrosilvafrontend/sige/compare/v1.0.5...v1.0.6) (2026-03-15)
 
 
