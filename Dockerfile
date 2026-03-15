@@ -28,4 +28,4 @@ COPY nginx.conf /etc/nginx/templates/default.conf.template
 # Expõe a porta padrão do Nginx
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/bin/sh", "-c", "echo '--- /etc/nginx/conf.d/default.conf'; cat /etc/nginx/conf.d/default.conf; nginx -g 'daemon off;'"]
