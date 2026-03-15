@@ -22,6 +22,9 @@ ENV BACKEND_URL=http://127.0.0.1:8080
 # Copia os arquivos da build do Angular para o diretório de serviço do Nginx
 COPY --from=build /app/dist/out/browser /usr/share/nginx/html
 
+# Remove a configuracao padrao para que apenas o template customizado seja renderizado.
+RUN rm -f /etc/nginx/conf.d/default.conf
+
 # Copia um template de configuração customizada do Nginx
 COPY nginx.conf /etc/nginx/templates/default.conf.template
 
