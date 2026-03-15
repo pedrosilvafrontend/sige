@@ -27,8 +27,11 @@ RUN rm -f /etc/nginx/conf.d/default.conf
 
 # Copia um template de configuração customizada do Nginx
 COPY nginx.conf /etc/nginx/templates/default.conf.template
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Expõe a porta padrão do Nginx
 EXPOSE 80
 
-CMD ["/bin/sh", "-c", "echo '--- /etc/nginx/conf.d/default.conf'; cat /etc/nginx/conf.d/default.conf; nginx -g 'daemon off;'"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
