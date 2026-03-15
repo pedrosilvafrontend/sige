@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/pedrosilvafrontend/sige/compare/v1.0.4...v1.0.5) (2026-03-15)
+
+
+### Bug Fixes
+
+* remove default Nginx ([10a4df4](https://github.com/pedrosilvafrontend/sige/commit/10a4df47bc9be1f4ff3375477fabed3fba759844))
+
 ## [1.0.4](https://github.com/pedrosilvafrontend/sige/compare/v1.0.3...v1.0.4) (2026-03-15)
 
 
