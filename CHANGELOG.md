@@ -1,3 +1,10 @@
+## [1.0.6](https://github.com/pedrosilvafrontend/sige/compare/v1.0.5...v1.0.6) (2026-03-15)
+
+
+### Bug Fixes
+
+* nginx.conf - remove X-Proxy-Backend ([2584d55](https://github.com/pedrosilvafrontend/sige/commit/2584d5546ff13402b0fc5ae265172195f45df4b4))
+
 ## [1.0.5](https://github.com/pedrosilvafrontend/sige/compare/v1.0.4...v1.0.5) (2026-03-15)
 
 
