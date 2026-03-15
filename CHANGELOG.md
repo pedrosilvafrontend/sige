@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/pedrosilvafrontend/sige/compare/v1.0.3...v1.0.4) (2026-03-15)
+
+
+### Bug Fixes
+
+* BACKEND_URL environment variable ([4a3e0c5](https://github.com/pedrosilvafrontend/sige/commit/4a3e0c5785282bc905ba2528d691a816bba09ed9))
+
 ## [1.0.3](https://github.com/pedrosilvafrontend/sige/compare/v1.0.2...v1.0.3) (2026-03-13)
 
 
