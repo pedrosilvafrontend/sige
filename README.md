@@ -10,6 +10,15 @@ To start a local development server, run:
 ng serve
 ```
 
+To run with the backend proxy enabled, set `BACKEND_URL` before `ng serve` or use one of the existing scripts:
+
+```bash
+BACKEND_URL=http://localhost:8080 npm start
+npm run start:8080
+```
+
+For production/App Runner, the container also expects `BACKEND_URL`, which is consumed by the Nginx proxy.
+
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
 ## Code scaffolding
