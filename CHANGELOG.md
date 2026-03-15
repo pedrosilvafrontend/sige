@@ -1,3 +1,10 @@
+## [1.0.8](https://github.com/pedrosilvafrontend/sige/compare/v1.0.7...v1.0.8) (2026-03-15)
+
+
+### Bug Fixes
+
+* update proxy headers ([2c573cd](https://github.com/pedrosilvafrontend/sige/commit/2c573cd5ac0df43fabeaef041c1b878fbf54a7cb))
+
 ## [1.0.7](https://github.com/pedrosilvafrontend/sige/compare/v1.0.6...v1.0.7) (2026-03-15)
 
 
