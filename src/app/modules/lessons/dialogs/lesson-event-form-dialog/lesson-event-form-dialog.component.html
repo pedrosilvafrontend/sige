@@ -22,7 +22,7 @@
 
         <div class="col-sm-12">
 <!--          @let proof = event.evalTools.proof;-->
-          <ui-modal #planningModal [template]="planningTemplate" [options]="{width: '800px'}"></ui-modal>
+          <ui-modal #planningModal [template]="planningTemplate" [options]="planningModalOptions"></ui-modal>
           <ui-modal #proofModal [template]="proofTemplate" [options]="{width: '800px'}"></ui-modal>
 
           <ng-template #planningTemplate>
@@ -30,14 +30,20 @@
             <mat-dialog-content>
               <div class="row mt-3" [formGroup]="extraForm">
                 <div class="col-md-12">
-                  <ui-textarea
+                  <!--<ui-textarea
                     id="planning"
                     name="planning"
                     height="14em"
                     [label]="'Planning' | translate"
                     [required]="true"
                     formControlName="planning"
-                  ></ui-textarea>
+                  ></ui-textarea>-->
+
+                  <ui-text-editor
+                    id="planning"
+                    [required]="true"
+                    formControlName="planning"
+                  ></ui-text-editor>
                 </div>
               </div>
             </mat-dialog-content>
