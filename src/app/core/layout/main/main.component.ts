@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MenuComponent } from '@ui/menu/menu.component';
 import { CdkMenuModule } from '@angular/cdk/menu';
+import { Footer } from '@core/layout/footer/footer';
 
 @Component({
   selector: 'app-admin',
@@ -9,6 +10,7 @@ import { CdkMenuModule } from '@angular/cdk/menu';
     CdkMenuModule,
     RouterOutlet,
     MenuComponent,
+    Footer,
   ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss'
