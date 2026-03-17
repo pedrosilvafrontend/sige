@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/pedrosilvafrontend/sige/compare/v1.1.3...v1.1.4) (2026-03-17)
+
+
+### Bug Fixes
+
+* temp remove lessons list for teachers ([77c7d4a](https://github.com/pedrosilvafrontend/sige/commit/77c7d4a8cfed66793665e58bfb6f46430195ba52))
+
 ## [1.1.3](https://github.com/pedrosilvafrontend/sige/compare/v1.1.2...v1.1.3) (2026-03-17)
 
 
