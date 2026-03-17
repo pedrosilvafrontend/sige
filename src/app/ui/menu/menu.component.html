@@ -36,6 +36,12 @@
     </button>
     <button class="menu-bar-item"
             cdkMenuItem
+            [routerLink]="'dashboard'"
+    >
+      Dashboard
+    </button>
+    <button class="menu-bar-item"
+            cdkMenuItem
             [routerLink]="'calendar'"
     >
       {{ 'calendar' | translate }}
