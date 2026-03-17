@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/pedrosilvafrontend/sige/compare/v1.1.4...v1.1.5) (2026-03-17)
+
+
+### Bug Fixes
+
+* remove class action buttons for teachers ([e927fe7](https://github.com/pedrosilvafrontend/sige/commit/e927fe74211d7021181bb0fc0e55b07494df15a8))
+
 ## [1.1.4](https://github.com/pedrosilvafrontend/sige/compare/v1.1.3...v1.1.4) (2026-03-17)
 
 
