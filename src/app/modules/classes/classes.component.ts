@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+ import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MAT_DATE_LOCALE, MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { rowsAnimation } from '@util';
 import { CommonModule, NgClass } from '@angular/common';
@@ -22,7 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ClassFormDialogComponent } from './dialogs/class-form-dialog/class-form-dialog.component';
-import { ClassesService } from '@services';
+import { AuthService, ClassesService } from '@services';
 import { SchoolClass } from '@models';
 import { ClassDeleteDialogComponent } from './dialogs/class-delete-dialog/class-delete.component';
 import { PageHeaderComponent } from '@ui/page-header/page-header.component';
@@ -63,7 +63,10 @@ export class ClassesComponent implements OnInit, OnDestroy {
   private dialog = inject(MatDialog);
   private classService = inject(ClassesService);
   private snackBar = inject(MatSnackBar);
-  public translate = inject(TranslateService);
+  public translate = inject(TranslateService)
+  private authService = inject(AuthService);
+
+  public user = this.authService.user$.value;
 
   columnsLabels = ['code', 'school', 'actions'].map((key: string) => this.translate.instant(key));
 

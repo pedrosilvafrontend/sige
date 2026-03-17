@@ -170,16 +170,18 @@
           <!-- actions -->
           <ng-container matColumnDef="actions">
             <mat-header-cell class="pr-0" *matHeaderCellDef>Actions</mat-header-cell>
-            <mat-cell *matCellDef="let row; let i=index;" class="pr-0">
-              <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="editCall(row)"
-                      class="tbl-action-btn">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="deleteItem(row)"
-                      class="tbl-action-btn">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </mat-cell>
+              <mat-cell *matCellDef="let row; let i=index;" class="pr-0">
+                @if (user.role !== 'teacher') {
+                  <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="editCall(row)"
+                          class="tbl-action-btn">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="accent" (click)="$event.stopPropagation()" (click)="deleteItem(row)"
+                          class="tbl-action-btn">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
+              </mat-cell>
           </ng-container>
           <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
           <mat-row *matRowDef="let row; columns: getDisplayedColumns();" (click)="editCall(row)"
