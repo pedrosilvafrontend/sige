@@ -1,3 +1,13 @@
+# [1.1.0](https://github.com/pedrosilvafrontend/sige/compare/v1.0.8...v1.1.0) (2026-03-17)
+
+
+### Features
+
+* add ngx-editor dependency ([e93e332](https://github.com/pedrosilvafrontend/sige/commit/e93e332ce71483dc32cff4c57238801cc05beba5))
+* footer with app version info ([f5d0953](https://github.com/pedrosilvafrontend/sige/commit/f5d0953ab08c995138baf67b319e5c109560d6cd))
+* footer with app version info ([86f1dca](https://github.com/pedrosilvafrontend/sige/commit/86f1dca5fe7f5e8d2f46fadebad6330e1c1a2ec2))
+* rich text editor component ([dedab12](https://github.com/pedrosilvafrontend/sige/commit/dedab124ae16cd851125b5716ede864032945d34))
+
 ## [1.0.8](https://github.com/pedrosilvafrontend/sige/compare/v1.0.7...v1.0.8) (2026-03-15)
 
 
