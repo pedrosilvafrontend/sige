@@ -18,6 +18,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { provideNgxMask } from 'ngx-mask';
+import { NgxEditorModule } from 'ngx-editor';
 
 export const MY_DATE_FORMATS = {
   parse: {
@@ -69,6 +70,18 @@ export const appConfig: ApplicationConfig = {
         //   deps: [HttpClient],
         // },
       }),
+      NgxEditorModule.forRoot({
+        locals: {
+          bold: 'Negrito',
+          italic: 'Itálico',
+          code: 'Código',
+          underline: 'Underline',
+          // ...
+        },
+        icons: {
+          // bold: '<img src="https://example.com/icon.png" width="15" height="15" alt="">',
+        },
+      })
     ),
     {
       provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,

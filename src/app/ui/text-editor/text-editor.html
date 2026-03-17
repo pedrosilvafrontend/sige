@@ -1,0 +1,9 @@
+<div class="NgxEditor__Wrapper">
+  <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"> </ngx-editor-menu>
+  <ngx-editor
+    [editor]="editor"
+    [formControl]="control"
+    [placeholder]="''"
+    (blur)="handleBlur()"
+  ></ngx-editor>
+</div>

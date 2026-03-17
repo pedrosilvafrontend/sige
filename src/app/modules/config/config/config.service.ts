@@ -3,6 +3,7 @@ import { BaseService } from '@services';
 import { BehaviorSubject, Observable, take } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ConfigData, ConfigResponse } from '@models/config.model';
+import { AppData } from '@models/app-data';
 
 @Injectable({
   providedIn: 'root'
@@ -49,6 +50,12 @@ export class ConfigService extends BaseService<ConfigData> {
         this.config.next(cfg);
         return cfg.school;
       })
+    );
+  }
+
+  getAppVersion(): Observable<AppData> {
+    return this.http.get<AppData>('/version.json').pipe(
+      catchError(this.handleError)
     );
   }
 }

@@ -75,7 +75,7 @@ ul {
   padding: 1rem;
   margin: 0 10px;
   background-color: $white;
-  height: calc(100vh - 3rem - 10px);
+  height: calc(100vh - 3rem - 15px);
   box-sizing: border-box;
   border-radius: $field-border-radius;
   border: solid $tertiary;
@@ -101,6 +101,9 @@ ul {
 // }
 .display-none {
   display: none;
+}
+.text-right {
+  text-align: right;
 }
 .text-muted {
   color: #96a2b4;

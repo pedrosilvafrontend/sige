@@ -2,9 +2,9 @@ import {
   MAT_DIALOG_DATA,
   MatDialogRef,
   MatDialogContent,
-  MatDialogClose, MatDialogActions, MatDialogTitle,
+  MatDialogClose, MatDialogActions, MatDialogTitle, MatDialogConfig,
 } from '@angular/material/dialog';
-import { ChangeDetectorRef, Component, inject, OnInit, output } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormsModule,
@@ -27,30 +27,23 @@ import {
   LessonEventFormComponent
 } from '@modules/lessons/form/lesson-event.form.component/lesson-event.form.component';
 import {
-  LessonBatch,
   LessonEvent, LessonEventExtra,
   LessonEventForm,
   LessonEventFormValue,
   Proof,
   School,
   SchoolClass,
-  Work
 } from '@models';
-import { AuthService, LessonStateService } from '@services';
+import { AuthService } from '@services';
 import { Button } from '@ui/button/button';
-import { LessonEventService } from '@services/lesson-event.service';
 import { ProofService } from '@core/services/proof.service';
-import { Util } from '@util/util';
-import { takeUntil } from 'rxjs';
-import { UpdateService } from '@services/update.service';
 import { ModalComponent } from '@ui/modal/modal.component';
-import { Textarea } from '@ui/field/textarea/textarea';
 import { LessonEventExtraService } from '@services/lesson-event-extra.service';
 import { TestFormComponent } from '@modules/common/form/test-form/test.form';
-import { JsonPipe, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { IProofForm } from '@form/proof.form';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MessageService } from '@services/message.service';
+import { TextEditor } from '@ui/text-editor/text-editor';
 
 export interface DialogData {
   item: LessonEvent;
@@ -82,23 +75,20 @@ export interface DialogData {
     MatDialogActions,
     MatDialogTitle,
     ModalComponent,
-    Textarea,
     TestFormComponent,
     NgClass,
+    TextEditor,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit {
   protected dialogData: DialogData = inject(MAT_DIALOG_DATA);
   public ref = inject(MatDialogRef<LessonEventFormDialogComponent>);
-  private lessonState = inject(LessonStateService);
   private proofService = inject(ProofService);
   private auth = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
-  private updateService = inject(UpdateService);
   private fb = inject(FormBuilder);
   private lessonEventExtraService = inject(LessonEventExtraService);
   private message = inject(MessageService);
-
   public user = this.auth.user$.value;
   public closeRefresh = false;
   public event!: LessonEvent;
@@ -120,23 +110,14 @@ export class LessonEventFormDialogComponent implements OnInit {
   public schoolId: number = 0;
   public disabled = false;
   public proofStatusClass: any = Proof.statusClass;
+  public planningModalOptions: MatDialogConfig = {
+    minWidth: '800px',
+    minHeight: '300px',
+    disableClose: true
+  };
 
   constructor() {
     this.readonly = this.dialogData.action === 'view';
-    // const lessonBatch = this.lessonSignal();
-    // if (lessonBatch) {
-    //   this.lessonBatch = lessonBatch;
-    // }
-
-    // console.log('Lesson Event Form Dialog Component', this.lesson);
-    // this.action = this.lesson?.id;
-    // if (this.action === 'edit') {
-    //   this.dialogTitle = dialogData.table.curricularComponent?.name || '';
-    //   this.data = dialogData.table;
-    // } else {
-    //   this.dialogTitle = 'New record';
-    //   this.data = new Lesson();
-    // }
   }
 
   savePlanning(callback?: () => void) {
@@ -156,7 +137,6 @@ export class LessonEventFormDialogComponent implements OnInit {
     this.lessonEventExtraService.params({ lessonId }).add(data).subscribe((response: LessonEventExtra) => {
       this.message.success('Salvo com sucesso!');
       this.extra = response;
-      // this.form.patchValue(response);
       this.closeRefresh = true;
       callback?.();
     })
@@ -190,8 +170,6 @@ export class LessonEventFormDialogComponent implements OnInit {
             this.closeRefresh = true;
             this.proofForm.patchValue(response);
             this.proof = response;
-            // Object.assign(this.proof, response);
-            // this.ref.close(response);
           },
           error: (error) => {
             console.error('Proof Update Error:', error);
@@ -215,15 +193,12 @@ export class LessonEventFormDialogComponent implements OnInit {
       Object.assign(this.event.evalTools.proof || {}, this.proofForm.value);
       this.closeRefresh = true;
       callback?.();
-      // this.ref.close(proof);
     })
   }
 
   setForm(form: FormGroup<LessonEventForm>) {
     this.form = form;
     this.cdr.detectChanges();
-    // const lesson = (this.dialogData?.lesEvent || {});
-    // this.form.patchValue(lesson as any);
   }
 
   close() {
