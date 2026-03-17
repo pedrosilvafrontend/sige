@@ -17,6 +17,7 @@ import { LessonEventService } from '@services/lesson-event.service';
 import { UpdateService } from '@services/update.service';
 import { MatBadge } from '@angular/material/badge';
 import { ActivityService } from '@modules/config/activity/activity.service';
+import { AuthService } from '@services';
 
 @Component({
   selector: 'app-main-dashboard',
@@ -50,6 +51,8 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   private activityService = inject(ActivityService);
   private destroy$: Subject<void> = new Subject<void>();
   private pendingUpdate = false;
+  // private authService = inject(AuthService);
+  // public user = this.authService.user$.value;
   user = input.required<User>();
   events: LessonEvent[] = [];
   dateFormat = 'dd/MM/yyyy';
@@ -68,7 +71,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
 
   async getEvents() {
     const params = {
-      limit: 12,
+      limit: this.user().role === 'teacher' ? 24 : 12,
       prevDate: false,
     }
     this.events = await firstValueFrom(this.lessonEventService.getAll(params));
