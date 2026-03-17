@@ -1,3 +1,11 @@
+## [1.1.2](https://github.com/pedrosilvafrontend/sige/compare/v1.1.1...v1.1.2) (2026-03-17)
+
+
+### Bug Fixes
+
+* ci and generate-version-json script adjustments ([84a11b5](https://github.com/pedrosilvafrontend/sige/commit/84a11b560360bcec3a7ecebc5cf043f43f2e7ecc))
+* releaserc ([41142ca](https://github.com/pedrosilvafrontend/sige/commit/41142caae4d8d82c08b880a437f0a23f39106d8f))
+
 ## [1.1.1](https://github.com/pedrosilvafrontend/sige/compare/v1.1.0...v1.1.1) (2026-03-17)
 
 
