@@ -1,3 +1,10 @@
+## [1.1.6](https://github.com/pedrosilvafrontend/sige/compare/v1.1.5...v1.1.6) (2026-03-17)
+
+
+### Bug Fixes
+
+* limit events on dashboard for teachers ([31a5db5](https://github.com/pedrosilvafrontend/sige/commit/31a5db543982c3e140e22cb38eb0df5b79f922f1))
+
 ## [1.1.5](https://github.com/pedrosilvafrontend/sige/compare/v1.1.4...v1.1.5) (2026-03-17)
 
 
