@@ -1,3 +1,15 @@
+## [1.1.3](https://github.com/pedrosilvafrontend/sige/compare/v1.1.2...v1.1.3) (2026-03-17)
+
+
+### Bug Fixes
+
+* temp block edit method ([bba0532](https://github.com/pedrosilvafrontend/sige/commit/bba0532a4aff4709d166a792c5bb027a36cbe882))
+
+
+### Features
+
+* dashboard menu ([18f2cd2](https://github.com/pedrosilvafrontend/sige/commit/18f2cd29f983ff8bf8677d749c97dd9ad0e4f464))
+
 ## [1.1.2](https://github.com/pedrosilvafrontend/sige/compare/v1.1.1...v1.1.2) (2026-03-17)
 
 
