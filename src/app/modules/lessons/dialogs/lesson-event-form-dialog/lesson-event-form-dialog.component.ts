@@ -112,6 +112,7 @@ export class LessonEventFormDialogComponent implements OnInit {
   public proofStatusClass: any = Proof.statusClass;
   public planningModalOptions: MatDialogConfig = {
     minWidth: '800px',
+    maxWidth: '1400px',
     minHeight: '300px',
     disableClose: true
   };
