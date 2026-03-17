@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/pedrosilvafrontend/sige/compare/v1.1.0...v1.1.1) (2026-03-17)
+
+
+### Bug Fixes
+
+* dialog width adjustment ([65cd581](https://github.com/pedrosilvafrontend/sige/commit/65cd58140e90a6bb363d17f642e0d1fcd46f0088))
+
 # [1.1.0](https://github.com/pedrosilvafrontend/sige/compare/v1.0.8...v1.1.0) (2026-03-17)
 
 
