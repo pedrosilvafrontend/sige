@@ -102,6 +102,10 @@ export class GridTeacherLesson implements OnInit, OnDestroy {
   }
 
   edit(itemConfig: GridsterItemConfig, item: GridsterItem) {
+    if (this.user.role === 'teacher') {
+      // TODO: temporário
+      return;
+    }
     const empty = !itemConfig['data']?.lesson?.curricularComponent?.name;
     if (empty) {
       return;
