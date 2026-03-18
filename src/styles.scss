@@ -669,3 +669,8 @@ button.mdc-button[data-badgeColor="info"]::after {
 .swal2-shown .cdk-overlay-container {
   display: none;
 }
+
+.error-snackbar {
+  background-color: $danger;
+  color: $white;
+}

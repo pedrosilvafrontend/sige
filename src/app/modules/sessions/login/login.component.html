@@ -4,7 +4,7 @@
     <img ngSrc="/sige-azul.svg" alt="SIGE: Sistema Integrado de Gestão Escolar" class="logo" width="250" height="250" priority>
   </div>
 
-  <form [formGroup]="form">
+  <form [formGroup]="form" (ngSubmit)="login()">
     <ui-field
       [label]="'username'"
       [placeholder]="'username'"
@@ -26,7 +26,7 @@
       formControlName="password"></ui-field>
 
     <div class="d-flex justify-content-center">
-      <ui-button (click)="login()">Login</ui-button>
+      <ui-button type="submit" [disabled]="form.invalid">Login</ui-button>
     </div>
   </form>
 
