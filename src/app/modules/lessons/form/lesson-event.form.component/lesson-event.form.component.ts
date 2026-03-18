@@ -81,7 +81,6 @@ export class LessonEventFormComponent implements OnInit, OnDestroy {
   public showProof = false;
   public user = this.userService.user;
   readonly proofPanelState = signal(false);
-  public accordion = viewChild.required(MatAccordion);
   public params = {
     lessonId: 0,
     eventId: 0,
@@ -116,11 +115,6 @@ export class LessonEventFormComponent implements OnInit, OnDestroy {
         this.form.enable();
       }
 
-      if (this.accordion()) {
-        this.accordion().ngOnChanges = (changes => {
-          console.log(changes)
-        });
-      }
       if (this.proofPanelState()) {
         console.log(this.proofPanelState())
       }
