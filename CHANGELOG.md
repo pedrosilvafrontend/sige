@@ -1,3 +1,10 @@
+## [1.1.7](https://github.com/pedrosilvafrontend/sige/compare/v1.1.6...v1.1.7) (2026-03-18)
+
+
+### Bug Fixes
+
+* disable class form for teachers ([bac195c](https://github.com/pedrosilvafrontend/sige/commit/bac195cb79955ca4e07d51076c450ace098a894a))
+
 ## [1.1.6](https://github.com/pedrosilvafrontend/sige/compare/v1.1.5...v1.1.6) (2026-03-17)
 
 
