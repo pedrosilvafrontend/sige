@@ -13,7 +13,7 @@ import {
   OnInit,
   ViewEncapsulation
 } from '@angular/core';
-import { ClassesService } from '@services';
+import { AuthService, ClassesService } from '@services';
 import {
   FormBuilder,
   FormGroup,
@@ -88,6 +88,8 @@ export class ClassFormDialogComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   public data: DialogData = inject(MAT_DIALOG_DATA);
   public dialogRef = inject(MatDialogRef<ClassFormDialogComponent>);
+  private authService = inject(AuthService);
+  public user = this.authService.user$.value;
 
   action: string;
   dialogTitle: string;
@@ -141,13 +143,18 @@ export class ClassFormDialogComponent implements OnInit, OnDestroy {
 
     form.controls.code.disable();
     this.formChanges(form);
+
+    if (this.user.role === 'teacher') {
+      form.disable();
+    }
     return form;
   }
 
   formChanges(form: FormGroup): void {
     form.valueChanges.pipe(takeUntil(this.subDestroy)).subscribe({
       next: data => {
-        const code = [data.yearId || '', data.dayShiftId, data.suffixId].join('');
+        const year = this.classYears.find(y => y.id === data.yearId);
+        const code = [data.degreeId || '', year?.name || '', data.dayShiftId, data.suffixId].join('');
         this.form.controls['code'].setValue(code, { emitEvent: false });
       }
     })

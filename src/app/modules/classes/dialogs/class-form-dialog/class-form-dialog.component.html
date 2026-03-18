@@ -136,9 +136,10 @@
             <mat-select
               [value]="form.get('school')?.value"
               (valueChange)="form.patchValue({school: $event})"
+              [disabled]="user.role === 'teacher'"
               [compareWith]="objectCompare">
               @for (item of schools; track item.id) {
-                <mat-option [value]="item">
+                <mat-option [value]="item" [disabled]="user.role === 'teacher'">
                   {{ item.name }}
                 </mat-option>
               }
@@ -161,8 +162,12 @@
     </div>
     <div matDialogActions>
       <div class="dialog-buttons">
-        <ui-button [color]="'neutral'" mat-dialog-close tabindex="-1">{{ 'Cancel' | translate }}</ui-button>
-        <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>
+        @if (user.role === 'teacher') {
+          <ui-button [color]="'neutral'" mat-dialog-close tabindex="-1">{{ 'close' | translate }}</ui-button>
+        } @else {
+          <ui-button [color]="'neutral'" mat-dialog-close tabindex="-1">{{ 'Cancel' | translate }}</ui-button>
+          <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>
+        }
       </div>
     </div>
   </form>
