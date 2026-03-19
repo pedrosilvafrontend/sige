@@ -1,3 +1,17 @@
+## [1.1.8](https://github.com/pedrosilvafrontend/sige/compare/v1.1.7...v1.1.8) (2026-03-19)
+
+
+### Bug Fixes
+
+* takeuntil ([9dd50f3](https://github.com/pedrosilvafrontend/sige/commit/9dd50f3308954a32ecbb536d62350f51773c72d0))
+
+
+### Features
+
+* event card and class colors ([012bc27](https://github.com/pedrosilvafrontend/sige/commit/012bc27ee7e75b919175a349bce277f7dc9f9b99))
+* event card and class colors ([05ed969](https://github.com/pedrosilvafrontend/sige/commit/05ed96961133fdf5a6457675578e9292d2fa18fb))
+* health check and login error handling ([065650f](https://github.com/pedrosilvafrontend/sige/commit/065650f52cba305e178533f3c48fe5c024b4759e))
+
 ## [1.1.7](https://github.com/pedrosilvafrontend/sige/compare/v1.1.6...v1.1.7) (2026-03-18)
 
 
