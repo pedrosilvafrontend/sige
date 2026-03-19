@@ -1,0 +1,70 @@
+.mat-mdc-card {
+  width: 100%;
+  color: #666666;
+  margin-bottom: 0;
+  border-radius: 4px;
+  box-shadow: none;
+  outline: 1px solid #efefef;
+  .day {
+    font-size: 2.8rem;
+    line-height: 2.8rem;
+    //color: #cccccc;
+    opacity: 0.7;
+    font-weight: 800;
+  }
+  .month {
+    font-size: 1.2rem;
+    line-height: 1.2em;
+    //color: #bbbbbb;
+    opacity: 0.7;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .hour {
+    font-size: 1rem;
+    //color: #aaaaaa;
+    opacity: 0.85;
+    font-weight: 500;
+  }
+  .activities {
+    height: 2.2rem;
+  }
+  .curricular-component {
+    font-size: 1.2rem;
+    line-height: 1.4rem;
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0.85;
+  }
+  .teacher-name {
+    font-size: 0.8rem;
+    vertical-align: middle;
+    opacity: 0.85;
+  }
+  .school {
+    opacity: 0.85;
+  }
+  .month, .curricular-component {
+    height: 1.4rem;
+    margin: 0.2rem 0;
+  }
+  .badge {
+    border: 1px solid currentColor;
+    background-color: transparent;
+    color: inherit;
+    opacity: 0.85;
+    font-size: 0.85em;
+    margin: 0;
+    &.dot-badge-info,
+    &.dot-badge-success,
+    &.dot-badge-danger,
+    &.dot-badge-warning {
+      &::after {
+        color: inherit;
+        border: 1px solid currentColor;
+      }
+    }
+  }
+}

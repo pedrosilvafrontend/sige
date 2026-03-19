@@ -6,6 +6,10 @@ import { LoadingService } from '@services/loading.service';
 import { Loader } from '@ui/loader/loader';
 import { AuthService, LocalStorageService } from '@services';
 import Swal from 'sweetalert2'
+import { AppService } from '@services/app.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError } from 'rxjs/operators';
+import { firstValueFrom, of } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -16,16 +20,46 @@ import Swal from 'sweetalert2'
 export class App implements OnInit {
   protected readonly title = signal('sige');
   private translate = inject(TranslateService);
+  private service = inject(AppService);
   private loading = inject(LoadingService);
   private auth = inject(AuthService);
   private store = inject(LocalStorageService);
   private router = inject(Router);
   gridLessonsKey = 'gridLessons';
+  healthError = signal(false);
 
   constructor() {
     this.translate.use('pt');
     this.translate.setTranslation('pt', defaultLanguage, true);
     this.onRouteNavigate();
+
+    this.healthCheck().then();
+  }
+
+  async healthCheck() {
+    try {
+      const onError = (error: any) => {
+        this.healthError.set(true);
+        throw error;
+      }
+      const healthCheck$ = this.service.healthCheck().pipe(
+        takeUntilDestroyed(),
+        catchError(onError)
+      )
+      const response = await firstValueFrom(healthCheck$);
+      console.log('Health check response:', response);
+    } catch (error) {
+      const refresh = await Swal.fire({
+        title: 'API indisponível',
+        text: 'Atualize a página para tentar novamente.',
+        icon: 'error',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        confirmButtonText: "Atualizar a página",
+      });
+
+      refresh.isConfirmed && window.location.reload();
+    }
   }
 
   onRouteNavigate() {

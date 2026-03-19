@@ -4,22 +4,20 @@
     <div class="row row-gap-24 my-4">
       @for (event of events; track event.date) {
         <div class="col activity-col">
+          <ui-event-card [user]="user()" [event]="event" [activities]="activities" (click)="openLessonEventDialog(event)"></ui-event-card>
 <!--        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 col-xxl-2 m-b-16">-->
-          <mat-card class="cursor-pointer" (click)="openLessonEventDialog(event)">
+          <!--<mat-card class="cursor-pointer" (click)="openLessonEventDialog(event)">
             <mat-card-content>
-<!--              <div class="d-flex gap-2">-->
               <div class="">
 
                 <div class="activities">
                   @let status = event.evalTools.proof?.status || '';
                   @if (status === 'APPROVED') {
-<!--                   TODO: aplicar activity.color de acordo com a base de dados -->
                     <span [className]="'badge m-x-2 activity-test'" [ngStyle]="{ 'background-color': activities.get('TEST')?.color }">{{ 'Proof' | translate }}</span>
                   } @else if (event.evalTools.work?.score) {
                     <span [className]="'badge m-x-2 activity-work'" [ngStyle]="{ 'background-color': activities.get('WORK')?.color }">{{ 'Work' | translate }}</span>
                   } @else {
                     <span class="badge badge-solid-gray dot-badge" [ngClass]="'dot-badge-'+proofStatusClass[status]">
-<!--                      <span class="dot-badge" [ngClass]="'text-bg-'+proofStatusClass[status]"></span>-->
                       {{ 'Lesson' | translate }}
                     </span>
                   }
@@ -67,7 +65,7 @@
                 }
               </div>
             </mat-card-content>
-          </mat-card>
+          </mat-card>-->
         </div>
       }
 

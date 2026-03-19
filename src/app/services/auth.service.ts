@@ -117,12 +117,12 @@ export class AuthService {
       this.router.navigate(['dashboard']);
     }
     catch (error) {
-      this.snackBar.open('Usuário ou senha inválidos', 'x', {
-        duration: 3000,
-        horizontalPosition: 'right',
-        verticalPosition: 'top',
-        panelClass: ['error-snackbar']
-      })
+      // this.snackBar.open('Usuário ou senha inválidos', 'x', {
+      //   duration: 3000,
+      //   horizontalPosition: 'right',
+      //   verticalPosition: 'top',
+      //   panelClass: ['error-snackbar']
+      // })
     }
     // return this.loginService.login(username, password, rememberMe).subscribe({
     //   next: (response) => {

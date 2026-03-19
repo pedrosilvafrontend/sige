@@ -48,7 +48,7 @@ export abstract class BaseSelect<T> implements ControlValueAccessor, OnInit, OnD
     this.cdr.detectChanges();
 
     this.control.valueChanges.pipe(
-      takeUntilDestroyed(),
+      takeUntil(this.destroy$),
       startWith(''),
       map((value: any) => this.filter(value || '')),
     ).subscribe((data: T[]) => {
