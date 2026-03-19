@@ -57,5 +57,14 @@
     opacity: 0.85;
     font-size: 0.85em;
     margin: 0;
+    &.dot-badge-info,
+    &.dot-badge-success,
+    &.dot-badge-danger,
+    &.dot-badge-warning {
+      &::after {
+        color: inherit;
+        border: 1px solid currentColor;
+      }
+    }
   }
 }

@@ -564,7 +564,7 @@ button.mdc-button[data-badgeColor="success"]::after {
 .dot-badge-warning::after,
 button.mdc-button[data-badgeColor="warning"]::after {
   background-color: $warm;
-  color: $dark-text
+  color: $dark-text;
 }
 .dot-badge-info::after,
 button.mdc-button[data-badgeColor="info"]::after {
