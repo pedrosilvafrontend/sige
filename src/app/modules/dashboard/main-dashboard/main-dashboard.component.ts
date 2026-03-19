@@ -18,6 +18,7 @@ import { UpdateService } from '@services/update.service';
 import { MatBadge } from '@angular/material/badge';
 import { ActivityService } from '@modules/config/activity/activity.service';
 import { AuthService } from '@services';
+import { EventCard } from '@ui/event-card/event-card';
 
 @Component({
   selector: 'app-main-dashboard',
@@ -33,7 +34,8 @@ import { AuthService } from '@services';
     NgStyle,
     MatBadge,
     NgClass,
-    LowerCasePipe
+    LowerCasePipe,
+    EventCard
   ],
   providers: [
     TranslatePipe

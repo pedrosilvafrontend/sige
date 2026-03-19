@@ -27,6 +27,7 @@ import {
   LessonEventFormComponent
 } from '@modules/lessons/form/lesson-event.form.component/lesson-event.form.component';
 import {
+  Activity,
   LessonEvent, LessonEventExtra,
   LessonEventForm,
   LessonEventFormValue,
@@ -40,10 +41,12 @@ import { ProofService } from '@core/services/proof.service';
 import { ModalComponent } from '@ui/modal/modal.component';
 import { LessonEventExtraService } from '@services/lesson-event-extra.service';
 import { TestFormComponent } from '@modules/common/form/test-form/test.form';
-import { NgClass } from '@angular/common';
+import { JsonPipe, NgClass, NgStyle } from '@angular/common';
 import { IProofForm } from '@form/proof.form';
 import { MessageService } from '@services/message.service';
 import { TextEditor } from '@ui/text-editor/text-editor';
+import { ColorPipe, getControl } from '@util/color-pipe';
+import { EventCard } from '@ui/event-card/event-card';
 
 export interface DialogData {
   item: LessonEvent;
@@ -78,6 +81,11 @@ export interface DialogData {
     TestFormComponent,
     NgClass,
     TextEditor,
+    ColorPipe,
+    NgStyle,
+    JsonPipe,
+    getControl,
+    EventCard,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit {
@@ -89,36 +97,45 @@ export class LessonEventFormDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private lessonEventExtraService = inject(LessonEventExtraService);
   private message = inject(MessageService);
-  public user = this.auth.user$.value;
-  public closeRefresh = false;
-  public event!: LessonEvent;
-  public proof: Proof = new Proof();
-  public extra: LessonEventExtra = new class implements LessonEventExtra {}
-  public action = 'edit';
-  public dialogTitle!: string;
-  public form!: UntypedFormGroup;
-  public proofForm!: FormGroup<IProofForm>;
-  public extraForm: UntypedFormGroup = this.fb.group({
+  user = this.auth.user$.value;
+  closeRefresh = false;
+  event!: LessonEvent;
+  proof: Proof = new Proof();
+  extra: LessonEventExtra = new class implements LessonEventExtra {}
+  action = 'edit';
+  dialogTitle!: string;
+  form!: UntypedFormGroup;
+  proofForm!: FormGroup<IProofForm>;
+  extraForm: UntypedFormGroup = this.fb.group({
     id: [''],
     planning: ['', Validators.required],
   });
-  public url: string | null = null;
-  public classes: SchoolClass[] = [];
-  public teachers: UserTable[] = [];
-  public schools: School[] = [];
-  public readonly: boolean;
-  public schoolId: number = 0;
-  public disabled = false;
-  public proofStatusClass: any = Proof.statusClass;
-  public planningModalOptions: MatDialogConfig = {
+  url: string | null = null;
+  classes: SchoolClass[] = [];
+  teachers: UserTable[] = [];
+  schools: School[] = [];
+  readonly: boolean;
+  schoolId: number = 0;
+  disabled = false;
+  proofStatusClass: any = Proof.statusClass;
+  planningModalOptions: MatDialogConfig = {
     minWidth: '800px',
     maxWidth: '1400px',
     minHeight: '300px',
     disableClose: true
   };
+  activities: Map<string, Activity> = new Map();
+  userConfig = this.fb.group({
+    schoolClass: this.fb.group({})
+  })
 
   constructor() {
     this.readonly = this.dialogData.action === 'view';
+  }
+
+  saveColor(color: string) {
+    console.log('>>> userConfig value', this.userConfig.getRawValue());
+    console.log('>>> save color', color);
   }
 
   savePlanning(callback?: () => void) {

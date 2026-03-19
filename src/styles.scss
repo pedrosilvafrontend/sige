@@ -290,11 +290,12 @@ mat-snack-bar-container > div {
   font-weight: 600;
   background-color: $neutral;
   padding: 0 0.6em;
-  line-height: 2em;
+  line-height: 1.4em;
   margin: 0 0.2em;
   //color: $dark-text;
   color: $white;
   border-radius: $field-border-radius;
+  display: inline-block;
   &.badge-solid-red {
     background-color: $danger;
   }
@@ -673,4 +674,9 @@ button.mdc-button[data-badgeColor="info"]::after {
 .error-snackbar {
   background-color: $danger;
   color: $white;
+}
+
+.mat-mdc-dialog-container .mat-mdc-dialog-title {
+  font-size: 1.2rem !important;
+  font-weight: 500 !important;
 }

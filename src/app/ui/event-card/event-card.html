@@ -1,0 +1,65 @@
+<mat-card class="cursor-pointer" [ngStyle]="{'background-color': color(), 'color': color() | textColor }">
+  <mat-card-content>
+    <!--              <div class="d-flex gap-2">-->
+    @let evt = event();
+    @if (evt) {
+      <div class="">
+
+        <div class="activities">
+          @let status = evt.evalTools.proof?.status || '';
+          @if (status === 'APPROVED') {
+            <!--                   TODO: aplicar activity.color de acordo com a base de dados -->
+            <span [className]="'badge m-x-2 activity-test'" [ngStyle]="{ 'background-color': activities().get('TEST')?.color }">{{ 'Proof' | translate }}</span>
+          } @else if (evt.evalTools.work?.score) {
+            <span [className]="'badge m-x-2 activity-work'" [ngStyle]="{ 'background-color': activities().get('WORK')?.color }">{{ 'Work' | translate }}</span>
+          } @else {
+            <span class="badge badge-solid-gray dot-badge" [ngClass]="'dot-badge-'+proofStatusClass[status]">
+              {{ 'Lesson' | translate }}
+            </span>
+          }
+        </div>
+
+        @if (!evt.groupId) {
+          <div class="d-flex gap-3 align-items-center">
+            <div class="day">
+              {{ evt.date | date: 'dd' }}
+            </div>
+            <div>
+              <div class="month">
+                {{ evt.date | date: 'MMM' }}
+              </div>
+              <div class="hour">
+                {{ evt.date | date: 'HH:mm' }}
+              </div>
+            </div>
+          </div>
+
+          <div>
+
+            <div class="curricular-component ellipsis">
+              {{ evt.curricularComponent?.name }}
+            </div>
+            @if (evt.lesson; as lesson) {
+              @if (user().role !== 'teacher') {
+                <div class="teacher-name ellipsis">
+                  {{ lesson.teacher?.fullName }}
+                </div>
+              }
+            }
+            <div class="school truncate-text">
+              <span [matTooltip]="evt.school?.name || ''">{{ evt.school?.acronym }}</span>
+              @if (evt.schoolClass; as schoolClass) {
+                - {{ schoolClass.code }}
+              }
+            </div>
+          </div>
+        }
+        @else  {
+          @let date = evt.date | date: dateFormat;
+          @let ts = evt.frequency.timeSchedule;
+          {{ date }} de {{ ts && ts.startTime  }} às {{ ts && ts.endTime }}
+        }
+      </div>
+    }
+  </mat-card-content>
+</mat-card>
