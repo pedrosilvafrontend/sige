@@ -1,6 +1,6 @@
 import {
   ApplicationConfig,
-  importProvidersFrom,
+  importProvidersFrom, LOCALE_ID,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection
 } from '@angular/core';
@@ -19,6 +19,10 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { provideNgxMask } from 'ngx-mask';
 import { NgxEditorModule } from 'ngx-editor';
+import { registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt';
+
+registerLocaleData(localePt);
 
 export const MY_DATE_FORMATS = {
   parse: {
@@ -83,6 +87,7 @@ export const appConfig: ApplicationConfig = {
         },
       })
     ),
+    { provide: LOCALE_ID, useValue: 'pt-BR' },
     {
       provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
       useValue: {
