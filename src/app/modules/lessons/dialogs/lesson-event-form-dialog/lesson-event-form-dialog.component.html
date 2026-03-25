@@ -34,6 +34,7 @@
 <!--          @let proof = event.evalTools.proof;-->
           <ui-modal #planningModal [template]="planningTemplate" [options]="planningModalOptions"></ui-modal>
           <ui-modal #proofModal [template]="proofTemplate" [options]="{width: '800px', disableClose: true}"></ui-modal>
+          <ui-modal #workModal [template]="workTemplate" [options]="{width: '800px', disableClose: true}"></ui-modal>
           <ui-modal #colorModal [template]="colorTemplate" [options]="{disableClose: true}"></ui-modal>
 
           <ng-template #colorTemplate>
@@ -87,13 +88,61 @@
             </mat-dialog-actions>
           </ng-template>
 
+          <ng-template #workTemplate>
+            <h3 mat-dialog-title>Trabalho</h3>
+            <mat-dialog-content>
+              @let disableWork = disabled || (work.status == 'APPROVED' && user.role == 'teacher');
+              @if (work && work.status) {
+                <div class="my-3">
+                  <span class="badge" [ngClass]="'text-bg-'+activityStatusClass[work.status]">
+                    {{ work.status | translate }}
+                  </span>
+                </div>
+              }
+              <app-work-form
+                class="d-block mt-3"
+                [data]="work || {}"
+                [disabled]="disableWork"
+                (form$)="(workForm = $event)"
+              ></app-work-form>
+            </mat-dialog-content>
+            <mat-dialog-actions>
+              <div class="d-flex gap-2">
+                @if (work?.id && !disableWork) {
+                  <ui-button color="danger" (onClick)="deleteWorkModal.open()" cdkFocusInitial>Excluír trabalho</ui-button>
+                }
+                <ui-button color="neutral" (onClick)="workModal.close()" cdkFocusInitial>
+                  @if (disableWork) {
+                    Fechar
+                  } @else {
+                    Cancelar
+                  }
+                </ui-button>
+                @let isManager = user.role && ['admin', 'principal', 'coordinator'].includes(user.role);
+                <!--                @if (isManager) {-->
+                <!--                  <ui-button (onClick)="approveWork(workModal.close)">-->
+                <!--                    {{ 'Approve' | translate }}-->
+                <!--                  </ui-button>-->
+                <!--                }-->
+                @if (!disableWork) {
+                  <ui-button (onClick)="saveWork(workModal.close)">
+                    Salvar
+                    @if (work.status && work.status != 'APPROVED' && isManager) {
+                      e aprovar
+                    }
+                  </ui-button>
+                }
+              </div>
+            </mat-dialog-actions>
+          </ng-template>
+
           <ng-template #proofTemplate>
             <h3 mat-dialog-title>Prova</h3>
             <mat-dialog-content>
               @let disableProof = disabled || (proof.status == 'APPROVED' && user.role == 'teacher');
               @if (proof && proof.status) {
                 <div class="my-3">
-                  <span class="badge" [ngClass]="'text-bg-'+proofStatusClass[proof.status]">
+                  <span class="badge" [ngClass]="'text-bg-'+activityStatusClass[proof.status]">
                     {{ proof.status | translate }}
                   </span>
                 </div>
@@ -150,14 +199,42 @@
               </div>
             </mat-dialog-actions>
           </ng-template>
+
+          <ui-modal #deleteWorkModal [template]="deleteWorkTemplate"></ui-modal>
+          <ng-template #deleteWorkTemplate>
+            <h3 mat-dialog-title>Excluír trabalho</h3>
+            <mat-dialog-content>
+              <p>Trabalho: <strong>{{ work?.id }}</strong></p>
+              Deseja realmente excluír o trabalho ?
+            </mat-dialog-content>
+            <mat-dialog-actions>
+              <div class="d-flex gap-2">
+                <ui-button color="neutral" (onClick)="deleteWorkModal.close()" cdkFocusInitial>Cancelar</ui-button>
+                <ui-button color="danger" (onClick)="deleteWork(workModal.close);deleteWorkModal.close()" cdkFocusInitial>Excluír trabalho</ui-button>
+              </div>
+            </mat-dialog-actions>
+          </ng-template>
         </div>
       </div>
     </div>
     <div matDialogActions>
       <div class="dialog-buttons">
-        <ui-button color="default" (onClick)="colorModal.open()">Cor</ui-button>
+        @let count = event.countActivities;
+        @let isMaxTotal = count.maxTotal > 0 && (count.total >= count.maxTotal);
+        @let isMaxProofs = count.maxProofs > 0 && (count.proofs >= count.maxProofs);
+        @let isMaxWorks = count.maxWorks > 0 && (count.works >= count.maxWorks);
+<!--        <ui-button color="default" (onClick)="colorModal.open()">Cor</ui-button>-->
         <ui-button icon="book" color="default" (onClick)="planningModal.open()">Planejamento</ui-button>
-        <ui-button icon="grading" color="default" (onClick)="proofModal.open()" badge="" [badgeColor]="proofStatusClass[proof.status]">
+        <ui-button icon="grading" color="default" (onClick)="workModal.open()" badge=""
+                   [badgeColor]="activityStatusClass[work.status]" [disabled]="!work.id && (isMaxTotal || isMaxWorks)">
+          <div class="d-flex gap-1 align-items-center">
+            <span>
+              {{ (work && work.id ? 'Work' : 'Add work') | translate }}
+            </span>
+          </div>
+        </ui-button>
+        <ui-button icon="grading" color="default" (onClick)="proofModal.open()" badge=""
+                   [badgeColor]="activityStatusClass[proof.status]" [disabled]="!proof.id && (isMaxTotal || isMaxProofs)">
           <div class="d-flex gap-1 align-items-center">
             <span>
               {{ (proof && proof.id ? 'Proof' : 'Add proof') | translate }}

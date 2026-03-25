@@ -9,6 +9,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import Swal from 'sweetalert2';
+import { MatDialog } from '@angular/material/dialog';
 
 export enum STATUS {
   UNAUTHORIZED = 401,
@@ -24,8 +25,11 @@ const errorPages = [
   STATUS.INTERNAL_SERVER_ERROR,
 ];
 
-const getMessage = (error: HttpErrorResponse) => {
-  return error.error?.error || error.error || error.message || `${error.status} ${error.statusText}`
+const getMessage = (resp: HttpErrorResponse) => {
+  if (resp.error.errors?.[0]?.field) {
+    return resp.error.errors.map((e: any) => e.message || String(e)).join(', ');
+  }
+  return resp.error?.error || resp.error || resp.message || `${resp.status} ${resp.statusText}`
 };
 
 const ROUTES = {
@@ -70,8 +74,11 @@ const getHandleError = (router: Router, snack: MatSnackBar) => {
 
 const handleUnauthorizedAccess = (error: HttpErrorResponse): void => {
   const router = inject(Router);
+  const dialog = inject(MatDialog);
+
   if (error.status === STATUS.UNAUTHORIZED) {
-    router.navigateByUrl(ROUTES.LOGIN);
+    router.navigateByUrl(ROUTES.LOGIN).then();
+    dialog.closeAll();
   }
 }
 

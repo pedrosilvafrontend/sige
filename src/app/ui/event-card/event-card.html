@@ -5,23 +5,36 @@
     @if (evt) {
       <div class="">
 
-        <div class="activities">
-          @let status = evt.evalTools.proof?.status || '';
-          @if (status === 'APPROVED') {
-            <!--                   TODO: aplicar activity.color de acordo com a base de dados -->
-            <span [className]="'badge m-x-2 activity-test'" [ngStyle]="{ 'background-color': activities().get('TEST')?.color }">{{ 'Proof' | translate }}</span>
-          } @else if (evt.evalTools.work?.score) {
-            <span [className]="'badge m-x-2 activity-work'" [ngStyle]="{ 'background-color': activities().get('WORK')?.color }">{{ 'Work' | translate }}</span>
-          } @else {
-            <span class="badge badge-solid-gray dot-badge" [ngClass]="'dot-badge-'+proofStatusClass[status]">
-              {{ 'Lesson' | translate }}
-            </span>
+        <div class="d-flex gap-1 justify-content-between mb-3">
+          <div class="activities">
+            @let pStatus = evt.evalTools.proof?.status || '';
+            @let wStatus = evt.evalTools.work?.status || '';
+            @if (pStatus === 'APPROVED') {
+              <span [className]="'badge m-x-2 activity-test'" [ngStyle]="{ 'background-color': activities().get('TEST')?.color }">{{ 'Proof' | translate }}</span>
+            } @else if (wStatus === 'APPROVED') {
+              <span [className]="'badge m-x-2 activity-work'" [ngStyle]="{ 'background-color': activities().get('WORK')?.color }">{{ 'Work' | translate }}</span>
+            } @else {
+              <span class="badge badge-solid-gray dot-badge" [ngClass]="'dot-badge-'+statusClass[pStatus || wStatus]">
+                {{ 'Lesson' | translate }}
+              </span>
+            }
+          </div>
+          @if (evt.countActivities.total; as total) {
+            @let act = evt.countActivities;
+            @let msgProofs = act.proofs ? act.proofs + ' ' + ((act.proofs > 1 ? 'proofs' : 'proof') | translate) : '';
+            @let msgWorks = act.works ? act.works + ' ' + ((act.works > 1 ? 'works' : 'work') | translate) : '';
+            @let sep = act.proofs && act.works ? (' and ' | translate) : '';
+            <div class="badge badge-solid-gray circle"
+                 [matTooltip]="msgProofs + sep + msgWorks">
+              {{ total }}
+            </div>
           }
         </div>
 
         @if (!evt.groupId) {
           <div class="d-flex gap-3 align-items-center">
             <div class="day">
+              <span class="weekday">{{ evt.weekday | translate }}</span>
               {{ evt.date | date: 'dd' }}
             </div>
             <div>

@@ -18,6 +18,7 @@ export interface ConfigData {
   endSecondSemester: string;
   maxDayTests: number;
   maxDayWorks: number;
+  maxDayActivities: number;
 }
 
 export interface ConfigResponse {

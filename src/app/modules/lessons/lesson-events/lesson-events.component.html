@@ -119,6 +119,16 @@
                           {{ row.schoolClass.code || '' }} -
                           {{ row.curricularComponent.code || '' }}
                           {{ row.curricularComponent.name || '' }}
+                          @if (row.countActivities?.total; as total) {
+                            @let act = row.countActivities;
+                            @let msgProofs = act.proofs ? act.proofs + ' ' + ((act.proofs > 1 ? 'proofs' : 'proof') | translate) : '';
+                            @let msgWorks = act.works ? act.works + ' ' + ((act.works > 1 ? 'works' : 'work') | translate) : '';
+                            @let sep = act.proofs && act.works ? (' and ' | translate) : '';
+                            <div class="badge badge-solid-gray circle"
+                                 [matTooltip]="msgProofs + sep + msgWorks">
+                              {{ total }}
+                            </div>
+                          }
                         </span>
                       </mat-cell>
                     </ng-container>
@@ -131,6 +141,7 @@
                       <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
                         <span class="mobile-label">{{ column.label }}:</span>
                         <span class="truncate-text">
+                          {{ row.weekday ? (row.weekday | translate) : '' }}
                           {{ row.date ? (row.date | date:'dd/MM/yyyy') : '' }}
                         </span>
                       </mat-cell>

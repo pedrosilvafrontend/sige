@@ -73,7 +73,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
 
   async getEvents() {
     const params = {
-      limit: this.user().role === 'teacher' ? 24 : 12,
+      limit: this.user().role === 'teacher' ? 36 : 24,
       prevDate: false,
     }
     this.events = await firstValueFrom(this.lessonEventService.getAll(params));

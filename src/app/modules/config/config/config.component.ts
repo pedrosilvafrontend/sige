@@ -68,6 +68,7 @@ export class ConfigComponent implements OnInit {
       endSecondSemester: this.fb.control<string | null>(data?.endSecondSemester || ''),
       maxDayTests: this.fb.control<number | null>(data?.maxDayTests || null),
       maxDayWorks: this.fb.control<number | null>(data?.maxDayWorks || null),
+      maxDayActivities: this.fb.control<number | null>(data?.maxDayActivities || null),
     }, { validators: [
       FormValidators.dateRange('startFirstSemester', 'endFirstSemester'),
       FormValidators.dateRange('startSecondSemester', 'endSecondSemester'),

@@ -9,7 +9,7 @@ export class WorkForm {
   static form(data?: Partial<Work>): FormGroup<IWorkForm> {
     const ctrls = {
       id: [data?.id || null],
-      title: [data?.score, [Validators.required]],
+      // title: [data?.title],
       score: [data?.score, [Validators.required]],
       local: [data?.local, [Validators.required]],
       evaluationCriteria: [data?.evaluationCriteria],
@@ -44,7 +44,7 @@ export class WorkForm {
 
 export interface IWorkForm {
   id: FormControl<number | null>;
-  title: FormControl<string | null | undefined>;
+  // title: FormControl<string | null | undefined>;
   score: FormControl<string | null | undefined>;
   local: FormControl<string | null | undefined>;
   evaluationCriteria: FormControl<string | null | undefined>;
