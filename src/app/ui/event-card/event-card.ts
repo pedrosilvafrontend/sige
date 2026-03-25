@@ -27,7 +27,7 @@ export class EventCard {
   color = input<string>('');
   activities = input.required<Map<string, Activity>>();
   onClick = output();
-  proofStatusClass: any = Proof.statusClass;
+  statusClass: any = Proof.statusClass;
   dateFormat = 'dd/MM/yyyy';
 
 }

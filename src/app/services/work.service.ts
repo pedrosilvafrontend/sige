@@ -7,6 +7,6 @@ import { Work } from '@models';
 })
 export class WorkService extends BaseService<Work> {
   constructor() {
-    super('work');
+    super('works');
   }
 }

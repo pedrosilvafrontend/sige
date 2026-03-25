@@ -33,7 +33,7 @@ import {
   LessonEventFormValue,
   Proof,
   School,
-  SchoolClass,
+  SchoolClass, Work,
 } from '@models';
 import { AuthService } from '@services';
 import { Button } from '@ui/button/button';
@@ -47,6 +47,9 @@ import { MessageService } from '@services/message.service';
 import { TextEditor } from '@ui/text-editor/text-editor';
 import { ColorPipe, getControl } from '@util/color-pipe';
 import { EventCard } from '@ui/event-card/event-card';
+import { IWorkForm } from '@form/work.form';
+import { WorkService } from '@services/work.service';
+import { WorkFormComponent } from '@modules/common/form/work-form/work-form.component';
 
 export interface DialogData {
   item: LessonEvent;
@@ -86,12 +89,14 @@ export interface DialogData {
     JsonPipe,
     getControl,
     EventCard,
+    WorkFormComponent,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit {
   protected dialogData: DialogData = inject(MAT_DIALOG_DATA);
   public ref = inject(MatDialogRef<LessonEventFormDialogComponent>);
   private proofService = inject(ProofService);
+  private workService = inject(WorkService);
   private auth = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
   private fb = inject(FormBuilder);
@@ -101,11 +106,13 @@ export class LessonEventFormDialogComponent implements OnInit {
   closeRefresh = false;
   event!: LessonEvent;
   proof: Proof = new Proof();
+  work: Work = new Work();
   extra: LessonEventExtra = new class implements LessonEventExtra {}
   action = 'edit';
   dialogTitle!: string;
   form!: UntypedFormGroup;
   proofForm!: FormGroup<IProofForm>;
+  workForm!: FormGroup<IWorkForm>;
   extraForm: UntypedFormGroup = this.fb.group({
     id: [''],
     planning: ['', Validators.required],
@@ -117,7 +124,7 @@ export class LessonEventFormDialogComponent implements OnInit {
   readonly: boolean;
   schoolId: number = 0;
   disabled = false;
-  proofStatusClass: any = Proof.statusClass;
+  activityStatusClass: any = Proof.statusClass;
   planningModalOptions: MatDialogConfig = {
     minWidth: '800px',
     maxWidth: '1400px',
@@ -158,6 +165,37 @@ export class LessonEventFormDialogComponent implements OnInit {
       this.closeRefresh = true;
       callback?.();
     })
+  }
+
+  saveWork(callback?: () => void) {
+    if (this.workForm.valid) {
+      const formData = this.form.getRawValue() as LessonEventFormValue;
+      const work = this.workForm.value as Work;
+      const lessonId = this.dialogData.item?.lesson?.id || 0;
+      if (!lessonId) {
+        return;
+      }
+      const data: Work = {
+        ...work,
+        lessonId: lessonId,
+        date: formData.date,
+        timeScheduleId: formData.timeSchedule?.id || 0,
+      }
+      const request$ = data.id ? this.workService.update(data) : this.workService.add(data);
+      request$.subscribe({
+        next: (response) => {
+          this.message.success('Salvo com sucesso!');
+          this.workForm.reset();
+          this.work = response;
+          this.closeRefresh = true;
+          callback?.();
+        },
+        error: (error) => {
+          console.error('Work Add Error:', error);
+          // this.form.setErrors({ temp: true });
+        }
+      })
+    }
   }
 
   saveProof(callback?: () => void) {
@@ -214,6 +252,17 @@ export class LessonEventFormDialogComponent implements OnInit {
     })
   }
 
+  deleteWork(callback?: () => void) {
+    const work = this.workForm.value;
+    this.workService.deleteItem(work.id || 0).subscribe(() => {
+      this.message.success('Trabalho excluído com sucesso!');
+      this.workForm.reset();
+      Object.assign(this.event.evalTools.work || {}, this.workForm.value);
+      this.closeRefresh = true;
+      callback?.();
+    })
+  }
+
   setForm(form: FormGroup<LessonEventForm>) {
     this.form = form;
     this.cdr.detectChanges();
@@ -228,6 +277,9 @@ export class LessonEventFormDialogComponent implements OnInit {
       this.event = this.dialogData.item;
       if (this.event?.evalTools?.proof) {
         this.proof = this.event.evalTools.proof;
+      }
+      if (this.event?.evalTools?.work) {
+        this.work = this.event.evalTools.work;
       }
       if (this.event?.extra) {
         this.extra = this.event.extra;

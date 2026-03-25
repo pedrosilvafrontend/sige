@@ -11,6 +11,15 @@
     //color: #cccccc;
     opacity: 0.7;
     font-weight: 800;
+    position: relative;
+    .weekday {
+      position: absolute;
+      top: -10px;
+      left: 0;
+      font-size: 0.7rem;
+      line-height: 1em;
+      font-weight: normal;
+    }
   }
   .month {
     font-size: 1.2rem;
@@ -27,7 +36,6 @@
     font-weight: 500;
   }
   .activities {
-    height: 2.2rem;
   }
   .curricular-component {
     font-size: 1.2rem;
@@ -66,5 +74,12 @@
         border: 1px solid currentColor;
       }
     }
+  }
+  .circle {
+    width: auto;
+    min-width: 1rem;
+    line-height: 0.9rem;
+    text-align: center;
+    padding: 0 0.3em;
   }
 }

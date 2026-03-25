@@ -67,6 +67,16 @@ export interface LessonEvent {
   work?: Work,
   extra?: LessonEventExtra,
   observations: string;
+  countActivities: CountActivities;
+}
+
+export interface CountActivities {
+  proofs: number;
+  maxProofs: number;
+  works: number;
+  maxWorks: number;
+  total: number;
+  maxTotal: number;
 }
 
 export interface LessonEventExtra {

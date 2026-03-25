@@ -44,6 +44,7 @@ import { LessonEventService } from '@services/lesson-event.service';
 import { UpdateService } from '@services/update.service';
 import { map } from 'rxjs/operators';
 import { ActivityService } from '@modules/config/activity/activity.service';
+import { MatBadge } from '@angular/material/badge';
 
 @Component({
   selector: 'app-lesson-events',
@@ -83,7 +84,8 @@ import { ActivityService } from '@modules/config/activity/activity.service';
     MatCheckbox,
     ReactiveFormsModule,
     Button,
-    NgStyle
+    NgStyle,
+    MatBadge
   ],
   providers: [
     TranslatePipe
