@@ -1,3 +1,10 @@
+## [1.1.9](https://github.com/pedrosilvafrontend/sige/compare/v1.1.8...v1.1.9) (2026-03-25)
+
+
+### Bug Fixes
+
+* date format and locale registration ([720a10a](https://github.com/pedrosilvafrontend/sige/commit/720a10a56fe2095efea8ad51e7d0e3c3e1c55e59))
+
 ## [1.1.8](https://github.com/pedrosilvafrontend/sige/compare/v1.1.7...v1.1.8) (2026-03-19)
 
 
