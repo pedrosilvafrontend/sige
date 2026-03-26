@@ -38,7 +38,7 @@ export class WorkFormComponent implements OnInit {
   public criteria: EvaluationCriterion[] = [];
   public defaultCriteria: string = '';
 
-  public schoolId = input<number>(0);
+  public schoolId = input.required<number>();
   public data = input<Partial<Work>>({});
   public dataId = input<number>();
   public disabled = input(false);
@@ -108,8 +108,9 @@ export class WorkFormComponent implements OnInit {
       });
     }
 
-    if (!this.form.controls.evaluationCriteria.value) {
-      this.form.controls.evaluationCriteria.patchValue(this.defaultCriteria);
+    const { id, evaluationCriteria } = this.form.controls;
+    if (!id.value && !evaluationCriteria.value) {
+      evaluationCriteria.patchValue(this.defaultCriteria);
     }
   }
 

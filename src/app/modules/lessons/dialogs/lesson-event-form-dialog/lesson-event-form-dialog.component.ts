@@ -122,7 +122,6 @@ export class LessonEventFormDialogComponent implements OnInit {
   teachers: UserTable[] = [];
   schools: School[] = [];
   readonly: boolean;
-  schoolId: number = 0;
   disabled = false;
   activityStatusClass: any = Proof.statusClass;
   planningModalOptions: MatDialogConfig = {
@@ -135,6 +134,10 @@ export class LessonEventFormDialogComponent implements OnInit {
   userConfig = this.fb.group({
     schoolClass: this.fb.group({})
   })
+
+  get schoolId(): number {
+    return this.event?.school?.id || 0;
+  }
 
   constructor() {
     this.readonly = this.dialogData.action === 'view';
