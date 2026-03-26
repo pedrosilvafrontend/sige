@@ -13,7 +13,7 @@
     <div mat-dialog-content>
       <div class="row">
         @if (dialogData) {
-          <app-lesson-events-form [schoolId]="event && event.school && event.school.id || 0"
+          <app-lesson-events-form [schoolId]="schoolId"
                                   [readOnly]="readonly"
                                   [data]="event"
                                   (form$)="setForm($event)"
@@ -101,6 +101,7 @@
               }
               <app-work-form
                 class="d-block mt-3"
+                [schoolId]="schoolId"
                 [data]="work || {}"
                 [disabled]="disableWork"
                 (form$)="(workForm = $event)"
