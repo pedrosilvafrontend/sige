@@ -1,3 +1,10 @@
+## [1.1.10](https://github.com/pedrosilvafrontend/sige/compare/v1.1.9...v1.1.10) (2026-03-26)
+
+
+### Bug Fixes
+
+* work form schoolId input ([d01e82b](https://github.com/pedrosilvafrontend/sige/commit/d01e82bde507b1387e6eb881400ded38b3e675d9))
+
 ## [1.1.9](https://github.com/pedrosilvafrontend/sige/compare/v1.1.8...v1.1.9) (2026-03-25)
 
 
