@@ -38,7 +38,7 @@ import {
 import { AuthService } from '@services';
 import { Button } from '@ui/button/button';
 import { ProofService } from '@core/services/proof.service';
-import { ModalComponent } from '@ui/modal/modal.component';
+import { ModalComponent, ModalDialogComponent } from '@ui/modal/modal.component';
 import { LessonEventExtraService } from '@services/lesson-event-extra.service';
 import { TestFormComponent } from '@modules/common/form/test-form/test.form';
 import { JsonPipe, NgClass, NgStyle } from '@angular/common';
@@ -50,9 +50,14 @@ import { EventCard } from '@ui/event-card/event-card';
 import { IWorkForm } from '@form/work.form';
 import { WorkService } from '@services/work.service';
 import { WorkFormComponent } from '@modules/common/form/work-form/work-form.component';
+import { WorkFormModal } from '@modules/works/modals/work-form-modal/work-form-modal';
+import { take } from 'rxjs';
 
 export interface DialogData {
   item: LessonEvent;
+  lessonId: number;
+  timeScheduleId: number;
+  date: string;
   action: string;
 }
 
@@ -90,6 +95,7 @@ export interface DialogData {
     getControl,
     EventCard,
     WorkFormComponent,
+    WorkFormModal,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit {
@@ -106,7 +112,6 @@ export class LessonEventFormDialogComponent implements OnInit {
   closeRefresh = false;
   event!: LessonEvent;
   proof: Proof = new Proof();
-  work: Work = new Work();
   extra: LessonEventExtra = new class implements LessonEventExtra {}
   action = 'edit';
   dialogTitle!: string;
@@ -134,13 +139,34 @@ export class LessonEventFormDialogComponent implements OnInit {
   userConfig = this.fb.group({
     schoolClass: this.fb.group({})
   })
+  private _work!: Work;
+  get work(): Work {
+    return this._work;
+  }
+  set work(value: Work) {
+    console.log('>>> SET WORK', value.id)
+    this._work = value;
+  }
 
   get schoolId(): number {
     return this.event?.school?.id || 0;
   }
 
   constructor() {
-    this.readonly = this.dialogData.action === 'view';
+    const { action, lessonId, timeScheduleId, date } = this.dialogData || {}
+    const work = new Work();
+    this.readonly = action === 'view';
+    if (lessonId) {
+      work.lessonId = lessonId;
+    }
+    if (timeScheduleId) {
+      work.timeScheduleId = timeScheduleId;
+    }
+    if (date) {
+      work.date = date;
+    }
+
+    this.work = work;
   }
 
   saveColor(color: string) {
@@ -170,35 +196,13 @@ export class LessonEventFormDialogComponent implements OnInit {
     })
   }
 
-  saveWork(callback?: () => void) {
-    if (this.workForm.valid) {
-      const formData = this.form.getRawValue() as LessonEventFormValue;
-      const work = this.workForm.value as Work;
-      const lessonId = this.dialogData.item?.lesson?.id || 0;
-      if (!lessonId) {
-        return;
+  workModalRef(ref: MatDialogRef<ModalDialogComponent, any>) {
+    ref.afterClosed().pipe(take(1)).subscribe((data) => {
+      if (data.id) {
+        this.closeRefresh = true;
+        this.work = data;
       }
-      const data: Work = {
-        ...work,
-        lessonId: lessonId,
-        date: formData.date,
-        timeScheduleId: formData.timeSchedule?.id || 0,
-      }
-      const request$ = data.id ? this.workService.update(data) : this.workService.add(data);
-      request$.subscribe({
-        next: (response) => {
-          this.message.success('Salvo com sucesso!');
-          this.workForm.reset();
-          this.work = response;
-          this.closeRefresh = true;
-          callback?.();
-        },
-        error: (error) => {
-          console.error('Work Add Error:', error);
-          // this.form.setErrors({ temp: true });
-        }
-      })
-    }
+    })
   }
 
   saveProof(callback?: () => void) {
@@ -278,13 +282,13 @@ export class LessonEventFormDialogComponent implements OnInit {
   ngOnInit() {
     if (this.dialogData.item) {
       this.event = this.dialogData.item;
-      if (this.event?.evalTools?.proof) {
+      if (this.event?.evalTools?.proof?.id) {
         this.proof = this.event.evalTools.proof;
       }
-      if (this.event?.evalTools?.work) {
+      if (this.event?.evalTools?.work?.id) {
         this.work = this.event.evalTools.work;
       }
-      if (this.event?.extra) {
+      if (this.event?.extra?.id) {
         this.extra = this.event.extra;
       }
       this.extraForm.patchValue(this.extra || {})

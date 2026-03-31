@@ -1,15 +1,17 @@
 import {
-  AfterContentChecked,
-  AfterContentInit, AfterViewInit,
   Component,
-  ContentChild,
-  ElementRef, Inject,
-  inject, input,
+  Inject,
+  inject, input, OnInit,
   output, TemplateRef, ViewEncapsulation
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButton } from '@angular/material/button';
 import { NgTemplateOutlet } from '@angular/common';
+
+export interface ModalOutput<T = any> {
+  open: (data?: T) => MatDialogRef<ModalDialogComponent>;
+  close: () => void;
+}
 
 @Component({
   selector: 'ui-modal-dialog',
@@ -20,7 +22,9 @@ import { NgTemplateOutlet } from '@angular/common';
   ],
   template: `
     <ng-template #confirm>
-      <h2 mat-dialog-title>Confirmação</h2>
+      <div class="modalTitle">
+        <h2 mat-dialog-title>Confirmação</h2>
+      </div>
       <mat-dialog-content>
         Deseja relmente excluír?
       </mat-dialog-content>
@@ -30,11 +34,13 @@ import { NgTemplateOutlet } from '@angular/common';
       </mat-dialog-actions>
     </ng-template>
 
+    <div class="dialogContainer">
     @if (data.type === 'confirm') {
       <ng-template [ngTemplateOutlet]="data.template || confirm" />
     } @else {
       <ng-template [ngTemplateOutlet]="data.template" />
     }
+    </div>
   `,
   styleUrl: './modal.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -52,11 +58,12 @@ export class ModalDialogComponent {
   imports: [],
   template: ``,
 })
-export class ModalComponent {
+export class ModalComponent implements OnInit {
   private dialog = inject(MatDialog);
   private _ref!: MatDialogRef<ModalDialogComponent>;
   public template = input<TemplateRef<any>>();
   public options = input<any>({})
+  modal = output<ModalComponent>();
 
   get ref(): MatDialogRef<ModalDialogComponent> {
     return this._ref;
@@ -65,11 +72,16 @@ export class ModalComponent {
     this._ref = value;
   }
 
-  get close (): () => void {
-    return this.ref?.close.bind(this.ref) || (() => {});
+  constructor() {
+    this.close = this.close.bind(this)
+    this.open = this.open.bind(this)
   }
 
-  open(): void {
+  close(dialogResult?: any) {
+    this.ref?.close(dialogResult)
+  }
+
+  open(): MatDialogRef<ModalDialogComponent, any> {
     if (this.ref) {
       this.ref.close();
     }
@@ -82,9 +94,15 @@ export class ModalComponent {
         template
       }
     });
+
+    return this.ref;
   }
 
   closeAll(): void {
     this.dialog.closeAll();
+  }
+
+  ngOnInit() {
+    this.modal.emit(this);
   }
 }

@@ -81,9 +81,13 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   }
 
   openLessonEventDialog(event: LessonEvent) {
+    const datePipe = new DatePipe('pt-BR');
     const dialogRef = this.dialog.open(LessonEventFormDialogComponent, {
       data: {
         item: event,
+        lessonId: event.lesson?.id,
+        timeScheduleId: event.frequency?.timeSchedule?.id || 0,
+        date: event.date,
         action: 'edit',
       },
       autoFocus: false,

@@ -1,0 +1,29 @@
+:host ::ng-deep .search-box {
+  .mat-mdc-text-field-wrapper {
+    height: 40px !important;
+  }
+
+  .mat-mdc-form-field-flex {
+    margin-top: -7px !important;
+  }
+  .mat-mdc-floating-label {
+    height: 32px;
+  }
+  .mat-mdc-input-element {
+    font-size: 13px !important;
+  }
+  .search-label {
+    font-size: 13px;
+    top: -4px;
+    position: relative;
+  }
+}
+:host ::ng-deep .column-filter .mat-mdc-select-arrow {
+  display: none;
+}
+:host ::ng-deep .advance-table .mat-mdc-header-cell {
+  font-weight: 500;
+}
+:host ::ng-deep table.mat-mdc-table .mat-column-actions {
+  flex: 0 0 160px;
+}

@@ -64,6 +64,14 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'works',
+        canActivate: [AuthGuard],
+        loadChildren: () =>
+          import('./modules/works/works.routes').then(
+            (m) => m.WORKS_ROUTE
+          ),
+      },
+      {
         path: 'users',
         loadChildren: () =>
           import('./modules/users/users.routes').then(

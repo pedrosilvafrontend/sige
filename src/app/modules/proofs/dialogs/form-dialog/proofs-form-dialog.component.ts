@@ -4,7 +4,7 @@ import {
   MatDialogContent,
   MatDialogClose, MatDialogActions,
 } from '@angular/material/dialog';
-import { Component, inject, Inject } from '@angular/core';
+import { Component, inject, Inject, input } from '@angular/core';
 import { ProofService } from '@core/services/proof.service';
 import {
   ReactiveFormsModule,
@@ -67,6 +67,7 @@ export class ProofsFormDialogComponent {
   dialogTitle: string;
   form: FormGroup<IProofForm>;
   proof: Proof;
+  disabled = input(false);
 
   constructor(
     public dialogRef: MatDialogRef<ProofsFormDialogComponent>,
