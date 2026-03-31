@@ -33,7 +33,6 @@ import { firstValueFrom, lastValueFrom, Subject, take, takeUntil } from 'rxjs';
 import {
   LessonEventFormDialogComponent
 } from '@modules/lessons/dialogs/lesson-event-form-dialog/lesson-event-form-dialog.component';
-import { SchoolEvent } from '@modules/lessons/lesson-events';
 import { LesEventService } from '@modules/lessons/lesson-events/lesson-event.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -283,20 +282,30 @@ export class CalendarComponent implements OnInit, OnDestroy {
       eventClick: this.handleEventClick.bind(this),
       eventsSet: this.handleEvents.bind(this),
       locale: this.translate.getCurrentLang(),
+      validRange: {
+        start: new Date()
+      },
       eventColor: '#a8a8a8',
       events: function(info, successCallback, failureCallback) {
         const classHash = self.classHash;
         const schoolId = self.filters.get('school')?.value?.id;
         const degreeId = self.filters.get('degreeId')?.value;
+        const activities = self.filters.get('activities')?.value;
         const params: any = {
           start: info.startStr,
           end: info.endStr,
-          prevDate: true
+          prevDate: true,
         }
         const setData = (data: any[]) => {
           self.originalData = Object.assign([], data || []);
           successCallback(data);
           self.cdr.detectChanges();
+        }
+        if (activities.test) {
+          params.proof = true;
+        }
+        if (activities.work) {
+          params.work = true;
         }
         if (classHash) {
           params.classHash = classHash;
@@ -320,19 +329,21 @@ export class CalendarComponent implements OnInit, OnDestroy {
                   if (!item.groupId) {
                     item.groupId = 'LESSON';
                   }
-                  const { lesson, school, schoolClass, curricularComponent } = event;
+                  const { lesson, school, schoolClass, curricularComponent, evalTools, countActivities } = item;
                   let title: string[] = [];
                   const hasFilterSchool = !!self.filters.get('school')?.value?.id;
                   const hasFilterClass = !!self.filters.get('schoolClass')?.value?.id;
                   const hasFilterTeacher = !!self.filters.get('teacher')?.value?.id;
                   if (lesson) {
+                    const num = ['⓪', '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'];
                     if (school?.acronym && !hasFilterSchool && self.schools.length > 1) title.push(school.acronym);
                     if (schoolClass?.code && !hasFilterClass) title.push(schoolClass.code);
                     if (curricularComponent?.name) title.push(curricularComponent.name);
                     if (lesson.teacher?.fullName && !hasFilterTeacher) title.push(lesson.teacher.fullName);
+                    if (countActivities?.total) title.push(num[countActivities.total] || `(${countActivities.total})`);
                   }
                   item.title = title.join(' - ');
-                  const { proof, work } = item.evalTools || {};
+                  const { proof, work } = evalTools || {};
                   [['TEST', proof], ['WORK', work]].forEach(([key, evalTool]) => {
                     if (evalTool?.id) {
                       if (evalTool.status === 'APPROVED') {
@@ -457,6 +468,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
   lastParams = '';
   applyFilter() {
     const strParams = JSON.stringify(this.filters.value);
+    console.log('>>> this.filters.value:', this.filters.value);
+    console.log('>>> Applying filter with params:', strParams);
     if (this.lastParams === strParams) {
       return;
     }
@@ -476,7 +489,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
       }
     };
 
-    const { lesson, school, schoolClass, activities, groupId } = item || {} as LessonEvent;
+    const { lesson, school, schoolClass, evalTools, groupId } = item || {} as LessonEvent;
 
     /** exclusive **/
 
@@ -495,8 +508,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     }
 
     /** inclusive **/
-    // const selectedActivities = Object.keys(filters.activities).filter(k => filters.activities[k]);
-    const hasActivity = (activities || []).some((activity: Activity) => filters.activities[activity.id.toLowerCase()]);
+    const hasActivity = !!(evalTools.proof?.id || evalTools?.work?.id);
 
     if (hasActivity) {
       return true;
