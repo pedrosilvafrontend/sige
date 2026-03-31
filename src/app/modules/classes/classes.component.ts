@@ -65,8 +65,8 @@ export class ClassesComponent implements OnInit, OnDestroy {
   private snackBar = inject(MatSnackBar);
   public translate = inject(TranslateService)
   private authService = inject(AuthService);
-
   public user = this.authService.user$.value;
+  isTeacher = this.user.role === 'teacher';
 
   columnsLabels = ['code', 'school', 'actions'].map((key: string) => this.translate.instant(key));
 

@@ -658,6 +658,14 @@ button.mdc-button[data-badgeColor="info"]::after {
   }
 }
 
+.event-activity-work .fc-list-event-graphic {
+  &::after {
+    content: 'Trabalho';
+    background: var(--work-color);
+    color: $white;
+  }
+}
+
 .ellipsis, .truncate {
   max-width: 100%;
   line-height: 1.4em;

@@ -15,7 +15,7 @@
                     class="tbl-header-btn text-red" matTooltip="Delete">
               <mat-icon>delete_outline</mat-icon>
             </button>
-            <button mat-icon-button (click)="addNew()" class="tbl-header-btn text-green" [matTooltip]="'Add' | translate">
+            <button mat-icon-button [hidden]=isTeacher (click)="addNew()" class="tbl-header-btn text-green" [matTooltip]="'Add' | translate">
               <mat-icon>add_circle_outline</mat-icon>
             </button>
             <button mat-icon-button (click)="refresh()" class="tbl-header-btn text-dark-grey" [matTooltip]="'Refresh' | translate">
