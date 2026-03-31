@@ -344,6 +344,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
                   }
                   item.title = title.join(' - ');
                   const { proof, work } = evalTools || {};
+                  const statuses: string[] = [];
                   [['TEST', proof], ['WORK', work]].forEach(([key, evalTool]) => {
                     if (evalTool?.id) {
                       if (evalTool.status === 'APPROVED') {
@@ -352,10 +353,17 @@ export class CalendarComponent implements OnInit, OnDestroy {
                         item.borderColor = color;
                         item.backgroundColor = color;
                       } else if (evalTool.status) {
-                        item.className = `${item.className || ''} activity-status-${self.proofStatusClass[evalTool.status]}`;
+                        statuses.push(evalTool.status);
                       }
                     }
                   })
+                  const status = ['REJECTED', 'PENDING_APPROVAL'].find(status => statuses.includes(status));
+                  if (status) {
+                    item.className = `${item.className || ''} activity-status-${self.proofStatusClass[status]}`;
+                  }
+                  item.extendedProps = {
+                    date: item.date
+                  }
                   return self._filter(item);
                 }
               );
@@ -393,7 +401,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
       disableClose: true
     });
     const lessonForm$ = dialogRef.componentInstance.lessonForm$;
-    console.log('>>> calendar lessonForm$', lessonForm$);
 
     // TODO: verificar porque não funciona os valueChanges
     // lessonForm$.subscribe(lessonForm => {
@@ -468,8 +475,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
   lastParams = '';
   applyFilter() {
     const strParams = JSON.stringify(this.filters.value);
-    console.log('>>> this.filters.value:', this.filters.value);
-    console.log('>>> Applying filter with params:', strParams);
     if (this.lastParams === strParams) {
       return;
     }
@@ -534,16 +539,19 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   openLesEventDialog(row: EventClickArg) {
-    const props = row.event.extendedProps;
-    const lessonId: number = props['lesson']?.id || 0;
+    const event = row.event.extendedProps as LessonEvent;
+    const lessonId: number = event['lesson']?.id || 0;
     this.lesEventService.setParams({lessonId: lessonId});
 
     const dialogRef = this.dialog.open(LessonEventFormDialogComponent, {
       data: {
         item: {
-          ...props,
+          ...event,
           date: row.event.start
         },
+        date: event.date,
+        lessonId,
+        timeScheduleId: event.frequency.timeSchedule?.id || 0,
         action: this.public ? 'view' : 'edit'
       },
       autoFocus: false,

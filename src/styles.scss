@@ -596,13 +596,14 @@ button.mdc-button[data-badgeColor="info"]::after {
   &success::before {
     background-color: $cool;
   }
-  &danger::before {
-    background-color: $danger;
-  }
   &warning::before {
     background-color: $warm;
   }
+  &danger::before {
+    background-color: $danger;
+  }
 }
+
 .activity-status- {
   &info,
   &success,
@@ -613,6 +614,7 @@ button.mdc-button[data-badgeColor="info"]::after {
       &::before {
         content: '';
         position: absolute;
+        z-index: 2;
         top: 0.1rem;
         right: -0.2rem;
         min-width: 1rem;
@@ -645,6 +647,8 @@ button.mdc-button[data-badgeColor="info"]::after {
     content: 'Aula';
     border-radius: 0.3rem;
     padding: 0 0.3rem;
+    float: right;
+    margin-right: 0.4em;
     background: $neutral;
     color: $white;
   }
