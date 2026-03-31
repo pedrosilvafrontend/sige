@@ -1,3 +1,11 @@
+## [1.1.12](https://github.com/pedrosilvafrontend/sige/compare/v1.1.11...v1.1.12) (2026-03-31)
+
+
+### Bug Fixes
+
+* calendar filters and activities colors ([104137b](https://github.com/pedrosilvafrontend/sige/commit/104137b7eef41ec02f6ff1146031f306f7645b19))
+* teacher add permissions ([8d22175](https://github.com/pedrosilvafrontend/sige/commit/8d22175373a254cc233cd8f417271fd9cb22c022))
+
 ## [1.1.11](https://github.com/pedrosilvafrontend/sige/compare/v1.1.10...v1.1.11) (2026-03-31)
 
 
