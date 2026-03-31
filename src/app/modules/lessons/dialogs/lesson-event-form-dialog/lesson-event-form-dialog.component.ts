@@ -144,7 +144,6 @@ export class LessonEventFormDialogComponent implements OnInit {
     return this._work;
   }
   set work(value: Work) {
-    console.log('>>> SET WORK', value.id)
     this._work = value;
   }
 

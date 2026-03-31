@@ -6,7 +6,6 @@ export class BaseComponent implements OnDestroy {
   protected sub = new Subject<void>();
 
   ngOnDestroy() {
-    console.log('>>> BASE DESTROY');
     this.sub.next();
     this.sub.complete();
   }
