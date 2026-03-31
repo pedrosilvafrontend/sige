@@ -1,0 +1,18 @@
+<ng-content>
+  <ui-button color="danger" (onClick)="open(modal)" cdkFocusInitial>Excluír
+  </ui-button>
+</ng-content>
+<ui-modal #modal (modal)="setModal($event)" [template]="deleteWorkTemplate"></ui-modal>
+<ng-template #deleteWorkTemplate>
+  <h3 mat-dialog-title>Excluír trabalho</h3>
+  <mat-dialog-content>
+    <p>Trabalho: <strong>{{ work().id }}</strong></p>
+    Deseja realmente excluír o trabalho ?
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <div class="d-flex gap-2">
+      <ui-button color="neutral" (onClick)="modal.close()" cdkFocusInitial>Cancelar</ui-button>
+      <ui-button color="danger" (onClick)="modal.close(true)" cdkFocusInitial>Excluír trabalho</ui-button>
+    </div>
+  </mat-dialog-actions>
+</ng-template>

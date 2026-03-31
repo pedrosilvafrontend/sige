@@ -83,6 +83,7 @@
     <div matDialogActions>
       <div class="dialog-buttons">
         @let isManager = auth.role === 'admin' || auth.role === 'principal' || auth.role === 'coordinator';
+        @let disabledProof = disabled() || (proof.status == 'APPROVED' && auth.role == 'teacher');
         @if (isManager) {
           @if (proof.status === 'PENDING_APPROVAL') {
             <ui-button color="danger" tabindex="-1" type="button" (onClick)="onReject()">{{ 'Reject' | translate }}</ui-button>
@@ -92,8 +93,22 @@
           }
         }
 
-        <ui-button color="neutral" mat-dialog-close tabindex="-1" type="button">{{ 'Cancel' | translate }}</ui-button>
-        <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>
+        <ui-button color="neutral" mat-dialog-close tabindex="-1" type="button">
+          @if (disabled()) {
+            {{ 'Close' | translate }}
+          } @else {
+            {{ 'Cancel' | translate }}
+          }
+        </ui-button>
+<!--        <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>-->
+        @if (!disabledProof) {
+          <ui-button type="submit">
+            Salvar
+            @if (proof.status && proof.status != 'APPROVED' && isManager) {
+              e aprovar
+            }
+          </ui-button>
+        }
       </div>
     </div>
   </form>

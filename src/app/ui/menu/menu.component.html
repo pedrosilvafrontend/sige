@@ -16,7 +16,8 @@
       <button mat-menu-item [routerLink]="'schools'">{{ 'schools' | translate }}</button>
       @if (allowMenu.managers) {
         <button mat-menu-item [routerLink]="'managers'">{{ 'management' | translate }}</button>
-        <button mat-menu-item [routerLink]="'proofs'">{{ 'proofs' | translate }}</button>
+        <button mat-menu-item [routerLink]="'proofs'">{{ 'Proofs' | translate }}</button>
+        <button mat-menu-item [routerLink]="'works'">{{ 'Works' | translate }}</button>
       }
       <button mat-menu-item [matMenuTriggerFor]="cfgMenu">{{ 'configs' | translate }}</button>
       <mat-menu #cfgMenu="matMenu">
@@ -92,7 +93,13 @@
                 cdkMenuItem
                 [routerLink]="'proofs'"
         >
-          {{ 'proofs' | translate }}
+          {{ 'Proofs' | translate }}
+        </button>
+        <button class="menu-item"
+                cdkMenuItem
+                [routerLink]="'works'"
+        >
+          {{ 'Works' | translate }}
         </button>
         <!--<button class="menu-item"
                 cdkMenuItem

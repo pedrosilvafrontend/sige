@@ -1,6 +1,9 @@
+import { LessonBatch } from '@models/lesson.model';
+
 export interface Work {
   id: number;
   lessonId: number;
+  lesson: LessonBatch;
   timeScheduleId: number;
   date: string;
   score: string;
@@ -28,5 +31,11 @@ export class Work {
       this.createdAt = work.createdAt || '';
       this.updatedAt = work.updatedAt || '';
     }
+  }
+
+  static statusClass = {
+    'PENDING_APPROVAL': 'warning',
+    'APPROVED': 'success',
+    'REJECTED': 'danger'
   }
 }
