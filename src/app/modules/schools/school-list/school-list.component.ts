@@ -99,6 +99,8 @@ export class SchoolListComponent implements OnInit, OnDestroy {
   isLoading = true;
   private destroy$ = new Subject<void>();
   public utils = SchoolsUtils;
+  public user = this.authService.user$.value;
+  isTeacher = this.user.role === 'teacher';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
