@@ -1,3 +1,10 @@
+## [1.1.11](https://github.com/pedrosilvafrontend/sige/compare/v1.1.10...v1.1.11) (2026-03-31)
+
+
+### Features
+
+* work registry and work moderate list ([b499ec5](https://github.com/pedrosilvafrontend/sige/commit/b499ec588fb27670605a892f490e0d8b239ba4cd))
+
 ## [1.1.10](https://github.com/pedrosilvafrontend/sige/compare/v1.1.9...v1.1.10) (2026-03-26)
 
 
