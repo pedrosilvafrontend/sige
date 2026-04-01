@@ -1,6 +1,6 @@
 import {
   LessonBatch,
-  Activity,
+  ActivityConfig,
   SchoolClass,
   CurricularComponent,
   Frequency,
@@ -18,7 +18,7 @@ export interface SchoolEvent {
   startDate: string;
   endDate: string;
   details: string;
-  activities: Activity[];
+  activities: ActivityConfig[];
   lesson?: Partial<LessonBatch>;
 }
 
@@ -43,7 +43,7 @@ export interface LessonEventFormValue {
   title: string;
   date: string;
   timeSchedule: TimeSchedule;
-  activities: Activity[];
+  activities: ActivityConfig[];
   evalTools: EvalTools;
   observations: string;
 }
@@ -51,7 +51,7 @@ export interface LessonEventFormValue {
 export interface LessonEvent {
   title?: string;
   groupId?: string;
-  activities: Activity[];
+  activities: ActivityConfig[];
   evalTools: EvalTools;
   schoolClass: SchoolClass;
   curricularComponent: CurricularComponent;

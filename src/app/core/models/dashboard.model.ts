@@ -1,4 +1,4 @@
-import { Activity, School, SchoolClass, CurricularComponent } from '@models';
+import { ActivityConfig, School, SchoolClass, CurricularComponent } from '@models';
 
 export interface ActivitiesCountFilters {
   school: Partial<School>;
@@ -12,7 +12,7 @@ export interface ActivitiesCountFilters {
 
 export interface ActivitiesCount {
   school: School;
-  activity: Activity;
+  activity: ActivityConfig;
   class?: SchoolClass;
   curricularComponent?: CurricularComponent;
   count: number;

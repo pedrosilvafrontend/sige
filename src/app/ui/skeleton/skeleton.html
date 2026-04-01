@@ -1,0 +1,49 @@
+<!--@if (type() === 'card') {-->
+<!--  <div class="skeleton-container">-->
+<!--    <div class="skeleton-card">-->
+<!--      <div class="shimmer"></div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--}-->
+<!--@if (type() === 'list') {-->
+<!--}-->
+
+<ng-template #skeletonList>
+  <div class="list-skeleton">
+    @for (i of [1,2,3,4,5]; track i) {
+      <div class="skeleton-item">
+        <div class="shimmer"></div>
+        <!--        <div class="skeleton-avatar"></div>-->
+        <div class="skeleton-content">
+          <div class="skeleton-line title"></div>
+          <div class="skeleton-line text"></div>
+        </div>
+      </div>
+    }
+  </div>
+</ng-template>
+
+<ng-template #skeletonCard>
+  <div class="skeleton-container">
+    <div class="skeleton-card">
+      <div class="shimmer"></div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #skeletonAll>
+  @if (type() === 'list') {
+    <ng-container *ngTemplateOutlet="skeletonList"></ng-container>
+  }
+  @if (type() === 'card') {
+    <ng-container *ngTemplateOutlet="skeletonCard"></ng-container>
+  }
+</ng-template>
+
+@defer (when !isLoading()) {
+  <ng-content></ng-content>
+} @placeholder {
+  <ng-container *ngTemplateOutlet="skeletonAll"></ng-container>
+}
+
+

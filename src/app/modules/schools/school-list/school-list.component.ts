@@ -41,6 +41,7 @@ import { AuthService, PermissionService } from '@services';
 import { Permission } from '@models';
 import { rowsAnimation } from '@core/util';
 import { format } from 'date-fns';
+import { Skeleton } from '@ui/skeleton/skeleton';
 
 @Component({
   selector: 'app-school-list',
@@ -69,6 +70,7 @@ import { format } from 'date-fns';
     DatePipe,
     AddressPipe,
     TranslatePipe,
+    Skeleton,
   ],
   templateUrl: './school-list.component.html',
   styleUrl: './school-list.component.scss',

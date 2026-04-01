@@ -39,7 +39,7 @@ import {
 import { Calendar } from '@modules/calendar/calendar.model';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { Button } from '@ui/button/button';
-import { Activity, LessonBatch, LessonEvent } from '@models';
+import { ActivityConfig, LessonBatch, LessonEvent } from '@models';
 import { LessonEventService } from '@services/lesson-event.service';
 import { UpdateService } from '@services/update.service';
 import { map } from 'rxjs/operators';
@@ -107,7 +107,7 @@ export class LessonEventsComponent extends BaseListComponent<LessonEvent> implem
   private updateService = inject(UpdateService);
   private activityService = inject(ActivityService);
   public authRole: string = '';
-  public activities: Map<string, Activity> = new Map();
+  public activities: Map<string, ActivityConfig> = new Map();
   public lesson!: LessonBatch;
   public lessonId: number = 0;
   public eventCategories: string[] = [];

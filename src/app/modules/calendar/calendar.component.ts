@@ -4,7 +4,7 @@ import {
   Component, ElementRef,
   inject,
   OnDestroy,
-  OnInit,
+  OnInit, signal,
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
@@ -45,7 +45,7 @@ import { UserType } from '@modules/users/users.model';
 import { User } from '@core/models/interface';
 import { ClassSelectComponent } from '@modules/classes/class-select/class-select.component';
 import { ActivatedRoute } from '@angular/router';
-import { Activity, Degree, LessonEvent, Proof, School, SchoolClass } from '@models';
+import { ActivityConfig, Degree, LessonEvent, Proof, School, SchoolClass } from '@models';
 import { AuthService, EventService, LessonsService, SchoolsService } from '@services';
 import { Button } from '@ui/button/button';
 import { debounceTime, map } from 'rxjs/operators';
@@ -53,6 +53,7 @@ import { DegreesService } from '@services/degrees.service';
 import { LessonEventService } from '@services/lesson-event.service';
 import { ActivityService } from '@modules/config/activity/activity.service';
 import { LessonsFormDialogComponent } from '@modules/lessons';
+import { Skeleton } from '@ui/skeleton/skeleton';
 
 @Component({
   selector: 'app-calendar',
@@ -80,6 +81,8 @@ import { LessonsFormDialogComponent } from '@modules/lessons';
     ClassSelectComponent,
     Button,
     NgClass,
+    Skeleton,
+    Skeleton,
   ]
 })
 export class CalendarComponent implements OnInit, OnDestroy {
@@ -99,6 +102,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   private elementRef = inject(ElementRef);
   private lessonsService = inject(LessonsService);
   private lastLessonKey = '';
+  isLoading = signal(true);
 
   @ViewChild(FullCalendarComponent, { static: false }) calendarComponent!: FullCalendarComponent;
   calendar: Calendar | null;
@@ -140,7 +144,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     school: {},
     schoolClass: {}
   }
-  activities: { [key: string]: Activity } = {};
+  activities: { [key: string]: ActivityConfig } = {};
 
   constructor() {
     this.dialogTitle = 'Add New Event';
@@ -233,7 +237,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.activities = await firstValueFrom(
       this.activityService.getAll().pipe(
         map(activities => {
-          return activities.reduce((acc: any, activity: Activity) => {
+          return activities.reduce((acc: any, activity: ActivityConfig) => {
             this.elementRef.nativeElement.style.setProperty(`--${activity.id.toLowerCase()}-color`, activity.color);
             acc[activity.id] = activity;
             return acc;
@@ -241,8 +245,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
         })
       )
     );
-
-
   }
 
   refresh() {
@@ -299,6 +301,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
         const setData = (data: any[]) => {
           self.originalData = Object.assign([], data || []);
           successCallback(data);
+          self.isLoading.set(false);
           self.cdr.detectChanges();
         }
         if (activities.test) {
