@@ -44,6 +44,7 @@ import { AddressPipe } from '@core/util/address.pipe';
 import { User } from '@core/models/interface';
 import * as fns from 'date-fns';
 import { PageHeaderComponent } from '@ui/page-header/page-header.component';
+import { Skeleton } from '@ui/skeleton/skeleton';
 
 @Component({
   selector: 'app-teachers',
@@ -75,6 +76,7 @@ import { PageHeaderComponent } from '@ui/page-header/page-header.component';
     MatMenuModule,
     MatPaginatorModule,
     PageHeaderComponent,
+    Skeleton,
   ],
 })
 export class TeachersComponent implements OnInit, OnDestroy {

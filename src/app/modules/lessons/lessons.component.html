@@ -55,57 +55,43 @@
 <!--  <mat-card-content>-->
     <div class="overflow-auto">
       <div class="responsive_table">
-        <table mat-table [dataSource]="dataSource" matSort class="mat-cell advance-table">
-          <!-- Checkbox Column -->
-          <ng-container matColumnDef="select">
-            <mat-header-cell *matHeaderCellDef [ngClass]="'tbl-col-width-per-6'">
-              <mat-checkbox (change)="$event ? masterToggle() : null"
-                            [checked]="selection.hasValue() && isAllSelected()" color="primary"
-                            [indeterminate]="selection.hasValue() && !isAllSelected()" [ngClass]="'tbl-checkbox'">
-              </mat-checkbox>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let row" [ngClass]="'tbl-col-width-per-6'">
-              <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
-                            [checked]="selection.isSelected(row)" [ngClass]="'tbl-checkbox'" color="primary">
-              </mat-checkbox>
-            </mat-cell>
-          </ng-container>
+        <ui-skeleton type="list" [loading]="isLoading">
+          <table mat-table [dataSource]="dataSource" matSort class="mat-cell advance-table">
+            <!-- Checkbox Column -->
+            <ng-container matColumnDef="select">
+              <mat-header-cell *matHeaderCellDef [ngClass]="'tbl-col-width-per-6'">
+                <mat-checkbox (change)="$event ? masterToggle() : null"
+                              [checked]="selection.hasValue() && isAllSelected()" color="primary"
+                              [indeterminate]="selection.hasValue() && !isAllSelected()" [ngClass]="'tbl-checkbox'">
+                </mat-checkbox>
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row" [ngClass]="'tbl-col-width-per-6'">
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+                              [checked]="selection.isSelected(row)" [ngClass]="'tbl-checkbox'" color="primary">
+                </mat-checkbox>
+              </mat-cell>
+            </ng-container>
 
 
-          @for (column of columnDefinitions; track column) {
-            <!-- Skip rendering if column.label is "select" or "action" -->
-            @if (column.type === 'check' || column.type === 'actionBtn') {
-              <!-- Skip this column -->
-            } @else {
-              @if (column.def === 'id') {
-                <ng-container [matColumnDef]="column.def">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'max-width': '80px'}">
-                    <span class="truncate-text">{{ column.label }}</span>
-                  </mat-header-cell>
-                  <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)" [ngStyle]="{'max-width': '80px'}">
-                    <span class="mobile-label">{{ column.label }}:</span>
-                    <span class="truncate-text">
-                        {{ row.id || '' }}
-                      </span>
-                  </mat-cell>
-                </ng-container>
+            @for (column of columnDefinitions; track column) {
+              <!-- Skip rendering if column.label is "select" or "action" -->
+              @if (column.type === 'check' || column.type === 'actionBtn') {
+                <!-- Skip this column -->
               } @else {
-                @if (column.def === 'class') {
+                @if (column.def === 'id') {
                   <ng-container [matColumnDef]="column.def">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'max-width': '80px'}">
                       <span class="truncate-text">{{ column.label }}</span>
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
+                    <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)" [ngStyle]="{'max-width': '80px'}">
                       <span class="mobile-label">{{ column.label }}:</span>
                       <span class="truncate-text">
-                        {{ row.class?.year?.name || '' }}
-                        {{ row.class?.suffix?.name || '' }}
-                        {{ row.class?.dayShift?.name || '' }}
-                      </span>
+                          {{ row.id || '' }}
+                        </span>
                     </mat-cell>
                   </ng-container>
                 } @else {
-                  @if (column.def === 'teacher') {
+                  @if (column.def === 'class') {
                     <ng-container [matColumnDef]="column.def">
                       <mat-header-cell *matHeaderCellDef mat-sort-header>
                         <span class="truncate-text">{{ column.label }}</span>
@@ -113,12 +99,14 @@
                       <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
                         <span class="mobile-label">{{ column.label }}:</span>
                         <span class="truncate-text">
-                          {{ row.teacher.fullName }}
+                          {{ row.class?.year?.name || '' }}
+                          {{ row.class?.suffix?.name || '' }}
+                          {{ row.class?.dayShift?.name || '' }}
                         </span>
                       </mat-cell>
                     </ng-container>
                   } @else {
-                    @if (column.def === 'curricularComponent') {
+                    @if (column.def === 'teacher') {
                       <ng-container [matColumnDef]="column.def">
                         <mat-header-cell *matHeaderCellDef mat-sort-header>
                           <span class="truncate-text">{{ column.label }}</span>
@@ -126,65 +114,79 @@
                         <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
                           <span class="mobile-label">{{ column.label }}:</span>
                           <span class="truncate-text">
-                            @if (row.curricularComponent; as cc) {
-                              {{ cc.code }} - {{ cc.name }}
-                            }
+                            {{ row.teacher.fullName }}
                           </span>
                         </mat-cell>
                       </ng-container>
                     } @else {
-                      @if (column.def === 'schoolClass') {
+                      @if (column.def === 'curricularComponent') {
                         <ng-container [matColumnDef]="column.def">
                           <mat-header-cell *matHeaderCellDef mat-sort-header>
                             <span class="truncate-text">{{ column.label }}</span>
                           </mat-header-cell>
                           <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
                             <span class="mobile-label">{{ column.label }}:</span>
-                            <span class="truncate-text">{{ row.schoolClass.code }}</span>
+                            <span class="truncate-text">
+                              @if (row.curricularComponent; as cc) {
+                                {{ cc.code }} - {{ cc.name }}
+                              }
+                            </span>
                           </mat-cell>
                         </ng-container>
                       } @else {
-                        @if (column.def === 'frequency') {
+                        @if (column.def === 'schoolClass') {
                           <ng-container [matColumnDef]="column.def">
                             <mat-header-cell *matHeaderCellDef mat-sort-header>
                               <span class="truncate-text">{{ column.label }}</span>
                             </mat-header-cell>
                             <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
                               <span class="mobile-label">{{ column.label }}:</span>
-                              <span #dataFrequency class="truncate-text">
-                                @if (row.frequency === 'UNIQUE') {
-                                  {{ row.date | date:'dd/MM' }} -
-                                  {{ row.startHour }} às {{ row.endHour }}
-                                  {{ row.dayOfWeek }}
-                                }
-                                @else {
-                                  {{ row.frequency | translate }} -
-                                  {{ row.startHour }} às {{ row.endHour }}
-                                }
-                              </span>
+                              <span class="truncate-text">{{ row.schoolClass.code }}</span>
                             </mat-cell>
                           </ng-container>
                         } @else {
-                          @if (column.def === 'school') {
+                          @if (column.def === 'frequency') {
                             <ng-container [matColumnDef]="column.def">
                               <mat-header-cell *matHeaderCellDef mat-sort-header>
                                 <span class="truncate-text">{{ column.label }}</span>
                               </mat-header-cell>
                               <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
                                 <span class="mobile-label">{{ column.label }}:</span>
-                                <span class="truncate-text">{{ row.school?.acronym }} - {{ row.school?.name }}</span>
+                                <span #dataFrequency class="truncate-text">
+                                  @if (row.frequency === 'UNIQUE') {
+                                    {{ row.date | date:'dd/MM' }} -
+                                    {{ row.startHour }} às {{ row.endHour }}
+                                    {{ row.dayOfWeek }}
+                                  }
+                                  @else {
+                                    {{ row.frequency | translate }} -
+                                    {{ row.startHour }} às {{ row.endHour }}
+                                  }
+                                </span>
                               </mat-cell>
                             </ng-container>
                           } @else {
-                            <ng-container [matColumnDef]="column.def">
-                              <mat-header-cell *matHeaderCellDef mat-sort-header>
-                                <span class="truncate-text">{{ column.label }}</span>
-                              </mat-header-cell>
-                              <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
-                                <span class="mobile-label">{{ column.label }}:</span>
-                                <span class="truncate-text">{{ row[column.def] }}</span>
-                              </mat-cell>
-                            </ng-container>
+                            @if (column.def === 'school') {
+                              <ng-container [matColumnDef]="column.def">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                                  <span class="truncate-text">{{ column.label }}</span>
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
+                                  <span class="mobile-label">{{ column.label }}:</span>
+                                  <span class="truncate-text">{{ row.school?.acronym }} - {{ row.school?.name }}</span>
+                                </mat-cell>
+                              </ng-container>
+                            } @else {
+                              <ng-container [matColumnDef]="column.def">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                                  <span class="truncate-text">{{ column.label }}</span>
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
+                                  <span class="mobile-label">{{ column.label }}:</span>
+                                  <span class="truncate-text">{{ row[column.def] }}</span>
+                                </mat-cell>
+                              </ng-container>
+                            }
                           }
                         }
                       }
@@ -192,45 +194,45 @@
                   }
                 }
               }
+              <!-- For User with image -->
+                <!-- For Date Columns -->
+                <!-- For Mobile Columns -->
+                <!-- For Email Columns -->
+                <!-- For Address Columns -->
+                <!-- For Gender Column -->
+                <!-- Rest all columns -->
             }
-            <!-- For User with image -->
-              <!-- For Date Columns -->
-              <!-- For Mobile Columns -->
-              <!-- For Email Columns -->
-              <!-- For Address Columns -->
-              <!-- For Gender Column -->
-              <!-- Rest all columns -->
-          }
 
-          <!-- actions -->
-          <ng-container matColumnDef="actions">
-            <mat-header-cell class="pr-0" *matHeaderCellDef>Actions</mat-header-cell>
-            <mat-cell *matCellDef="let row; let i=index;" class="pr-0">
-              <button mat-icon-button color="accent"
-                      [matTooltip]="'Edit' | translate"
-                      (click)="$event.stopPropagation();openLessonFormDialog(row.id)"
-                      class="tbl-action-btn">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button
-                      [matTooltip]="'Lesson events' | translate"
-                      (click)="$event.stopPropagation();goToEvents(row)"
-                      class="tbl-action-btn">
-                <mat-icon>list</mat-icon>
-              </button>
-              <button mat-icon-button
-                      [matTooltip]="'Delete' | translate"
-                      (click)="$event.stopPropagation();deleteItem(row)"
-                      class="tbl-action-btn hover-danger">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </mat-cell>
-          </ng-container>
-          <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: getDisplayedColumns();" (click)="openLessonFormDialog(row.id)"
-                   [style.cursor]="'pointer'" matRipple>
-          </mat-row>
-        </table>
+            <!-- actions -->
+            <ng-container matColumnDef="actions">
+              <mat-header-cell class="pr-0" *matHeaderCellDef>Actions</mat-header-cell>
+              <mat-cell *matCellDef="let row; let i=index;" class="pr-0">
+                <button mat-icon-button color="accent"
+                        [matTooltip]="'Edit' | translate"
+                        (click)="$event.stopPropagation();openLessonFormDialog(row.id)"
+                        class="tbl-action-btn">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button
+                        [matTooltip]="'Lesson events' | translate"
+                        (click)="$event.stopPropagation();goToEvents(row)"
+                        class="tbl-action-btn">
+                  <mat-icon>list</mat-icon>
+                </button>
+                <button mat-icon-button
+                        [matTooltip]="'Delete' | translate"
+                        (click)="$event.stopPropagation();deleteItem(row)"
+                        class="tbl-action-btn hover-danger">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="getDisplayedColumns()"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: getDisplayedColumns();" (click)="openLessonFormDialog(row.id)"
+                     [style.cursor]="'pointer'" matRipple>
+            </mat-row>
+          </table>
+        </ui-skeleton>
       </div>
       <!-- Loading spinner -->
       @if (isLoading) {

@@ -289,7 +289,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
       },
       eventColor: '#a8a8a8',
       events: function(info, successCallback, failureCallback) {
-        // self.isLoading.set(true);
         const classHash = self.classHash;
         const schoolId = self.filters.get('school')?.value?.id;
         const degreeId = self.filters.get('degreeId')?.value;

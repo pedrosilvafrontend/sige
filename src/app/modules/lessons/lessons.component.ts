@@ -32,6 +32,7 @@ import { EventDialogComponent } from '@modules/calendar/dialogs/event-dialog/eve
 import { Util } from '@util/util';
 import { GridLesson } from '@ui/grid-lesson/grid-lesson';
 import { GridTeacherLesson } from '@ui/grid-teacher-lessons/grid-teacher-lesson';
+import { Skeleton } from '@ui/skeleton/skeleton';
 
 @Component({
   selector: 'app-lessons',
@@ -64,6 +65,7 @@ import { GridTeacherLesson } from '@ui/grid-teacher-lessons/grid-teacher-lesson'
     TranslateModule,
     GridLesson,
     GridTeacherLesson,
+    Skeleton,
   ],
 })
 export class LessonsComponent implements OnInit, OnDestroy {
