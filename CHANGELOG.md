@@ -1,3 +1,12 @@
+## [1.1.14](https://github.com/pedrosilvafrontend/sige/compare/v1.1.13...v1.1.14) (2026-04-01)
+
+
+### Features
+
+* skeleton and activity status ([f17f360](https://github.com/pedrosilvafrontend/sige/commit/f17f36048c03dfc2de27b2d97b22d2406c9de409))
+* skeleton loading ([774e437](https://github.com/pedrosilvafrontend/sige/commit/774e437ee82d00a4d2e347557ec8a6fd47e547d2))
+* skeleton loading ([c09a02d](https://github.com/pedrosilvafrontend/sige/commit/c09a02d495260f39c4d1438a900284c38ec191fb))
+
 ## [1.1.13](https://github.com/pedrosilvafrontend/sige/compare/v1.1.12...v1.1.13) (2026-03-31)
 
 
