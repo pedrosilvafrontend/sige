@@ -27,6 +27,7 @@ import { SchoolClass } from '@models';
 import { ClassDeleteDialogComponent } from './dialogs/class-delete-dialog/class-delete.component';
 import { PageHeaderComponent } from '@ui/page-header/page-header.component';
 import { Util } from '@util/util';
+ import { Skeleton } from '@ui/skeleton/skeleton';
 
 @Component({
   selector: 'app-classes',
@@ -57,6 +58,7 @@ import { Util } from '@util/util';
     MatPaginatorModule,
     TranslatePipe,
     PageHeaderComponent,
+    Skeleton,
   ],
 })
 export class ClassesComponent implements OnInit, OnDestroy {

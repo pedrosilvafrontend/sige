@@ -23,7 +23,7 @@ export class Skeleton {
     effect(() => {
       const loading = this.loading();
       if (!loading && (+new Date() - this.initOn < 1000)) {
-        setTimeout(() => this.isLoading.set(false), 1000);
+        setTimeout(() => this.isLoading.set(false), 500);
         return;
       }
       this.isLoading.set(loading);
