@@ -5,7 +5,7 @@ export * from './lesson.model';
 export * from './users.model';
 export * from './dashboard.model';
 export * from './address';
-export * from './activity';
+export * from './activity-config';
 export * from './crud';
 export * from './permission';
 export * from './event';

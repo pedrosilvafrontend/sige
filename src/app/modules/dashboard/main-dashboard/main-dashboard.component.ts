@@ -1,7 +1,7 @@
-import { ChangeDetectorRef, Component, inject, input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { firstValueFrom, Subject, takeUntil } from 'rxjs';
-import { Activity, LessonEvent, Proof, SchoolEvent } from '@models';
+import { ActivityConfig, LessonEvent, Proof, SchoolEvent } from '@models';
 import { DatePipe, LowerCasePipe, NgClass, NgStyle } from '@angular/common';
 import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { User } from '@core/models/interface';
@@ -19,6 +19,7 @@ import { MatBadge } from '@angular/material/badge';
 import { ActivityService } from '@modules/config/activity/activity.service';
 import { AuthService } from '@services';
 import { EventCard } from '@ui/event-card/event-card';
+import { Skeleton } from '@ui/skeleton/skeleton';
 
 @Component({
   selector: 'app-main-dashboard',
@@ -35,7 +36,9 @@ import { EventCard } from '@ui/event-card/event-card';
     MatBadge,
     NgClass,
     LowerCasePipe,
-    EventCard
+    EventCard,
+    Skeleton,
+    Skeleton
   ],
   providers: [
     TranslatePipe
@@ -59,7 +62,8 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   events: LessonEvent[] = [];
   dateFormat = 'dd/MM/yyyy';
   proofStatusClass: any = Proof.statusClass;
-  activities: Map<string, Activity> = new Map();
+  activities: Map<string, ActivityConfig> = new Map();
+  isLoading = signal(true);
 
   async ngOnInit() {
     await this.getEvents();
@@ -69,14 +73,17 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     });
 
     this.activities = await this.activityService.getMap();
+    this.isLoading.set(false);
   }
 
   async getEvents() {
+    // this.isLoading.set(true);
     const params = {
       limit: this.user().role === 'teacher' ? 36 : 24,
       prevDate: false,
     }
     this.events = await firstValueFrom(this.lessonEventService.getAll(params));
+    // this.isLoading.set(false);
     this.cdr.detectChanges();
   }
 

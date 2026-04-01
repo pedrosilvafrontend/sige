@@ -4,7 +4,14 @@
     <div class="row row-gap-24 my-4">
       @for (event of events; track event.date) {
         <div class="col activity-col">
-          <ui-event-card [user]="user()" [event]="event" [activities]="activities" (click)="openLessonEventDialog(event)"></ui-event-card>
+<!--          @defer (when !isLoading()) {-->
+<!--            <ui-event-card [user]="user()" [event]="event" [activities]="activities" (click)="openLessonEventDialog(event)"></ui-event-card>-->
+<!--          } @placeholder {-->
+<!--            <ui-skeleton type="card"></ui-skeleton>-->
+<!--          }-->
+          <ui-skeleton type="card" [loading]="isLoading()">
+            <ui-event-card [user]="user()" [event]="event" [activities]="activities" (click)="openLessonEventDialog(event)"></ui-event-card>
+          </ui-skeleton>
         </div>
       }
 

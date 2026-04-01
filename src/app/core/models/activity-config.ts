@@ -2,7 +2,7 @@ import { School } from '@models/school.model';
 import { SchoolClass } from '@models/classes.model';
 import { CurricularComponent } from '@models/curricular-component.model';
 
-export interface Activity {
+export interface ActivityConfig {
   id: string;
   name: string;
   color?: string;

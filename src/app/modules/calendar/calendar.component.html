@@ -116,8 +116,10 @@
               </div>
             </div>
             <div class="panel-body">
-              <full-calendar #calendar [options]='calendarOptions'>
-              </full-calendar>
+              <ui-skeleton type="list" [loading]="isLoading()">
+                <full-calendar [hidden]="isLoading()" #calendar [options]='calendarOptions'>
+                </full-calendar>
+              </ui-skeleton>
             </div>
           </div>
         </div>

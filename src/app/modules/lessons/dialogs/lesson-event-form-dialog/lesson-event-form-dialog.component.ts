@@ -27,7 +27,7 @@ import {
   LessonEventFormComponent
 } from '@modules/lessons/form/lesson-event.form.component/lesson-event.form.component';
 import {
-  Activity,
+  ActivityConfig,
   LessonEvent, LessonEventExtra,
   LessonEventForm,
   LessonEventFormValue,
@@ -135,7 +135,7 @@ export class LessonEventFormDialogComponent implements OnInit {
     minHeight: '300px',
     disableClose: true
   };
-  activities: Map<string, Activity> = new Map();
+  activities: Map<string, ActivityConfig> = new Map();
   userConfig = this.fb.group({
     schoolClass: this.fb.group({})
   })

@@ -10,11 +10,11 @@
             @let pStatus = evt.evalTools.proof?.status || '';
             @let wStatus = evt.evalTools.work?.status || '';
             @if (pStatus === 'APPROVED') {
-              <span [className]="'badge m-x-2 activity-test'" [ngStyle]="{ 'background-color': activities().get('TEST')?.color }">{{ 'Proof' | translate }}</span>
+              <span [className]="'badge m-x-2 activity-test'" [ngStyle]="activities().get('TEST')?.color | colorStyle">{{ 'Proof' | translate }}</span>
             } @else if (wStatus === 'APPROVED') {
-              <span [className]="'badge m-x-2 activity-work'" [ngStyle]="{ 'background-color': activities().get('WORK')?.color }">{{ 'Work' | translate }}</span>
+              <span [className]="'badge m-x-2 activity-work'" [ngStyle]="activities().get('WORK')?.color | colorStyle">{{ 'Work' | translate }}</span>
             } @else {
-              <span class="badge badge-solid-gray dot-badge" [ngClass]="'dot-badge-'+statusClass[pStatus || wStatus]">
+              <span class="badge badge-solid-gray dot-badge" [ngClass]="'dot-badge-'+(evt.evalTools | activityStatusClass)">
                 {{ 'Lesson' | translate }}
               </span>
             }
