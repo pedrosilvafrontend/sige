@@ -1,3 +1,10 @@
+## [1.1.18](https://github.com/pedrosilvafrontend/sige/compare/v1.1.17...v1.1.18) (2026-04-09)
+
+
+### Bug Fixes
+
+* proof and work modal close methods ([53b8609](https://github.com/pedrosilvafrontend/sige/commit/53b8609e5edf113525a7ee72d9352da3a816145b))
+
 ## [1.1.17](https://github.com/pedrosilvafrontend/sige/compare/v1.1.16...v1.1.17) (2026-04-09)
 
 
