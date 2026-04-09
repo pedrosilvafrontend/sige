@@ -63,6 +63,7 @@ export class WorkFormModal {
   ref$ = output<MatDialogRef<ModalDialogComponent, any>>({ alias: 'ref' })
 
   constructor() {
+    this.open = this.open.bind(this);
     effect(() => {
       if (this.workInput()) {
         console.log('workInput changed', this.workInput());

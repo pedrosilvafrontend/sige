@@ -36,7 +36,6 @@
           <ui-modal #proofModal [template]="proofTemplate" [options]="{width: '800px', disableClose: true}"></ui-modal>
 <!--          <ui-modal #workModal [template]="workTemplate" [options]="{width: '800px', disableClose: true}"></ui-modal>-->
 
-<!--          TODO: event colors modal -->
           <app-event-colors #colorModal [event]="event" [colorBy]="colorBy"></app-event-colors>
 
 
@@ -71,7 +70,12 @@
           </ng-template>
 
           <ng-template #proofTemplate>
-            <h3 mat-dialog-title>Prova</h3>
+            <div class="modalHeader">
+              <h3 mat-dialog-title>Prova</h3>
+              <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="proofModal.close()">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
             <mat-dialog-content>
               @let disableProof = disabled || (proof.status == 'APPROVED' && auth.role == 'teacher');
               @if (proof && proof.status) {
@@ -108,7 +112,7 @@
 <!--                  </ui-button>-->
 <!--                }-->
                 @if (!disableProof) {
-                  <ui-button (onClick)="saveProof(proofModal.close)">
+                  <ui-button [disabled]="proofForm.invalid" (onClick)="saveProof(proofModal.close)">
                     Salvar
                     @if (proof.status && proof.status != 'APPROVED' && isManager) {
                       e aprovar
@@ -159,8 +163,8 @@
         @let isMaxWorks = count.maxWorks > 0 && (count.works >= count.maxWorks);
         <ui-button color="default" (onClick)="openColorModal(colorModal)">Cor</ui-button>
         <ui-button color="default" (onClick)="planningModal.open()">{{ 'Planning' | translate }}</ui-button>
-        <app-work-form-modal #workModal [work]="work" [schoolId]="schoolId" (ref)="workModalRef($event)">
-          <ui-button color="default" (onClick)="workModal.open()" badge=""
+        <app-work-form-modal #workModal [work]="work" [schoolId]="schoolId">
+          <ui-button color="default" (onClick)="workModalOpen(workModal.open)" badge=""
                      [badgeColor]="activityStatusClass[work.status]" [disabled]="!work.id && (isMaxTotal || isMaxWorks)">
             <div class="d-flex gap-1 align-items-center">
               <span>

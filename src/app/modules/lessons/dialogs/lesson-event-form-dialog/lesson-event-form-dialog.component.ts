@@ -195,13 +195,16 @@ export class LessonEventFormDialogComponent implements OnInit {
     })
   }
 
-  workModalRef(ref: MatDialogRef<ModalDialogComponent, any>) {
-    ref.afterClosed().pipe(take(1)).subscribe((data) => {
-      if (data?.id) {
-        this.closeRefresh = true;
-        this.work = data;
-      }
-    })
+  workModalOpen(openFn: (data?: Work) => MatDialogRef<ModalDialogComponent, any>) {
+    const ref = openFn?.(this.work);
+    if (ref) {
+      ref.afterClosed().pipe(take(1)).subscribe((data) => {
+        if (data?.id) {
+          this.closeRefresh = true;
+          this.work = data;
+        }
+      })
+    }
   }
 
   saveProof(callback?: () => void) {
