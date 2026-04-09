@@ -15,11 +15,9 @@ import { ModalComponent, ModalDialogComponent } from '@ui/modal/modal.component'
 import { ActivityConfig, LessonEvent } from '@models';
 import { AuthService } from '@services';
 import { take } from 'rxjs';
-import { JsonPipe } from '@angular/common';
 import { ColorBy, newColorBy } from '@models/colors-by';
 import { UserColorsService } from '@core/services/user-colors.service';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
-import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-event-colors',
@@ -36,7 +34,6 @@ import { MatButton } from '@angular/material/button';
     TranslatePipe,
     ModalComponent,
     ReactiveFormsModule,
-    JsonPipe,
     MatRadioButton,
     MatRadioGroup,
   ],
