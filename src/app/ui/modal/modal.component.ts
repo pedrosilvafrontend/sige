@@ -98,9 +98,9 @@ export class ModalComponent implements OnInit {
     return this.ref;
   }
 
-  closeAll(): void {
-    this.dialog.closeAll();
-  }
+  // closeAll(): void {
+  //   this.dialog.closeAll();
+  // }
 
   ngOnInit() {
     this.modal.emit(this);

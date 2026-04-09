@@ -13,7 +13,7 @@
 <ng-template #workTemplate>
   <div class="modalHeader">
     <h3 mat-dialog-title>Trabalho</h3>
-    <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
+    <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="modal.close()">
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -51,7 +51,7 @@
         }
       }
 
-      <ui-button color="neutral" mat-dialog-close type="button" (onClick)="modal.close()">
+      <ui-button color="neutral" type="button" (onClick)="modal.close()">
         @if (disabled()) {
           {{ 'Close' | translate }}
         } @else {
@@ -61,7 +61,7 @@
 <!--      <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>-->
       @let isManager = auth.role && ['admin', 'principal', 'coordinator'].includes(auth.role);
       @if (!disableWork) {
-        <ui-button (onClick)="onSubmit()">
+        <ui-button [disabled]="form.invalid" (onClick)="onSubmit()">
           Salvar
           @if (work.status && work.status != 'APPROVED' && isManager) {
             e aprovar
