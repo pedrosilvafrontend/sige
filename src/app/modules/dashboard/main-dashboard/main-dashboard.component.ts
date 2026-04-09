@@ -80,8 +80,6 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    // await this.getEvents();
-
     this.updateService.proof$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.getEvents().then();
     });
@@ -97,15 +95,17 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   }
 
   async refresh() {
+    this.isLoading.set(true);
     await this.getColors();
     await this.getEvents();
     this.cdr.detectChanges();
+    this.isLoading.set(false);
   }
 
   async getEvents() {
     // this.isLoading.set(true);
     const params = {
-      limit: this.auth().role === 'teacher' ? 36 : 24,
+      limit: this.auth().role === 'teacher' ? 48 : 36,
       prevDate: false,
     }
     this.events = await firstValueFrom(this.lessonEventService.getAll(params));
