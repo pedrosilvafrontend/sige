@@ -35,29 +35,11 @@
           <ui-modal #planningModal [template]="planningTemplate" [options]="planningModalOptions"></ui-modal>
           <ui-modal #proofModal [template]="proofTemplate" [options]="{width: '800px', disableClose: true}"></ui-modal>
 <!--          <ui-modal #workModal [template]="workTemplate" [options]="{width: '800px', disableClose: true}"></ui-modal>-->
-          <ui-modal #colorModal [template]="colorTemplate" [options]="{disableClose: true}"></ui-modal>
 
-          <ng-template #colorTemplate>
-            <h3 mat-dialog-title>Cor da turma {{ event.schoolClass.code }}</h3>
-            @let control = userConfig.controls.schoolClass | getControl: event.schoolClass.code+'.color': '#ffffff';
-            <mat-dialog-content>
-              <div class="d-flex justify-content-center mt-3">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>{{ 'color' | translate }}</mat-label>
-                  <input id="color" matInput type="color" [formControl]="control" class="d-none">
-                  <label for="color">
-                    <ui-event-card [color]="control.value" [event]="event" [user]="user" [activities]="activities"></ui-event-card>
-                  </label>
-                </mat-form-field>
-              </div>
-            </mat-dialog-content>
-            <mat-dialog-actions>
-              <div class="d-flex gap-2">
-                <ui-button color="neutral" (onClick)="colorModal.close()" cdkFocusInitial>Cancelar</ui-button>
-                <ui-button (onClick)="saveColor(control.value)">[Em desenvolvimento...]</ui-button>
-              </div>
-            </mat-dialog-actions>
-          </ng-template>
+<!--          TODO: event colors modal -->
+          <app-event-colors #colorModal [event]="event" [colorBy]="colorBy"></app-event-colors>
+
+
           <ng-template #planningTemplate>
             <h3 mat-dialog-title>Planejamento de aula</h3>
             <mat-dialog-content>
@@ -91,7 +73,7 @@
           <ng-template #proofTemplate>
             <h3 mat-dialog-title>Prova</h3>
             <mat-dialog-content>
-              @let disableProof = disabled || (proof.status == 'APPROVED' && user.role == 'teacher');
+              @let disableProof = disabled || (proof.status == 'APPROVED' && auth.role == 'teacher');
               @if (proof && proof.status) {
                 <div class="my-3">
                   <span class="badge" [ngClass]="'text-bg-'+activityStatusClass[proof.status]">
@@ -119,7 +101,7 @@
                     Cancelar
                   }
                 </ui-button>
-                @let isManager = user.role && ['admin', 'principal', 'coordinator'].includes(user.role);
+                @let isManager = auth.role && ['admin', 'principal', 'coordinator'].includes(auth.role);
 <!--                @if (isManager) {-->
 <!--                  <ui-button (onClick)="approveProof(proofModal.close)">-->
 <!--                    {{ 'Approve' | translate }}-->
@@ -175,9 +157,8 @@
         @let isMaxTotal = count.maxTotal > 0 && (count.total >= count.maxTotal);
         @let isMaxProofs = count.maxProofs > 0 && (count.proofs >= count.maxProofs);
         @let isMaxWorks = count.maxWorks > 0 && (count.works >= count.maxWorks);
-<!--        <ui-button color="default" (onClick)="colorModal.open()">Cor</ui-button>-->
-        <ui-button color="default" (onClick)="planningModal.open()">Planejamento</ui-button>
-
+        <ui-button color="default" (onClick)="openColorModal(colorModal)">Cor</ui-button>
+        <ui-button color="default" (onClick)="planningModal.open()">{{ 'Planning' | translate }}</ui-button>
         <app-work-form-modal #workModal [work]="work" [schoolId]="schoolId" (ref)="workModalRef($event)">
           <ui-button color="default" (onClick)="workModal.open()" badge=""
                      [badgeColor]="activityStatusClass[work.status]" [disabled]="!work.id && (isMaxTotal || isMaxWorks)">

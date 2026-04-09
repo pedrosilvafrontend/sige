@@ -16,7 +16,7 @@ export class LessonEventService {
 
   getAll(params?: any): Observable<LessonEvent[]> {
     return this.http
-      .get<LessonEvent[]>(this.API_URL, { params })
+      .get<LessonEvent[]>(this.API_URL, { params: params || {} })
       .pipe(catchError(this.handleError));
   }
 

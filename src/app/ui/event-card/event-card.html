@@ -1,8 +1,6 @@
 <mat-card class="cursor-pointer" [ngStyle]="{'background-color': color(), 'color': color() | textColor }">
   <mat-card-content>
-    <!--              <div class="d-flex gap-2">-->
-    @let evt = event();
-    @if (evt) {
+    @if (event(); as evt) {
       <div class="">
 
         <div class="d-flex gap-1 justify-content-between mb-3">
@@ -53,7 +51,7 @@
               {{ evt.curricularComponent?.name }}
             </div>
             @if (evt.lesson; as lesson) {
-              @if (user().role !== 'teacher') {
+              @if (auth().role !== 'teacher') {
                 <div class="teacher-name ellipsis">
                   {{ lesson.teacher?.fullName }}
                 </div>

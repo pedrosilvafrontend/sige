@@ -1,0 +1,43 @@
+<ui-modal (modal)="setModal($event)" [template]="colorTemplate" [options]="options"></ui-modal>
+<ng-template #colorTemplate>
+  <h3 mat-dialog-title>Cor da turma {{ event.schoolClass.code }}</h3>
+  <mat-dialog-content [formGroup]="form">
+    <div>
+      <mat-label class="msr-3">{{ 'Coloring by' | translate }}:</mat-label>
+      <mat-radio-group formControlName="coloringBy" aria-label="Select" required>
+        @if (auth.multiSchools) {
+          <mat-radio-button value="school" color="primary" [disabled]="!form.controls.schoolId.value">
+            {{ 'School' | translate }}
+          </mat-radio-button>
+        }
+        <mat-radio-button value="class" color="primary" [disabled]="!form.controls.classId.value">
+          {{ 'Class' | translate }}
+        </mat-radio-button>
+        <mat-radio-button value="curricularComponent" color="primary" [disabled]="!form.controls.curricularComponentId.value">
+          {{ 'Curricular component' | translate }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div class="d-flex justify-content-center mt-3">
+      <mat-form-field appearance="outline" class="w-50">
+        <mat-label>{{ 'color' | translate }}</mat-label>
+        <input id="color" matInput type="color" formControlName="color" class="d-none">
+        <label for="color">
+          <ui-event-card [color]="form.controls.color.value || ''" [event]="event" [auth]="auth" [activities]="activities"></ui-event-card>
+          <div class="mt-3 text-center">
+            <span class="fake-button">Selecionar cor</span>
+          </div>
+        </label>
+      </mat-form-field>
+    </div>
+    <pre>
+      {{ form.value | json }}
+    </pre>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <div class="d-flex gap-2">
+      <ui-button color="neutral" (onClick)="modal.close()" cdkFocusInitial>Cancelar</ui-button>
+      <ui-button [disabled]="form.invalid || submitting" (onClick)="submit()">Salvar</ui-button>
+    </div>
+  </mat-dialog-actions>
+</ng-template>

@@ -693,63 +693,21 @@ button.mdc-button[data-badgeColor="info"]::after {
   font-weight: 500 !important;
 }
 
-//.skeleton-loader {
-//  display: flex;
-//  flex-direction: column;
-//  align-items: center;
-//  justify-content: center;
-//  padding: 2rem;
-//  background-color: #f0f0f0;
-//  border-radius: 8px;
-//}
-//
-//.spinner {
-//  border: 4px solid rgba(0, 0, 0, 0.1);
-//  width: 36px;
-//  height: 36px;
-//  border-radius: 50%;
-//  border-left-color: $primary;
-//  //border-left-color: #09f;
-//  animation: spin 1s linear infinite;
-//}
-//
-//@keyframes spin {
-//  0% { transform: rotate(0deg); }
-//  100% { transform: rotate(360deg); }
-//}
-
-//.skeleton-card {
-//  width: 100%;
-//  height: 200px; /* Ajuste conforme sua necessidade */
-//  background-color: #e0e0e0;
-//  border-radius: 8px;
-//  position: relative;
-//  overflow: hidden; /* Garante que o brilho não saia da div */
-//}
-//
-//.skeleton-shimmer {
-//  position: absolute;
-//  top: 0;
-//  left: 0;
-//  width: 100%;
-//  height: 100%;
-//  /* Cria o gradiente diagonal: cinza claro -> branco translúcido -> cinza claro */
-//  background: linear-gradient(
-//    110deg,
-//    rgba(255, 255, 255, 0) 20%,
-//    rgba(255, 255, 255, 0.5) 50%,
-//    rgba(255, 255, 255, 0) 80%
-//  );
-//  background-size: 200% 100%;
-//  animation: shimmer 1.5s infinite linear;
-//}
-//
-//@keyframes shimmer {
-//  0% {
-//    background-position: -150% 0;
-//  }
-//  100% {
-//    background-position: 150% 0;
-//  }
-//}
-
+.fake-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px; // Adjust for M3 rounding
+  height: 36px;
+  padding: 0 16px;
+  box-sizing: border-box;
+  background-color: $primary;
+  color: $white;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  outline: none;
+  border: none;
+}

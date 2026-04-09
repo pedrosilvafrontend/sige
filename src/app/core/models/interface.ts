@@ -16,6 +16,7 @@ export interface User {
   roles?: string[];
   permissions?: string[];
   schools?: School[];
+  multiSchools?: boolean
 }
 
 export interface Token {

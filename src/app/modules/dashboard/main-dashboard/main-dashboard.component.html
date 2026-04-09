@@ -1,16 +1,29 @@
 <div>
-  <h2>Próximas atividades</h2>
+  <div class="d-flex justify-content-between align-items-center">
+    <h2>Próximas atividades</h2>
+    <div>
+      <mat-label class="msr-3">{{ 'Coloring by' | translate }}:</mat-label>
+      <mat-radio-group [formControl]="coloringByControl" aria-label="Select" required>
+        @if (auth().multiSchools) {
+          <mat-radio-button value="school" color="primary">
+            {{ 'School' | translate }}
+          </mat-radio-button>
+        }
+        <mat-radio-button value="class" color="primary">
+          {{ 'Class' | translate }}
+        </mat-radio-button>
+        <mat-radio-button value="curricularComponent" color="primary">
+          {{ 'Curricular component' | translate }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </div>
   <div class="">
     <div class="row row-gap-24 my-4">
       @for (event of events; track event.date) {
         <div class="col activity-col">
-<!--          @defer (when !isLoading()) {-->
-<!--            <ui-event-card [user]="user()" [event]="event" [activities]="activities" (click)="openLessonEventDialog(event)"></ui-event-card>-->
-<!--          } @placeholder {-->
-<!--            <ui-skeleton type="card"></ui-skeleton>-->
-<!--          }-->
           <ui-skeleton type="card" [loading]="isLoading()">
-            <ui-event-card [user]="user()" [event]="event" [activities]="activities" (click)="openLessonEventDialog(event)"></ui-event-card>
+            <ui-event-card [color]="colors | coloringBy:event:coloringByControl.value" [auth]="auth()" [event]="event" [activities]="activities" (click)="openLessonEventDialog(event)"></ui-event-card>
           </ui-skeleton>
         </div>
       }
