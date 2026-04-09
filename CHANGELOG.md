@@ -1,3 +1,10 @@
+## [1.1.17](https://github.com/pedrosilvafrontend/sige/compare/v1.1.16...v1.1.17) (2026-04-09)
+
+
+### Features
+
+* event colors ([2388964](https://github.com/pedrosilvafrontend/sige/commit/238896433dec352eab5a1b6228875b93d7ba94cb))
+
 ## [1.1.16](https://github.com/pedrosilvafrontend/sige/compare/v1.1.15...v1.1.16) (2026-04-09)
 
 
