@@ -45,13 +45,12 @@ import { JsonPipe, NgClass, NgStyle } from '@angular/common';
 import { IProofForm } from '@form/proof.form';
 import { MessageService } from '@services/message.service';
 import { TextEditor } from '@ui/text-editor/text-editor';
-import { ColorPipe, getControl } from '@util/color-pipe';
-import { EventCard } from '@ui/event-card/event-card';
 import { IWorkForm } from '@form/work.form';
 import { WorkService } from '@services/work.service';
-import { WorkFormComponent } from '@modules/common/form/work-form/work-form.component';
 import { WorkFormModal } from '@modules/works/modals/work-form-modal/work-form-modal';
 import { take } from 'rxjs';
+import { EventColors } from '@modules/modals/event-colors/event-colors';
+import { ColorBy, newColorBy } from '@models/colors-by';
 
 export interface DialogData {
   item: LessonEvent;
@@ -59,6 +58,7 @@ export interface DialogData {
   timeScheduleId: number;
   date: string;
   action: string;
+  colorBy?: ColorBy;
 }
 
 @Component({
@@ -89,13 +89,8 @@ export interface DialogData {
     TestFormComponent,
     NgClass,
     TextEditor,
-    ColorPipe,
-    NgStyle,
-    JsonPipe,
-    getControl,
-    EventCard,
-    WorkFormComponent,
     WorkFormModal,
+    EventColors,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit {
@@ -103,12 +98,12 @@ export class LessonEventFormDialogComponent implements OnInit {
   public ref = inject(MatDialogRef<LessonEventFormDialogComponent>);
   private proofService = inject(ProofService);
   private workService = inject(WorkService);
-  private auth = inject(AuthService);
+  private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
   private fb = inject(FormBuilder);
   private lessonEventExtraService = inject(LessonEventExtraService);
   private message = inject(MessageService);
-  user = this.auth.user$.value;
+  auth = this.authService.user$.value;
   closeRefresh = false;
   event!: LessonEvent;
   proof: Proof = new Proof();
@@ -136,9 +131,8 @@ export class LessonEventFormDialogComponent implements OnInit {
     disableClose: true
   };
   activities: Map<string, ActivityConfig> = new Map();
-  userConfig = this.fb.group({
-    schoolClass: this.fb.group({})
-  })
+  colorBy: ColorBy;
+
   private _work!: Work;
   get work(): Work {
     return this._work;
@@ -152,7 +146,7 @@ export class LessonEventFormDialogComponent implements OnInit {
   }
 
   constructor() {
-    const { action, lessonId, timeScheduleId, date } = this.dialogData || {}
+    const { action, lessonId, timeScheduleId, date, colorBy } = this.dialogData || {}
     const work = new Work();
     this.readonly = action === 'view';
     if (lessonId) {
@@ -166,11 +160,8 @@ export class LessonEventFormDialogComponent implements OnInit {
     }
 
     this.work = work;
-  }
 
-  saveColor(color: string) {
-    console.log('>>> userConfig value', this.userConfig.getRawValue());
-    console.log('>>> save color', color);
+    this.colorBy = colorBy || newColorBy();
   }
 
   savePlanning(callback?: () => void) {
@@ -192,6 +183,15 @@ export class LessonEventFormDialogComponent implements OnInit {
       this.extra = response;
       this.closeRefresh = true;
       callback?.();
+    })
+  }
+
+  openColorModal(modal: EventColors) {
+    modal.open(this.event).afterClosed().pipe(take(1)).subscribe((colorBy) => {
+      if (colorBy) {
+        this.colorBy = colorBy;
+        this.closeRefresh = true;
+      }
     })
   }
 

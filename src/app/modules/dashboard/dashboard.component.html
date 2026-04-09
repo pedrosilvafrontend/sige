@@ -1,4 +1,6 @@
-<app-main-dashboard [user]="user"></app-main-dashboard>
+@if (auth) {
+  <app-main-dashboard [auth]="auth"></app-main-dashboard>
+}
 
 <!--@if (user.role === 'principal') {-->
 <!--  <app-main-dashboard [user]="user"></app-main-dashboard>-->

@@ -37,23 +37,42 @@ export class AuthService {
     if (!this.tokenService.getBearerToken()) {
       this.store.remove(this.userStoreKey);
     }
-    this.user$.next(this.store.get(this.userStoreKey));
+    this.setUser(this.store.get(this.userStoreKey));
 
     effect(() => {
       const school = this.school();
       if (school?.id && school.id !== this.store.get(this.schoolStoreKey)?.id) {
-        this.store.set(this.schoolStoreKey, this.school());
+        this.store.set(this.schoolStoreKey, school);
       }
     });
-    this.checkSelectedSchool();
+    this.selectSchool();
   }
 
-  checkSelectedSchool() {
+  setUser(user: User) {
+    if (this.tokenService.valid()) {
+      user.roles = this.tokenService.roleArray;
+      user.permissions = this.tokenService.permissionArray;
+      user.multiSchools = (user.schools?.length || 0) > 1;
+      this.user$.next(user);
+      this.store.set(this.userStoreKey, user);
+    } else {
+      this.user$.next({});
+    }
+  }
+
+  selectSchool(schoolId?: number) {
     const schools = this.user$.getValue().schools || [];
-    const schoolStore: School | undefined = this.store.get(this.schoolStoreKey);
-    const has = schools.some(s => s.id === schoolStore?.id);
-    const school = has ? schoolStore : schools[0];
-    if (!school?.id || this.school().id === school.id) return;
+
+    if (schools.length == 1) {
+      this.school.set(schools[0]);
+      // this.store.set(this.schoolStoreKey, schools[0]);
+      return;
+    }
+
+    if (!schoolId) return;
+
+    const school = schools.find(s => s.id === schoolId);
+    if (!school?.id) return;
     this.school.set(school);
     this.store.set(this.schoolStoreKey, school);
   }
@@ -78,7 +97,7 @@ export class AuthService {
       this.logout();
       return;
     }
-    this.user$.next(userStore);
+    this.setUser(userStore);
   }
 
   async register(data: { email: string, password: string }) {
@@ -111,8 +130,7 @@ export class AuthService {
       user.roles = this.tokenService.roleArray;
       user.permissions = this.tokenService.permissionArray;
 
-      this.user$.next(user);
-      this.store.set(this.userStoreKey, user);
+      this.setUser(user);
 
       this.router.navigate(['dashboard']);
     }
@@ -137,7 +155,7 @@ export class AuthService {
     //     user.permissions = this.tokenService.permissionArray;
     //
     //     // Update user subject and store in local storage
-    //     this.user$.next(user);
+    //     this.setUser(user);
     //     this.store.set(this.userStoreKey, user);
     //
     //     this.router.navigate(['dashboard/dashboard1']);
@@ -147,7 +165,7 @@ export class AuthService {
     //     console.error(error);
     //   },
     // });
-    this.checkSelectedSchool();
+    this.selectSchool();
   }
   refresh() {
     return this.loginService.refresh().pipe(
@@ -162,8 +180,7 @@ export class AuthService {
           currentUser.permissions = this.tokenService.permissionArray;
 
           // Update the user$ BehaviorSubject and local storage
-          this.user$.next(currentUser);
-          this.store.set(this.userStoreKey, currentUser);
+          this.setUser(currentUser);
         }
 
         return of(response);
@@ -199,9 +216,7 @@ export class AuthService {
 
     // Update user with roles and permissions from token if available
     if (this.tokenService.valid()) {
-      currentUser.roles = this.tokenService.roleArray;
-      currentUser.permissions = this.tokenService.permissionArray;
-      this.user$.next(currentUser);
+      this.setUser(currentUser);
     }
     else {
       this.user$.next({});

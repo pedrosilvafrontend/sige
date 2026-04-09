@@ -24,7 +24,7 @@ import { activityStatusClassPipe, ColorPipe, ColorStylePipe } from '@util/color-
   styleUrl: './event-card.scss',
 })
 export class EventCard {
-  user = input.required<User>();
+  auth = input.required<User>();
   event = input.required<LessonEvent>();
   color = input<string>('');
   activities = input.required<Map<string, ActivityConfig>>();

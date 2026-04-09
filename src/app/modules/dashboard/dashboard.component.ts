@@ -14,6 +14,6 @@ import { MainDashboardComponent } from '@modules/dashboard/main-dashboard/main-d
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
-  auth = inject(AuthService);
-  user = this.auth.user$.value;
+  authService = inject(AuthService);
+  auth = this.authService.user$.value;
 }
