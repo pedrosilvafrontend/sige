@@ -166,23 +166,18 @@
         <app-work-form-modal #workModal [work]="work" [schoolId]="schoolId">
           <ui-button color="default" (onClick)="workModalOpen(workModal.open)" badge=""
                      [badgeColor]="activityStatusClass[work.status]" [disabled]="!work.id && (isMaxTotal || isMaxWorks)">
-            <div class="d-flex gap-1 align-items-center">
-              <span>
-                {{ (work && work.id ? 'Work' : 'Add work') | translate }}
-              </span>
-            </div>
+            {{ 'Work' | translate }}
           </ui-button>
         </app-work-form-modal>
 
 
         <ui-button color="default" (onClick)="proofModal.open()" badge=""
                    [badgeColor]="activityStatusClass[proof.status]" [disabled]="!proof.id && (isMaxTotal || isMaxProofs)">
-          <div class="d-flex gap-1 align-items-center">
-            <span>
-              {{ (proof && proof.id ? 'Proof' : 'Add proof') | translate }}
-            </span>
-          </div>
+          {{ 'Proof' | translate }}
         </ui-button>
+        <!--<app-general-event-modal #gEvent>
+          <ui-button color="default" (onClick)="gEventOpen(gEvent.open)" type="button">{{ 'Event' | translate }}</ui-button>
+        </app-general-event-modal>-->
         <ui-button color="neutral" (onClick)="close()" type="button">{{ 'close' | translate }}</ui-button>
       </div>
     </div>

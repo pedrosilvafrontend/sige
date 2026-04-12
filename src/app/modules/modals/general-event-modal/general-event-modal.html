@@ -1,0 +1,58 @@
+<ng-content>
+  <ui-button color="default" (onClick)="open()" badge="" [disabled]="disabledButton()">
+    <div class="d-flex gap-1 align-items-center">
+      <span>
+        {{ 'Event' | translate }}
+      </span>
+    </div>
+  </ui-button>
+</ng-content>
+<ui-modal (modal)="(modal = $event)" [template]="template" [options]="{width: '800px', disableClose: true}"></ui-modal>
+<ng-template #template>
+  <div class="modalHeader">
+    <h3 mat-dialog-title>{{ 'General event' | translate }}</h3>
+    <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="modal.close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-dialog-content>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="type-field"  appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{ 'Type' | translate }}</mat-label>
+            <mat-select formControlName="type">
+              @for (item of types; track item) {
+                <mat-option [value]="item">
+                  {{ item | titlecase | translate }}
+                </mat-option>
+              }
+            </mat-select>
+            @if (form.get('type')?.hasError('required')) {
+              <mat-error>
+                {{ 'required' | translate }}
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      <pre>{{ form.value | json }}</pre>
+    </form>
+
+  </mat-dialog-content>
+  <div matDialogActions>
+
+    <div class="dialog-buttons">
+
+      <ui-button color="neutral" type="button" (onClick)="modal.close()">
+        @if (disabled()) {
+          {{ 'Close' | translate }}
+        } @else {
+          {{ 'Cancel' | translate }}
+        }
+      </ui-button>
+
+    </div>
+  </div>
+</ng-template>

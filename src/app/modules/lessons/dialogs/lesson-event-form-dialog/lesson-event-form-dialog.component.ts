@@ -27,7 +27,7 @@ import {
   LessonEventFormComponent
 } from '@modules/lessons/form/lesson-event.form.component/lesson-event.form.component';
 import {
-  ActivityConfig,
+  ActivityConfig, GeneralEvent,
   LessonEvent, LessonEventExtra,
   LessonEventForm,
   LessonEventFormValue,
@@ -51,6 +51,7 @@ import { WorkFormModal } from '@modules/works/modals/work-form-modal/work-form-m
 import { take } from 'rxjs';
 import { EventColors } from '@modules/modals/event-colors/event-colors';
 import { ColorBy, newColorBy } from '@models/colors-by';
+import { GeneralEventModal } from '@modules/modals/general-event-modal/general-event-modal';
 
 export interface DialogData {
   item: LessonEvent;
@@ -91,6 +92,7 @@ export interface DialogData {
     TextEditor,
     WorkFormModal,
     EventColors,
+    GeneralEventModal,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit {
@@ -107,6 +109,7 @@ export class LessonEventFormDialogComponent implements OnInit {
   closeRefresh = false;
   event!: LessonEvent;
   proof: Proof = new Proof();
+  generalEvent!: GeneralEvent;
   extra: LessonEventExtra = new class implements LessonEventExtra {}
   action = 'edit';
   dialogTitle!: string;
@@ -202,6 +205,18 @@ export class LessonEventFormDialogComponent implements OnInit {
         if (data?.id) {
           this.closeRefresh = true;
           this.work = data;
+        }
+      })
+    }
+  }
+
+  gEventOpen(openFn: (data?: GeneralEvent) => MatDialogRef<ModalDialogComponent, GeneralEvent>) {
+    const ref = openFn?.(this.generalEvent);
+    if (ref) {
+      ref.afterClosed().pipe(take(1)).subscribe((data) => {
+        if (data?.id) {
+          this.closeRefresh = true;
+          this.generalEvent = data;
         }
       })
     }

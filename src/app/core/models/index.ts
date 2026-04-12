@@ -22,4 +22,5 @@ export * from './degree.model';
 export * from './curricular-component.model';
 export * from './user-school-association';
 export * from './time-schedule.model';
+export * from './general-event';
 

@@ -1,9 +1,9 @@
 <ng-content>
   <ui-button icon="grading" color="default" (onClick)="open()" badge=""
-             [badgeColor]="statusClass[work.status]" [disabled]="disabledButton()">
+             [badgeColor]="statusClass[data.status]" [disabled]="disabledButton()">
     <div class="d-flex gap-1 align-items-center">
       <span>
-        {{ (work.id ? 'Work' : 'Add work') | translate }}
+        {{ 'Work' | translate }}
       </span>
     </div>
   </ui-button>
@@ -18,18 +18,18 @@
     </button>
   </div>
   <mat-dialog-content>
-    @let disableWork = disabled() || (work.status == 'APPROVED' && auth.role == 'teacher');
-    @if (work && work.status) {
+    @let disableWork = disabled() || (data.status == 'APPROVED' && auth.role == 'teacher');
+    @if (data && data.status) {
       <div class="my-3">
-        <span class="badge" [ngClass]="'text-bg-'+statusClass[work.status]">
-          {{ work.status | translate }}
+        <span class="badge" [ngClass]="'text-bg-'+statusClass[data.status]">
+          {{ data.status | translate }}
         </span>
       </div>
     }
     <app-work-form
       class="d-block mt-3"
       [schoolId]="schoolId()"
-      [data]="work || {}"
+      [data]="data || {}"
       [disabled]="disabled()"
       (form$)="(form = $event)"
     ></app-work-form>
@@ -38,15 +38,15 @@
     <div class="dialog-buttons">
       @let isWorkManager = auth.role === 'admin' || auth.role === 'principal' || auth.role === 'coordinator';
 
-      @if (work?.id && !disableWork) {
-        <app-delete-work-modal [work]="work" (close)="onDeleteWork($event)"></app-delete-work-modal>
+      @if (data?.id && !disableWork) {
+        <app-delete-work-modal [work]="data" (close)="onDeleteWork($event)"></app-delete-work-modal>
       }
 
       @if (isWorkManager) {
-        @if (work.status === 'PENDING_APPROVAL') {
+        @if (data.status === 'PENDING_APPROVAL') {
           <ui-button color="danger" tabindex="-1" type="button" (onClick)="onReject()">{{ 'Reject' | translate }}</ui-button>
         }
-        @if ((work.status === 'REJECTED' || work.status === 'PENDING_APPROVAL')) {
+        @if ((data.status === 'REJECTED' || data.status === 'PENDING_APPROVAL')) {
           <ui-button color="success" tabindex="-1" type="button" (onClick)="onApprove()">{{ 'Approve' | translate }}</ui-button>
         }
       }
@@ -63,7 +63,7 @@
       @if (!disableWork) {
         <ui-button [disabled]="form.invalid" (onClick)="onSubmit()">
           Salvar
-          @if (work.status && work.status != 'APPROVED' && isManager) {
+          @if (data.status && data.status != 'APPROVED' && isManager) {
             e aprovar
           }
         </ui-button>
