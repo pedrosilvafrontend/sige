@@ -11,7 +11,9 @@
       <button mat-menu-item [routerLink]="'dashboard'">{{ 'dashboard' | translate }}</button>
       <button mat-menu-item [routerLink]="'calendar'">{{ 'calendar' | translate }}</button>
       <button mat-menu-item [routerLink]="'lessons'">{{ 'lessons' | translate }}</button>
-      <button mat-menu-item [routerLink]="'teachers'">{{ 'teachers' | translate }}</button>
+      @if (allowMenu.teachers) {
+        <button mat-menu-item [routerLink]="'teachers'">{{ 'teachers' | translate }}</button>
+      }
       <button mat-menu-item [routerLink]="'classes'">{{ 'classes' | translate }}</button>
       <button mat-menu-item [routerLink]="'schools'">{{ 'schools' | translate }}</button>
       @if (allowMenu.managers) {
@@ -19,12 +21,14 @@
         <button mat-menu-item [routerLink]="'proofs'">{{ 'Proofs' | translate }}</button>
         <button mat-menu-item [routerLink]="'works'">{{ 'Works' | translate }}</button>
       }
-      <button mat-menu-item [matMenuTriggerFor]="cfgMenu">{{ 'configs' | translate }}</button>
-      <mat-menu #cfgMenu="matMenu">
-        <button mat-menu-item [routerLink]="'configs/curricular-components-list'">{{ 'Curricular components' | translate }}</button>
-        <button mat-menu-item [routerLink]="'configs/day-shifts'">{{ 'day-shifts' | translate }}</button>
-        <button mat-menu-item [routerLink]="'configs/general'">{{ 'general' | translate }}</button>
-      </mat-menu>
+      @if (allowMenu.configs) {
+        <button mat-menu-item [matMenuTriggerFor]="cfgMenu">{{ 'configs' | translate }}</button>
+        <mat-menu #cfgMenu="matMenu">
+          <button mat-menu-item [routerLink]="'configs/curricular-components-list'">{{ 'Curricular components' | translate }}</button>
+          <button mat-menu-item [routerLink]="'configs/day-shifts'">{{ 'day-shifts' | translate }}</button>
+          <button mat-menu-item [routerLink]="'configs/general'">{{ 'general' | translate }}</button>
+        </mat-menu>
+      }
     </mat-menu>
   </div>
 
