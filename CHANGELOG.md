@@ -1,3 +1,10 @@
+## [1.1.21](https://github.com/pedrosilvafrontend/sige/compare/v1.1.20...v1.1.21) (2026-04-16)
+
+
+### Features
+
+* text-editor responsive ([2354f5c](https://github.com/pedrosilvafrontend/sige/commit/2354f5c592bf430da0c00f7589a8a4e161f3b1d8))
+
 ## [1.1.20](https://github.com/pedrosilvafrontend/sige/compare/v1.1.19...v1.1.20) (2026-04-16)
 
 
