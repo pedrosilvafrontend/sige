@@ -96,13 +96,14 @@ export class CalendarComponent implements OnInit, OnDestroy {
   private activityService = inject(ActivityService);
   private snackBar = inject(MatSnackBar);
   private translate = inject(TranslateService);
-  private auth = inject(AuthService);
+  private authService = inject(AuthService);
   private activatedRoute = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private elementRef = inject(ElementRef);
   private lessonsService = inject(LessonsService);
   private lastLessonKey = '';
   isLoading = signal(true);
+  auth = this.authService.user$.value;
 
   @ViewChild(FullCalendarComponent, { static: false }) calendarComponent!: FullCalendarComponent;
   calendar: Calendar | null;
@@ -151,8 +152,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
     const blankObject = {} as Calendar;
     this.calendar = new Calendar(blankObject);
     this.addCusForm = this.createCalendarForm(this.calendar);
-    this.authRole = this.auth.user$.value.role || '';
-    this.authUser = this.auth.user$.value;
+    this.authRole = this.authService.user$.value.role || '';
+    this.authUser = this.authService.user$.value;
     if (this.activatedRoute.snapshot.url[0]?.path === 'public') {
       this.public = true;
     }

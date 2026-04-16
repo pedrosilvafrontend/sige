@@ -190,6 +190,9 @@ ul {
         max-height: calc(100vh - 130px);
         padding: 20px 16px;
       }
+      .mat-mdc-dialog-actions {
+        overflow-x: auto;
+      }
     }
   }
 }
