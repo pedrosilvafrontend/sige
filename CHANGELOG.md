@@ -1,3 +1,10 @@
+## [1.1.20](https://github.com/pedrosilvafrontend/sige/compare/v1.1.19...v1.1.20) (2026-04-16)
+
+
+### Bug Fixes
+
+* mobile menu hides if not allowed ([8f78668](https://github.com/pedrosilvafrontend/sige/commit/8f78668af2595e219544b489f9112b6d90f698ef))
+
 ## [1.1.19](https://github.com/pedrosilvafrontend/sige/compare/v1.1.18...v1.1.19) (2026-04-16)
 
 
