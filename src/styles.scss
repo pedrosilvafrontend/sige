@@ -139,23 +139,60 @@ ul {
   }
 }
 @media (max-width: 480px) {
-  .responsive_table .mdc-data-table__row {
-    //flex-direction: column;
-    //align-items: start;
-    //padding: 8px 0;
-    //display: grid
-    padding-left: 0;
-    padding-right: 0;
+  .mat-mdc-table, .mat-mdc-row {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
   }
-  mat-row mat-cell {
-    position: relative;
-    border-bottom-color: transparent !important;
-    .mobile-label {
-      position: absolute;
-      top: 0;
-      font-weight: 200;
-      font-size: 0.7rem;
-      line-height: 1.2em;
+  table.mat-mdc-table {
+    thead {
+      display: none;
+    }
+    .mdc-data-table__row {
+      padding-left: 0;
+      padding-right: 0;
+    }
+    .mat-mdc-row {
+      padding-top: 16px;
+    }
+    mat-row mat-cell {
+      position: relative;
+      border-bottom-color: transparent !important;
+      .mobile-label {
+        position: absolute;
+        top: 0;
+        font-weight: 200;
+        font-size: 0.7rem;
+        line-height: 1.2em;
+        width: auto;
+      }
+    }
+    mat-cell:first-of-type {
+      padding-left: 16px;
+    }
+    .mat-column-actions {
+      flex: auto !important;
+    }
+  }
+  .mat-mdc-dialog-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    border-radius: 0 !important;
+    .mat-mdc-dialog-surface {
+      border-radius: 0 !important;
+      .modalHeader {
+        height: 66px;
+      }
+      .mat-mdc-dialog-content {
+        height: calc(100vh - 130px) !important;
+        max-height: calc(100vh - 130px);
+        padding: 20px 16px;
+      }
+      .mat-mdc-dialog-actions {
+        overflow-x: auto;
+      }
     }
   }
 }
