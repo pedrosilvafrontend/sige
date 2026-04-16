@@ -1,5 +1,12 @@
 .NgxEditor__Wrapper {
   .NgxEditor__Content {
-    min-height: 200px;
+    min-height: 25vh;
   }
+}
+ngx-editor-menu {
+  position: -webkit-sticky; /* Suporte para Safari */
+  position: sticky;
+  top: -1px;
+  background-color: white;
+  z-index: 1000;
 }
