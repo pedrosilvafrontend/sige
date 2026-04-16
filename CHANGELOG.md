@@ -1,3 +1,12 @@
+## [1.1.19](https://github.com/pedrosilvafrontend/sige/compare/v1.1.18...v1.1.19) (2026-04-16)
+
+
+### Features
+
+* general event modal and types ([bb58901](https://github.com/pedrosilvafrontend/sige/commit/bb5890195c04698ce13d23209716d4f0b9e4d175))
+* tables and modals responsive layout ([e649356](https://github.com/pedrosilvafrontend/sige/commit/e6493564a7a1ba568c0c7fbdb97d736612e696a0))
+* tables and modals responsive layout ([703103a](https://github.com/pedrosilvafrontend/sige/commit/703103a716d7faf1f00c392719bb4717a3cfe566))
+
 ## [1.1.18](https://github.com/pedrosilvafrontend/sige/compare/v1.1.17...v1.1.18) (2026-04-09)
 
 
