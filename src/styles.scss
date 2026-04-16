@@ -75,7 +75,7 @@ ul {
   padding: 1rem;
   margin: 0 10px;
   background-color: $white;
-  height: calc(100vh - 3rem - 15px);
+  height: calc(100svh - 3rem - 15px);
   box-sizing: border-box;
   border-radius: $field-border-radius;
   border: solid $tertiary;
@@ -85,13 +85,13 @@ ul {
   scrollbar-width: thin;
 }
 .root-container.public {
-  height: calc(100vh - 20px);
+  height: calc(100svh - 20px);
   margin-top: 10px
 }
 .public-container {
   background-color: $white;
   scrollbar-width: thin;
-  height: calc(100vh);
+  height: calc(100svh);
   overflow-x: hidden;
   padding: 10px;
 }
