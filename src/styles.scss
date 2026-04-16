@@ -196,9 +196,6 @@ ul {
         max-height: calc(100svh - 130px);
         padding: 20px 16px;
       }
-      .mat-mdc-dialog-actions {
-        overflow-x: auto;
-      }
     }
   }
   ::ng-deep .NgxEditor {
@@ -461,7 +458,13 @@ mat-snack-bar-container > div {
     margin: 0;
     border-top: 1px solid rgba(0,0,0,0.1);
     padding: 0.7rem 1rem;
-    justify-content: center;
+    //justify-content: center;
+
+    overflow-x: auto;
+    justify-content: unset;
+    .dialog-buttons {
+      margin: 0 auto;
+    }
   }
 }
 
