@@ -174,8 +174,14 @@ ul {
       flex: auto !important;
     }
   }
+}
+
+@media (max-width: 600px) {
+}
+@media (max-width: 800px) {
   .mat-mdc-dialog-panel {
     width: 100% !important;
+    min-width: 100% !important;
     max-width: 100% !important;
     height: 100% !important;
     max-height: 100% !important;
@@ -186,8 +192,8 @@ ul {
         height: 66px;
       }
       .mat-mdc-dialog-content {
-        height: calc(100vh - 130px) !important;
-        max-height: calc(100vh - 130px);
+        height: calc(100svh - 130px) !important;
+        max-height: calc(100svh - 130px);
         padding: 20px 16px;
       }
       .mat-mdc-dialog-actions {
@@ -195,8 +201,33 @@ ul {
       }
     }
   }
-}
+  ::ng-deep .NgxEditor {
+    width: 100%;
+  }
 
+  ::ng-deep .NgxEditor__Content {
+    min-height: 150px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  ::ng-deep .NgxEditor__MenuBar {
+    display: flex;
+    flex-wrap: wrap; /* permite quebrar linha */
+    gap: 4px;
+  }
+  ::ng-deep .NgxEditor__MenuBar {
+    justify-content: space-between;
+  }
+
+  ::ng-deep .NgxEditor__MenuItem {
+    flex: 1 1 auto;
+  }
+  ::ng-deep .NgxEditor__Wrapper .NgxEditor__Content {
+    min-height: 25em;
+    max-height: 50vh; /* limita em telas grandes */
+    overflow-y: auto;
+  }
+}
 @media (min-width: 600px) {
   .mobile-label {
     display: none;
