@@ -1,3 +1,10 @@
+## [1.1.22](https://github.com/pedrosilvafrontend/sige/compare/v1.1.21...v1.1.22) (2026-04-16)
+
+
+### Features
+
+* modal buttons responsive overflow ([e08bd19](https://github.com/pedrosilvafrontend/sige/commit/e08bd19695a3737828144b887e3eafefcd72dda0))
+
 ## [1.1.21](https://github.com/pedrosilvafrontend/sige/compare/v1.1.20...v1.1.21) (2026-04-16)
 
 
