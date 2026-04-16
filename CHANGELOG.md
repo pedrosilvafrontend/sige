@@ -1,3 +1,10 @@
+## [1.1.23](https://github.com/pedrosilvafrontend/sige/compare/v1.1.22...v1.1.23) (2026-04-16)
+
+
+### Features
+
+* responsive height adjustments ([cf5505f](https://github.com/pedrosilvafrontend/sige/commit/cf5505f9dc87d3181066031f086ad6b645edf8cc))
+
 ## [1.1.22](https://github.com/pedrosilvafrontend/sige/compare/v1.1.21...v1.1.22) (2026-04-16)
 
 
