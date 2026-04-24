@@ -1,4 +1,42 @@
+@let multiclassTest = form.controls.type.value === 'MULTICLASS_TEST';
+@let isManager = ['admin', 'coordinator', 'principal'].includes(auth().role || '');
 <div class="row" [formGroup]="form">
+  @if (['admin', 'coordinator', 'principal'].includes(auth().role || '')) {
+    <div class="col-md-6">
+      <mat-form-field class="mat-mdc-form-field"  appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'Type' | translate }}</mat-label>
+        <mat-select formControlName="type">
+          @for (item of proofTypes; track item) {
+            <mat-option [value]="item">
+              {{ item | translate }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    @if (multiclassTest) {
+      <!--<div class="col-sm-6">
+        <app-class-select
+          [formControl]="classControl"
+          [schoolId]="schoolId()"
+          [degreeId]="degreeId"
+          [dayShiftId]="dayShiftId"
+        >
+        </app-class-select>
+      </div>-->
+      <div class="col-sm-6">
+        <app-curricular-component-select
+          [formControl]="ccControl"
+          [classYearId]="classYearId"
+        ></app-curricular-component-select>
+      </div>
+      <div class="col-md-12">
+        <app-event-checkbox-group [form]="form.controls.events" [events]="events" [selectAll]="true"></app-event-checkbox-group>
+      </div>
+    }
+  }
+
   <div class="col-md-12">
     <ui-field
       id="title"
@@ -14,7 +52,7 @@
       name="score"
       cType="score"
       [label]="'Score' | translate"
-      [required]="true"
+      [required]="!isManager || !multiclassTest"
       formControlName="score"
     >
     </ui-field>
@@ -24,7 +62,7 @@
       id="content"
       name="content"
       [label]="'Content' | translate"
-      [required]="true"
+      [required]="!isManager || !multiclassTest"
       formControlName="content"
       ></ui-textarea>
   </div>
@@ -38,3 +76,7 @@
     </ui-textarea>
   </div>
 </div>
+
+<pre>
+  {{ form.value | json }}
+</pre>

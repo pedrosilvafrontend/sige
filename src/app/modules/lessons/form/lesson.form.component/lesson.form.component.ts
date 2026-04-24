@@ -169,7 +169,7 @@ export class LessonFormComponent implements OnInit, OnDestroy {
     this.schoolId = null;
     let classes: SchoolClass[] = [];
     if (schoolId) {
-      const response = await firstValueFrom(this.classesService.getAll(schoolId));
+      const response = await firstValueFrom(this.classesService.getAll({schoolId}));
       classes = response?.data || [];
     }
     this.classes = classes || [];

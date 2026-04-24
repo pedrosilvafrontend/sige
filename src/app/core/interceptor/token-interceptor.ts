@@ -30,10 +30,12 @@ export const tokenInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown
       'Authorization',
       tokenService.getBearerToken()
     )
-    let school: School | undefined = store.get(schoolStoreKey);
+    const school: School | undefined = store.get(schoolStoreKey);
     if (school) {
       headers = headers.append('X-School-ID', String(school.id));
     }
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    headers = headers.append('X-Timezone', timezone);
     // headers = headers.append('X-School-ID', store.get(schoolStoreKey) || '');
     return next(
         request.clone({

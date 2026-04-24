@@ -19,6 +19,7 @@ export interface ConfigData {
   maxDayTests: number;
   maxDayWorks: number;
   maxDayActivities: number;
+  updateLessons: boolean;
 }
 
 export interface ConfigResponse {

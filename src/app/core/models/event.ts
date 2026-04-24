@@ -11,6 +11,8 @@ import {
 import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
 import { EvalTools, EvalToolsForm } from '@models/eval-tools';
 
+export type Weekday = 'UNIQUE' | 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN';
+
 export interface SchoolEvent {
   id?: string;
   title: string;
@@ -59,13 +61,14 @@ export interface LessonEvent {
   frequency: Frequency;
   lesson: LessonBatch;
   school: School;
-  weekday: 'UNIQUE' | 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN';
+  weekday: Weekday;
   styleClass: string;
   start: string;
   end: string;
   test?: Proof,
   work?: Work,
   extra?: LessonEventExtra,
+  color?: string,
   observations: string;
   countActivities: CountActivities;
 }
@@ -85,4 +88,14 @@ export interface LessonEventExtra {
   date?: string;
   timeScheduleId?: number;
   planning?: string;
+}
+
+export interface UniqueLessonEvent {
+  date: string,
+  schoolId: number,
+  classId: number,
+  frequencyId: number,
+  timeScheduleId: number,
+  weekday: Weekday,
+  selected?: boolean
 }

@@ -37,7 +37,7 @@ body {
   font: var(--mat-sys-body-medium);
 
   // Reset the user agent margin.
-  margin: 0;
+  margin: 10px 10px;
   height: 100%;
 }
 /* You can add global styles to this file, and also import other style files */
@@ -73,7 +73,7 @@ ul {
 }
 .root-container {
   padding: 1rem;
-  margin: 0 10px;
+  //margin: 0 10px;
   background-color: $white;
   height: calc(100svh - 3rem - 15px);
   box-sizing: border-box;

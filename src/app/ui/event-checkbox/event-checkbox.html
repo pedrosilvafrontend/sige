@@ -1,0 +1,8 @@
+@if (event(); as event) {
+  <mat-checkbox
+    [checked]="checked"
+    [disabled]="disabled"
+    (change)="toggle($event.checked)">
+    {{ event.title || event.school.acronym }}
+  </mat-checkbox>
+}

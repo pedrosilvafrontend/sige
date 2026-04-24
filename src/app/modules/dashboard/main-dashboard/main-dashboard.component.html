@@ -20,10 +20,10 @@
   </div>
   <div class="">
     <div class="row row-gap-24 my-4">
-      @for (event of events; track event.date) {
+      @for (event of events; let i = $index; track i) {
         <div class="col activity-col">
           <ui-skeleton type="card" [loading]="isLoading()">
-            <ui-event-card [color]="colors | coloringBy:event:coloringByControl.value" [auth]="auth()" [event]="event" [activities]="activities" (click)="openLessonEventDialog(event)"></ui-event-card>
+            <ui-event-card [color]="event.color || ''" [auth]="auth()" [event]="event" [activities]="activities" (click)="openLessonEventDialog(event)"></ui-event-card>
           </ui-skeleton>
         </div>
       }

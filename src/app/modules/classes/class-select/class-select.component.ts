@@ -57,6 +57,7 @@ export class ClassSelectComponent implements OnInit, OnDestroy, ControlValueAcce
   public noItemsMessage = 'No classes found';
   public showSchool = input(false);
   public disabled = input(false);
+  public dayShiftId = input<string>();
   public control = new FormControl();
   public filteredOptions: SchoolClass[] = [];
   public destroy$: Subject<void> = new Subject<void>();
@@ -66,17 +67,21 @@ export class ClassSelectComponent implements OnInit, OnDestroy, ControlValueAcce
   private onChangeFn: (value: SchoolClass | null) => void = () => {};
   private onTouchedFn: () => void = () => {};
 
-  private _schoolId: number | null = null;
-  get schoolId(): number | null {
+  private _schoolId!: number;
+  get schoolId(): number {
     return this._schoolId;
   }
   @Input({transform: numberAttribute})
-  set schoolId(value: number | null) {
-    this._schoolId = value;
-    if (!value) {
+  set schoolId(value: number) {
+    if (this._schoolId && this._schoolId !== value) {
+      this._schoolId = value;
+      if (!value) {
+        return;
+      }
+      this.getClasses().then();
       return;
     }
-    this.getClasses().then();
+    this._schoolId = value;
   }
 
   private _degreeId: string = '';
@@ -137,7 +142,13 @@ export class ClassSelectComponent implements OnInit, OnDestroy, ControlValueAcce
     if (!this.all && !this.schoolId) {
       return;
     }
-    const response = await firstValueFrom(this.classesService.getAll(this.schoolId || null));
+    const response = await firstValueFrom(
+      this.classesService.getAll({
+        schoolId: this.schoolId,
+        degreeId: this.degreeId,
+        dayShiftId: this.dayShiftId(),
+      })
+    );
     this.classes = response.data;
     this.cdr.detectChanges();
 
@@ -156,6 +167,7 @@ export class ClassSelectComponent implements OnInit, OnDestroy, ControlValueAcce
   }
 
   async ngOnInit() {
+    await this.getClasses();
 
     this.control.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value: unknown) => {
       if (!value) {

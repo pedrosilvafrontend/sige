@@ -70,7 +70,7 @@ export class Frequency {
 
   constructor(frequency: Partial<Frequency> = {}) {
     {
-      this.id = frequency.id;
+      this.id = frequency.id || 0;
       this.weekday = frequency.weekday || '';
       this.timeSchedule = frequency.timeSchedule || null;
     }
