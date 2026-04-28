@@ -10,14 +10,13 @@ import {
   output,
   signal
 } from '@angular/core';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IProofForm, ProofForm } from '@form/proof.form';
 import { Field } from '@ui/field/field';
 import { CurricularComponent, LessonEvent, Proof, SchoolClass, UniqueLessonEvent, User } from '@models';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Textarea } from '@ui/field/textarea/textarea';
 import { LessonEventService } from '@services/lesson-event.service';
-import { JsonPipe } from '@angular/common';
 import { EventCheckboxGroup } from '@ui/event-checkbox/event-checkbox-group/event-checkbox-group';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -26,9 +25,7 @@ import { Subject, takeUntil } from 'rxjs';
 import {
   CurricularComponentSelectComponent
 } from '@modules/config/curricular-components-list/curricular-component-select/curricular-component-select.component';
-import { ClassSelectComponent } from '@modules/classes/class-select/class-select.component';
 import { FormUtil } from '@util/form-util';
-import { disabled, form } from '@angular/forms/signals';
 import { AuthService } from '@services';
 
 @Component({
@@ -38,12 +35,10 @@ import { AuthService } from '@services';
     ReactiveFormsModule,
     TranslatePipe,
     Textarea,
-    JsonPipe,
     EventCheckboxGroup,
     MatFormFieldModule,
     MatSelectModule,
-    CurricularComponentSelectComponent,
-    ClassSelectComponent
+    CurricularComponentSelectComponent
   ],
   templateUrl: './test.form.html',
   styleUrl: './test.form.scss'
