@@ -254,7 +254,7 @@ export class LessonEventFormDialogComponent implements OnInit {
           timeScheduleId: formData.timeSchedule?.id || 0,
           title: proof.title || '',
           whereToFindIt: proof.whereToFindIt || '',
-          events: proof.events.filter((e: UniqueLessonEvent) => e.selected),
+          events: proof.events?.filter((e: UniqueLessonEvent) => e.selected) || [],
         }
         const request$ = data.id ? this.proofService.update(data) : this.proofService.add(data);
         request$.subscribe({

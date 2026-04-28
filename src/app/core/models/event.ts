@@ -6,7 +6,7 @@ import {
   Frequency,
   School,
   TimeSchedule,
-  Proof, Work
+  Proof, Work, Entity, User
 } from '@models';
 import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
 import { EvalTools, EvalToolsForm } from '@models/eval-tools';
@@ -65,12 +65,54 @@ export interface LessonEvent {
   styleClass: string;
   start: string;
   end: string;
-  test?: Proof,
-  work?: Work,
-  extra?: LessonEventExtra,
-  color?: string,
+  extra?: LessonEventExtra;
+  color?: string;
   observations: string;
   countActivities: CountActivities;
+}
+
+export class LessonEvent {
+  title?: string;
+  groupId?: string;
+  activities: ActivityConfig[] = [];
+  evalTools!: EvalTools;
+  schoolClass: SchoolClass;
+  curricularComponent: CurricularComponent;
+  date: string;
+  frequency!: Frequency;
+  lesson!: LessonBatch;
+  school: School;
+  weekday!: Weekday;
+  styleClass!: string;
+  start: string = '';
+  end: string = '';
+  extra?: LessonEventExtra;
+  color?: string;
+  observations: string = '';
+  countActivities!: CountActivities;
+
+  constructor(lesson: Partial<LessonEvent> = {}) {
+    {
+      this.title = lesson.title || '';
+      this.groupId = lesson.groupId || '';
+      this.activities = lesson.activities || [];
+      this.evalTools = lesson.evalTools || new EvalTools();
+      this.schoolClass = lesson.schoolClass || new SchoolClass();
+      this.curricularComponent = lesson.curricularComponent || new CurricularComponent();
+      this.date = lesson.date || '';
+      this.frequency = lesson.frequency || new Frequency();
+      this.lesson = lesson.lesson || new LessonBatch();
+      this.school = lesson.school || new School();
+      this.weekday = lesson.weekday || 'UNIQUE';
+      this.styleClass = lesson.styleClass || '';
+      this.start = lesson.start || '';
+      this.end = lesson.end || '';
+      this.extra = lesson.extra || undefined;
+      this.color = lesson.color || '';
+      this.observations = lesson.observations || '';
+      this.countActivities = <CountActivities>lesson.countActivities || undefined;
+    }
+  }
 }
 
 export interface CountActivities {

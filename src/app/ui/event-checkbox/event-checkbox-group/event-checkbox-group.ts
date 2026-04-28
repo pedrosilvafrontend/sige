@@ -9,7 +9,7 @@ import { EventCard } from '@ui/event-card/event-card';
 import { AuthService } from '@services';
 import { Activity } from '@modules/config/activity/activity.model';
 
-type LessonEvent = LessonEvt & { selected?: boolean };
+type LessonEvent = LessonEvt & { selected?: boolean, disabled?: boolean };
 
 @Component({
   selector: 'app-event-checkbox-group',
@@ -58,18 +58,18 @@ export class EventCheckboxGroup {
         }
         eventKeys.add(eventKey);
 
-        let selected = false;
+        // let selected = false;
         // if (classesIds.length) {
         //   selected = classesIds.includes(event.schoolClass?.id ?? -1);
         // }
-        if (event.evalTools.proof?.id && event.evalTools.proof?.type === 'MULTICLASS_TEST') {
-          selected = true;
-        }
-        else {
-          selected = selectAll;
-        }
-        uEvent.selected = selected;
-        event.selected = selected;
+        // if (event.evalTools.proof?.id && event.evalTools.proof?.type === 'MULTICLASS_TEST') {
+        //   selected = true;
+        // }
+        // else {
+        //   selected = selectAll;
+        // }
+        // uEvent.selected = selected;
+        // event.selected = selected;
 
         // uEvent.selected = event.selected || selectAll;
         // if (!event.selected) {
@@ -77,6 +77,9 @@ export class EventCheckboxGroup {
         // }
         events.push(event);
         this.form().push(this.getEventForm(uEvent))
+      }
+      if (!events.length && this.events.length > 0) {
+        this.form().clear();
       }
       this.events = events;
       this.cdr.detectChanges();

@@ -1,12 +1,10 @@
 <div class="row event-checkbox-group pt-2 pb-5">
   @for (event of events; let i = $index; track i) {
-<!--      <app-event-checkbox [event]="event" [formControl]="form | form: 'events.'+i:null" [selected]="true"></app-event-checkbox>-->
     <div class="col-md-4">
       <mat-checkbox
         [checked]="event.selected"
-        [disabled]="disabled()"
+        [disabled]="event.disabled || disabled()"
         (change)="toggle($event.checked, i)">
-<!--        {{ event.title || event.school.acronym }}-->
         <ui-event-card [color]="event.color || ''" [auth]="auth" [event]="event" [activities]="activities"></ui-event-card>
       </mat-checkbox>
     </div>
