@@ -1,3 +1,11 @@
+## [1.1.24](https://github.com/pedrosilvafrontend/sige/compare/v1.1.23...v1.1.24) (2026-04-28)
+
+
+### Features
+
+* multiclass test ([edaf853](https://github.com/pedrosilvafrontend/sige/commit/edaf853befd5a07a9a2887594fadb4325c553423))
+* multiclass test - bimonthly ([ac99fad](https://github.com/pedrosilvafrontend/sige/commit/ac99fad2386e3f761db5f56592f8a0361536c128))
+
 ## [1.1.23](https://github.com/pedrosilvafrontend/sige/compare/v1.1.22...v1.1.23) (2026-04-16)
 
 
