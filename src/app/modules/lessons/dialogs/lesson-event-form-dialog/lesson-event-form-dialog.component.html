@@ -88,6 +88,10 @@
               <app-test-form
                 class="d-block mt-3"
                 [data]="proof || {}"
+                [schoolId]="schoolId"
+                [timeScheduleId]="timeScheduleId"
+                [date]="event.date"
+                [event]="event"
                 [disabled]="disableProof"
                 (form$)="(proofForm = $event)"
               >
@@ -96,7 +100,7 @@
             <mat-dialog-actions>
               <div class="d-flex gap-2">
                 @if (proof?.id && !disableProof) {
-                  <ui-button color="danger" (onClick)="deleteProofModal.open()" cdkFocusInitial>Excluír prova</ui-button>
+                  <ui-button color="danger" (onClick)="deleteProofModal.open()">Excluír prova</ui-button>
                 }
                 <ui-button color="neutral" (onClick)="proofModal.close()" cdkFocusInitial>
                   @if (disableProof) {
@@ -114,7 +118,7 @@
                 @if (!disableProof) {
                   <ui-button [disabled]="proofForm.invalid" (onClick)="saveProof(proofModal.close)">
                     Salvar
-                    @if (proof.status && proof.status != 'APPROVED' && isManager) {
+                    @if (proof.status && proof.status != 'APPROVED' && isManager && (proof.type != 'MULTICLASS_TEST' || (proofForm.controls.score.value && proofForm.controls.content.value))) {
                       e aprovar
                     }
                   </ui-button>
@@ -133,7 +137,7 @@
             <mat-dialog-actions>
               <div class="d-flex gap-2">
                 <ui-button color="neutral" (onClick)="deleteProofModal.close()" cdkFocusInitial>Cancelar</ui-button>
-                <ui-button color="danger" (onClick)="deleteProof(proofModal.close);deleteProofModal.close()" cdkFocusInitial>Excluír prova</ui-button>
+                <ui-button color="danger" (onClick)="deleteProof(proofModal.close);deleteProofModal.close()">Excluír prova</ui-button>
               </div>
             </mat-dialog-actions>
           </ng-template>

@@ -96,7 +96,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
 
   async refresh() {
     this.isLoading.set(true);
-    await this.getColors();
+    // await this.getColors();
     await this.getEvents();
     this.cdr.detectChanges();
     this.isLoading.set(false);
@@ -108,6 +108,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
       // limit: this.auth().role === 'teacher' ? 48 : 36,
       limit: 48,
       prevDate: false,
+      colorBy: this.coloringByControl.value,
     }
     this.events = await firstValueFrom(this.lessonEventService.getAll(params));
     // this.isLoading.set(false);

@@ -1,0 +1,12 @@
+.event-checkbox-group {
+  .mat-mdc-checkbox {
+    width: 100%;
+    .mdc-form-field, label {
+      width: 100%;
+    }
+    .mdc-form-field {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+}

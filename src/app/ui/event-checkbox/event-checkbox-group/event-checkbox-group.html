@@ -1,0 +1,12 @@
+<div class="row event-checkbox-group pt-2 pb-5">
+  @for (event of events; let i = $index; track i) {
+    <div class="col-md-4">
+      <mat-checkbox
+        [checked]="event.selected"
+        [disabled]="event.disabled || disabled()"
+        (change)="toggle($event.checked, i)">
+        <ui-event-card [color]="event.color || ''" [auth]="auth" [event]="event" [activities]="activities"></ui-event-card>
+      </mat-checkbox>
+    </div>
+  }
+</div>

@@ -1,4 +1,4 @@
-import { LessonBatch } from '@models';
+import { LessonBatch, LessonEvent, UniqueLessonEvent, Weekday } from '@models';
 
 export class Util {
   static objectCompare(option: any, value: any) : boolean {
@@ -86,6 +86,78 @@ export class Util {
         fn(...args).then(callback);
       }, delay);
     };
+  }
+
+  static eventCompare(a: LessonEvent, b: LessonEvent): boolean {
+    return a.date === b.date
+      && a.frequency.timeSchedule?.id === b.frequency.timeSchedule?.id
+      && a.lesson?.id === b.lesson?.id;
+  }
+
+  static minimalEvent(event: LessonEvent) : LessonEvent {
+    const { title, activities, date, frequency, lesson, school, weekday, styleClass, start, end, extra,
+      color, observations, countActivities, evalTools, curricularComponent } = event;
+    const { timeSchedule } = frequency;
+    const { schoolClass } = lesson;
+    const { proof, work } = evalTools;
+    return {
+      title,
+      date,
+      start,
+      end,
+      weekday,
+      color,
+      activities: activities || [],
+      frequency: {
+        timeSchedule: {
+          id: frequency.id || 0,
+          startTime: timeSchedule?.startTime || '',
+          endTime: timeSchedule?.endTime || '',
+          dayShiftId: timeSchedule?.dayShiftId || 0,
+        },
+        weekday: weekday || frequency.weekday,
+      },
+      lesson: {
+        id: lesson?.id || 0,
+        teacher: {
+          id: lesson.teacher?.id || 0,
+          fullName: lesson.teacher?.fullName || '',
+        },
+        schoolClass: {
+          id: schoolClass?.id || 0,
+          code: schoolClass?.code || '',
+        }
+      },
+      school: {
+        id: school?.id || 0,
+        name: school?.name || '',
+        acronym: school?.acronym || '',
+      },
+      evalTools: {
+        proof: {
+          id: proof?.id || 0,
+        },
+        work: {
+          id: work?.id || 0,
+        }
+      },
+      curricularComponent: {
+        id: curricularComponent?.id || 0,
+        name: curricularComponent?.name || '',
+      }
+    } as LessonEvent;
+  }
+
+  static toUniqueLessonEvent(event: LessonEvent): UniqueLessonEvent {
+    return {
+      date: event.date || '',
+      schoolId: event.school?.id || 0,
+      classId: event.schoolClass?.id || 0,
+      frequencyId: event.frequency?.id || 0,
+      timeScheduleId: event.frequency?.timeSchedule?.id || 0,
+      weekday: (event.weekday || event.frequency?.weekday || 'UNIQUE') as Weekday,
+      selected: (event as any)?.selected || false
+    }
   }
 
 }

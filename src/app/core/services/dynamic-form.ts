@@ -36,11 +36,11 @@ export class DynamicForm {
       const nextIsNumber = nextPart !== undefined && !isNaN(Number(nextPart));
 
       if (isLast) {
-        this.ensureControl(current, part, new FormControl(initialValue));
+        this.ensureControl(current, part, new FormControl(initialValue), true);
       } else {
         // Se a próxima chave for número, precisamos de um FormArray
         const nextControl = nextIsNumber ? this.fb.array([]) : this.fb.group({});
-        this.ensureControl(current, part, nextControl);
+        this.ensureControl(current, part, nextControl, false);
 
         // Move para o próximo nível (Group ou Array)
         current = (current as any).get(part);
@@ -48,16 +48,21 @@ export class DynamicForm {
     }
   }
 
-  private ensureControl(parent: AbstractControl, key: string, control: AbstractControl) {
+  private ensureControl(parent: AbstractControl, key: string, control: AbstractControl, isLast: boolean) {
     if (parent instanceof FormGroup) {
       if (!parent.get(key)) {
         parent.addControl(key, control);
       }
     } else if (parent instanceof FormArray) {
       const index = Number(key);
+      const fillControl = () => isLast ? this.fb.control(null as any) : this.fb.group({});
+      const fillAt = isLast ? index : index + 1;
       // Preenche o array com grupos vazios se o índice solicitado for maior que o tamanho atual
-      while (parent.length <= index) {
-        parent.push(this.fb.group({}));
+      while (parent.length < fillAt) {
+        parent.push(fillControl());
+      }
+      if (isLast) {
+        parent.push(control);
       }
     }
   }

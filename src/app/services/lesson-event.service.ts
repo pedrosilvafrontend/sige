@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LessonEvent } from '@models';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -17,7 +17,7 @@ export class LessonEventService {
   getAll(params?: any): Observable<LessonEvent[]> {
     return this.http
       .get<LessonEvent[]>(this.API_URL, { params: params || {} })
-      .pipe(catchError(this.handleError));
+      .pipe(take(1), catchError(this.handleError));
   }
 
   handleError(error: HttpErrorResponse) {

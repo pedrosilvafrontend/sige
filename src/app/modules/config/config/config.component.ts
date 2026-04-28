@@ -18,6 +18,7 @@ import { firstValueFrom } from 'rxjs';
 import { FormValidators } from '@form';
 import { Button } from '@ui/button/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-config',
@@ -31,6 +32,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     Datepicker,
     JsonPipe,
     Button,
+    MatCheckbox,
   ],
   templateUrl: './config.component.html',
   styleUrl: './config.component.scss',
@@ -55,6 +57,7 @@ export class ConfigComponent implements OnInit {
   form = this.fb.group({
     school: this.getFormGroup('school'),
     association: this.getFormGroup('association'),
+    updateLessons: this.fb.nonNullable.control<boolean>(true),
   });
 
   getFormGroup(group: 'school' | 'association', data?: ConfigData) {
@@ -94,7 +97,19 @@ export class ConfigComponent implements OnInit {
   submit(groupName: string) {
     console.log(this.form.value);
     const data = (this.form.get(groupName)?.value || {}) as ConfigData;
+    if (groupName === 'school') {
+      data.updateLessons = this.form.controls.updateLessons.value;
+    }
     if (this.form.invalid) {
+      return;
+    }
+    if (!data.id) {
+      this.configService.add(data).subscribe({
+        next: () => {
+          this.showNotification('snackbar-success', 'Configurações criadas com sucesso');
+          this.loadData().then();
+        },
+      });
       return;
     }
     this.configService.update(data).subscribe({

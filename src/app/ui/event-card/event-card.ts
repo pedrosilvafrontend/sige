@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, effect, input, output } from '@angular/core';
 import { DatePipe, NgClass, NgStyle } from '@angular/common';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -26,10 +26,19 @@ import { activityStatusClassPipe, ColorPipe, ColorStylePipe } from '@util/color-
 export class EventCard {
   auth = input.required<User>();
   event = input.required<LessonEvent>();
-  color = input<string>('');
-  activities = input.required<Map<string, ActivityConfig>>();
+  colorI = input<string>('', { alias: 'color' });
+  activities = input<Map<string, ActivityConfig>>(new Map());
   onClick = output();
   statusClass: any = Proof.statusClass;
   dateFormat = 'dd/MM/yyyy';
+  color = '';
 
+  constructor() {
+    effect(() => {
+      this.color = this.colorI();
+      if (this.event()?.color && !this.color) {
+        this.color = this.event().color || '';
+      }
+    });
+  }
 }

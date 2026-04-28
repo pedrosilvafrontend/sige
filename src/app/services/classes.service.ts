@@ -4,6 +4,12 @@ import { catchError, map } from 'rxjs/operators';
 import { SchoolClass, ApiResponse } from '@models';
 import { BaseApiService } from '@services/base-api-service';
 
+export type ClassesGetAllParams = {
+  schoolId?: number;
+  degreeId?: string;
+  dayShiftId?: string;
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -13,14 +19,14 @@ export class ClassesService extends BaseApiService<SchoolClass> {
     super('/classes')
   }
 
-  override returnCachedData(params: any): boolean {
+  override returnCachedData(params?: ClassesGetAllParams): boolean {
     const data = this.lastData.getValue();
-    return (params?.schoolId && data[0]?.school?.id === params?.schoolId);
+    return (!!params?.schoolId && data[0]?.school?.id === params?.schoolId);
   }
 
   /** GET: Fetch all advance tables */
-  override getAll(schoolId?: number | null): Observable<ApiResponse<SchoolClass[]>> {
-    if (this.returnCachedData({schoolId})) {
+  override getAll(params?: ClassesGetAllParams, force?: boolean): Observable<ApiResponse<SchoolClass[]>> {
+    if (!force && this.returnCachedData(params)) {
       return this.lastData.pipe(
         map((data) => {
           return { data };
@@ -29,12 +35,21 @@ export class ClassesService extends BaseApiService<SchoolClass> {
     }
 
     let url = this.API_URL;
+    const urlParams = new URLSearchParams();
 
-    if (schoolId) {
-      const params = new URLSearchParams();
-      params.append("school_id", String(schoolId));
-      url = [this.API_URL, params].join('?');
+    if (params?.schoolId) {
+      urlParams.append("schoolId", String(params.schoolId));
     }
+
+    if (params?.degreeId) {
+      urlParams.append("degreeId", String(params.degreeId));
+    }
+
+    if (params?.dayShiftId) {
+      urlParams.append("dayShiftId", String(params.dayShiftId));
+    }
+
+    url = [this.API_URL, urlParams].join('?');
 
     return this.http
       .get<ApiResponse<SchoolClass[]>>(url)

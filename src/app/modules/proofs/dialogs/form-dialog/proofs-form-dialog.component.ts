@@ -28,6 +28,7 @@ import { Button } from '@ui/button/button';
 import { IProofForm, ProofForm } from '@form/proof.form';
 import { AuthService } from '@services';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 export interface DialogData {
   id: number;
@@ -57,6 +58,7 @@ export interface DialogData {
     TranslateModule,
     MatDialogActions,
     Button,
+    MatCheckbox,
   ],
 })
 export class ProofsFormDialogComponent {

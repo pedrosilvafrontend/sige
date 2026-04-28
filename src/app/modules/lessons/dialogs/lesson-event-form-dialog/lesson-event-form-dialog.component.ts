@@ -27,13 +27,13 @@ import {
   LessonEventFormComponent
 } from '@modules/lessons/form/lesson-event.form.component/lesson-event.form.component';
 import {
-  ActivityConfig, GeneralEvent,
+  ActivityConfig, Frequency, GeneralEvent,
   LessonEvent, LessonEventExtra,
   LessonEventForm,
   LessonEventFormValue,
   Proof,
   School,
-  SchoolClass, Work,
+  SchoolClass, UniqueLessonEvent, Work,
 } from '@models';
 import { AuthService } from '@services';
 import { Button } from '@ui/button/button';
@@ -92,7 +92,6 @@ export interface DialogData {
     TextEditor,
     WorkFormModal,
     EventColors,
-    GeneralEventModal,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit {
@@ -146,6 +145,18 @@ export class LessonEventFormDialogComponent implements OnInit {
 
   get schoolId(): number {
     return this.event?.school?.id || 0;
+  }
+
+  get frequency(): Frequency {
+    const frequency = this.event?.frequency || new Frequency();
+    if (this.event.weekday) {
+      frequency.weekday = this.event.weekday;
+    }
+    return frequency;
+  }
+
+  get timeScheduleId(): number {
+    return this.event?.frequency?.timeSchedule?.id || 0;
   }
 
   constructor() {
@@ -230,17 +241,20 @@ export class LessonEventFormDialogComponent implements OnInit {
       if (!lessonId) {
         return;
       }
-      if (proof?.score) {
+      if (proof?.score || proof?.type === 'MULTICLASS_TEST') {
         const data: Proof = {
+          id: proof.id || 0,
+          type: proof.type || 'TEST',
+          lessonId: lessonId,
+          schoolId: proof.schoolId || this.schoolId,
           content: proof.content || '',
           date: formData.date,
-          id: proof.id || 0,
-          lessonId: lessonId,
-          score: proof.score,
+          score: proof.score || '',
           status: proof.status || '',
           timeScheduleId: formData.timeSchedule?.id || 0,
           title: proof.title || '',
           whereToFindIt: proof.whereToFindIt || '',
+          events: proof.events?.filter((e: UniqueLessonEvent) => e.selected) || [],
         }
         const request$ = data.id ? this.proofService.update(data) : this.proofService.add(data);
         request$.subscribe({
@@ -300,7 +314,11 @@ export class LessonEventFormDialogComponent implements OnInit {
     if (this.dialogData.item) {
       this.event = this.dialogData.item;
       if (this.event?.evalTools?.proof?.id) {
-        this.proof = this.event.evalTools.proof;
+        const proof = this.event.evalTools.proof;
+        if (!this.proof.timeScheduleId) {
+          this.proof.timeScheduleId = this.timeScheduleId;
+        }
+        this.proof = proof;
       }
       if (this.event?.evalTools?.work?.id) {
         this.work = this.event.evalTools.work;
