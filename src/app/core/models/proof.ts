@@ -17,6 +17,7 @@ export interface Proof {
   events: UniqueLessonEvent[];
   createdAt?: string;
   updatedAt?: string;
+  curricularComponentId?: number;
 }
 
 export class Proof {
@@ -36,6 +37,7 @@ export class Proof {
       this.events = proof.events || [];
       this.createdAt = proof.createdAt || '';
       this.updatedAt = proof.updatedAt || '';
+      this.curricularComponentId = proof.curricularComponentId || 0
     }
   }
 

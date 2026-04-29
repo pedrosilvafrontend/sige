@@ -46,7 +46,7 @@ export class EventCheckboxGroup {
       // const classesIds = this.selectedClasses();
       const eventKeys = new Set<string>();
       const getEventKey = (uEvent: UniqueLessonEvent) => {
-        return `${uEvent.schoolId}|${uEvent.classId}|${uEvent.timeScheduleId}|${uEvent.weekday}`;
+        return `${uEvent.schoolId}|${uEvent.lessonId}|${uEvent.classId}|${uEvent.timeScheduleId}|${uEvent.weekday}`;
       };
       this.form().clear();
       const events: LessonEvent[] = [];
@@ -97,6 +97,7 @@ export class EventCheckboxGroup {
     const form = this.fb.nonNullable.group({
       date: [''],
       schoolId: [0],
+      lessonId: [0],
       classId: [0],
       frequencyId: [0],
       timeScheduleId: [0],

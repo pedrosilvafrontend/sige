@@ -255,6 +255,7 @@ export class LessonEventFormDialogComponent implements OnInit {
           title: proof.title || '',
           whereToFindIt: proof.whereToFindIt || '',
           events: proof.events?.filter((e: UniqueLessonEvent) => e.selected) || [],
+          curricularComponentId: proof.curricularComponentId || 0
         }
         const request$ = data.id ? this.proofService.update(data) : this.proofService.add(data);
         request$.subscribe({

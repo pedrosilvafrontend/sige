@@ -57,7 +57,20 @@ export class TestFormComponent implements OnInit, OnDestroy {
   dataId = input<number>();
   schoolId = input.required<number>();
   timeScheduleId = input.required<number>();
-  date = input.required<string>();
+  dateInput = input.required<string>({ alias: 'date' });
+  date!: string;
+  // date = input.required<string>({
+  //   transform: v => {
+  //     const type = typeof v;
+  //     if (type === 'object' && v.toISOString) {
+  //       return v.toISOString();
+  //     }
+  //     if (type !== 'string') {
+  //       return '';
+  //     }
+  //     return v;
+  //   }
+  // } as any);
   eventInput = input.required<LessonEvent>({alias: 'event'});
   disabled = input(false);
   readOnly = input(false);
@@ -93,6 +106,14 @@ export class TestFormComponent implements OnInit, OnDestroy {
         this.form.enable();
       }
       this.cdr.detectChanges();
+
+      let date = this.dateInput();
+      if (typeof date !== 'string') {
+        if ((date as Date).toISOString) {
+          date = (date as Date).toISOString();
+        }
+      }
+      this.date = date;
 
       if (this.data()) {
         const data = this.data();
@@ -146,7 +167,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
       const params = {
         schoolId: this.schoolId(),
         timeScheduleId: this.timeScheduleId(),
-        date: (this.date() || '').substring(0, 10),
+        date: (this.date || '').substring(0, 10),
       }
       this.eventsLoading.set(true);
 
@@ -225,8 +246,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
     const form = ProofForm.form();
     const { type } = form.controls;
     type.valueChanges.pipe(takeUntil(this.destroy$)).subscribe({
-      next: value => {
-        console.log('>>>', value);
+      next: () => {
         this.changeType();
       }
     })
@@ -235,6 +255,11 @@ export class TestFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.form$.emit(this.form);
+    this.ccControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (cc) => {
+        this.form.controls.curricularComponentId.setValue(cc?.id || 0, { emitEvent: false })
+      }
+    })
   }
 
   ngOnDestroy() {

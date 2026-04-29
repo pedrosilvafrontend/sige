@@ -18,7 +18,8 @@ export class ProofForm {
       status: [data?.status || null],
       date: [data?.date || null],
       timeScheduleId: [data?.timeScheduleId || null],
-      events: this.fb.array<FormControl<UniqueLessonEvent>>([])
+      events: this.fb.array<FormControl<UniqueLessonEvent>>([]),
+      curricularComponentId: [data?.curricularComponentId || 0]
     };
     return this.fb.group(ctrls);
   }
@@ -37,4 +38,5 @@ export interface IProofForm {
   date: FormControl<string | null>;
   timeScheduleId: FormControl<number | null>;
   events: FormArray<FormControl<UniqueLessonEvent>>;
+  curricularComponentId: FormControl<number | null>;
 }

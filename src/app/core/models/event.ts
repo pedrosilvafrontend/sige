@@ -135,6 +135,7 @@ export interface LessonEventExtra {
 export interface UniqueLessonEvent {
   date: string,
   schoolId: number,
+  lessonId: number,
   classId: number,
   frequencyId: number,
   timeScheduleId: number,

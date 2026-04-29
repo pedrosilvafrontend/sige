@@ -152,6 +152,7 @@ export class Util {
     return {
       date: event.date || '',
       schoolId: event.school?.id || 0,
+      lessonId: event.lesson?.id || 0,
       classId: event.schoolClass?.id || 0,
       frequencyId: event.frequency?.id || 0,
       timeScheduleId: event.frequency?.timeSchedule?.id || 0,
