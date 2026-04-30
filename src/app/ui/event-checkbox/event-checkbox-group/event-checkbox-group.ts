@@ -1,23 +1,20 @@
-import { ChangeDetectorRef, Component, effect, inject, input, ViewEncapsulation } from '@angular/core';
-import { FormArray, FormBuilder, FormControl } from '@angular/forms';
-import { ActivityConfig, LessonEvent as LessonEvt, UniqueLessonEvent, User } from '@models';
-import { EventCheckboxComponent } from '@ui/event-checkbox/event-checkbox';
-import { FormPipe } from '@util/form-pipe';
-import { Util } from '@util/util';
+import { ChangeDetectorRef, Component, effect, inject, input, signal, ViewEncapsulation } from '@angular/core';
+import { FormArray, FormBuilder } from '@angular/forms';
+import { ActivityConfig, LessonEvent as LessonEvt, LessonEventForm, UniqueLessonEvent, User } from '@models';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { EventCard } from '@ui/event-card/event-card';
 import { AuthService } from '@services';
-import { Activity } from '@modules/config/activity/activity.model';
+import { Skeleton } from '@ui/skeleton/skeleton';
+import { Util } from '@util/util';
 
 type LessonEvent = LessonEvt & { selected?: boolean, disabled?: boolean };
 
 @Component({
   selector: 'app-event-checkbox-group',
   imports: [
-    EventCheckboxComponent,
-    FormPipe,
     MatCheckbox,
-    EventCard
+    EventCard,
+    Skeleton
   ],
   templateUrl: './event-checkbox-group.html',
   styleUrl: './event-checkbox-group.scss',
@@ -29,11 +26,11 @@ export class EventCheckboxGroup {
   private authService = inject(AuthService);
   auth: User = this.authService.user$.value;
   events: LessonEvent[] = [];
+  multiclass = input<boolean>(true);
   form = input.required<FormArray>();
   eventsInput = input.required<LessonEvent[]>({ alias: 'events' });
   disabled = input(false);
-  selectAll = input(false);
-  // selectedClasses = input<number[]>([]);
+  isLoading = signal(true);
 
   activities: Map<string, ActivityConfig> = new Map<string, ActivityConfig>();
 
@@ -42,47 +39,35 @@ export class EventCheckboxGroup {
       const hasMulticlassProof = this.eventsInput().some(
         event => event.evalTools.proof?.id && event.evalTools.proof?.type === 'MULTICLASS_TEST'
       );
-      const selectAll = !hasMulticlassProof && this.selectAll();
-      // const classesIds = this.selectedClasses();
       const eventKeys = new Set<string>();
       const getEventKey = (uEvent: UniqueLessonEvent) => {
         return `${uEvent.schoolId}|${uEvent.lessonId}|${uEvent.classId}|${uEvent.timeScheduleId}|${uEvent.weekday}`;
       };
       this.form().clear();
-      const events: LessonEvent[] = [];
-      for (const event of this.eventsInput()) {
+      const events: LessonEvent[] = this.eventsInput() || [];
+      for (const event of events) {
         const uEvent = Util.toUniqueLessonEvent(event);
-        const eventKey = getEventKey(uEvent);
-        if (eventKeys.has(eventKey)) {
-          continue;
-        }
-        eventKeys.add(eventKey);
-
-        // let selected = false;
-        // if (classesIds.length) {
-        //   selected = classesIds.includes(event.schoolClass?.id ?? -1);
+        // const eventKey = getEventKey(uEvent);
+        // if (eventKeys.has(eventKey)) {
+        //   continue;
         // }
-        // if (event.evalTools.proof?.id && event.evalTools.proof?.type === 'MULTICLASS_TEST') {
-        //   selected = true;
-        // }
-        // else {
-        //   selected = selectAll;
-        // }
-        // uEvent.selected = selected;
-        // event.selected = selected;
-
-        // uEvent.selected = event.selected || selectAll;
-        // if (!event.selected) {
-        //   event.selected = selectAll;
-        // }
-        events.push(event);
-        this.form().push(this.getEventForm(uEvent))
+        // eventKeys.add(eventKey);
+        // events.push(event);
+        this.form().push(this.getEventForm(uEvent));
       }
       if (!events.length && this.events.length > 0) {
         this.form().clear();
       }
       this.events = events;
       this.cdr.detectChanges();
+      if (events.length) {
+        this.isLoading.set(false);
+      }
+      else {
+        setTimeout(() => {
+          this.isLoading.set(false);
+        }, 2000)
+      }
     });
   }
 
@@ -93,6 +78,25 @@ export class EventCheckboxGroup {
     this.form().at(index).patchValue(uEvent);
   }
 
+  // getEventForm(event: LessonEvent) {
+  //   // return LessonEventForm(event);
+  //   const fb = this.fb;
+  //   const { title, date, frequency, observations, evalTools, extra, disabled, selected } = event || {};
+  //   const { timeSchedule } = frequency || {};
+  //   return fb.group(
+  //     {
+  //       title: fb.control({value: title || '', disabled: true}),
+  //       date: fb.control({value: date || '', disabled: true}),
+  //       timeSchedule: fb.control({value: timeSchedule || null, disabled: true}),
+  //       observations: fb.control(observations || ''),
+  //       evalTools: fb.control(evalTools || null),
+  //       extra: fb.control(extra || null),
+  //       disabled: fb.nonNullable.control({ value: !!disabled, disabled: false }),
+  //       selected: fb.nonNullable.control({ value: !!selected, disabled: false })
+  //     }
+  //   );
+  // }
+
   getEventForm(uEvent: UniqueLessonEvent) {
     const form = this.fb.nonNullable.group({
       date: [''],
@@ -102,6 +106,8 @@ export class EventCheckboxGroup {
       frequencyId: [0],
       timeScheduleId: [0],
       weekday: ['UNIQUE'],
+      proofId: [0],
+      workId: [0],
       selected: [false]
     });
     form.patchValue(uEvent, { emitEvent: false });

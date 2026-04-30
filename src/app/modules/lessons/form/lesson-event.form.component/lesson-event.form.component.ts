@@ -180,27 +180,28 @@ export class LessonEventFormComponent implements OnInit, OnDestroy {
 
 
   createForm(data?: LessonEvent): FormGroup<LessonEventForm> {
-    const { title, date, frequency, observations, activities } = data || {};
-    const { timeSchedule } = frequency || {};
-
-    const extra = this.fb.group({
-      id: this.fb.control(null),
-      planning: this.fb.control(null)
-    }, {disabled: true});
-
-    const form = this.fb.group(
-      {
-        title: this.fb.control({value: title || '', disabled: true}),
-        date: this.fb.control({value: date || '', disabled: true}),
-        timeSchedule: this.fb.control({value: timeSchedule || null, disabled: true}),
-        observations: this.fb.control(observations || ''),
-        activities: this.fb.array([] as any),
-        evalTools: this.fb.group({}),
-        extra: extra
-      }
-    );
-
-    return form;
+    return LessonEventForm(data);
+    // const { title, date, frequency, observations, activities } = data || {};
+    // const { timeSchedule } = frequency || {};
+    //
+    // const extra = this.fb.group({
+    //   id: this.fb.control(null),
+    //   planning: this.fb.control(null)
+    // }, {disabled: true});
+    //
+    // const form = this.fb.group(
+    //   {
+    //     title: this.fb.control({value: title || '', disabled: true}),
+    //     date: this.fb.control({value: date || '', disabled: true}),
+    //     timeSchedule: this.fb.control({value: timeSchedule || null, disabled: true}),
+    //     observations: this.fb.control(observations || ''),
+    //     activities: this.fb.array([] as any),
+    //     evalTools: this.fb.group({}),
+    //     extra: extra
+    //   }
+    // );
+    //
+    // return form;
   }
 
   formObservables() {

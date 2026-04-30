@@ -8,8 +8,10 @@ import {
   TimeSchedule,
   Proof, Work, Entity, User
 } from '@models';
-import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { EvalTools, EvalToolsForm } from '@models/eval-tools';
+import { ProofForm } from '@form/proof.form';
+import { WorkForm } from '@form/work.form';
 
 export type Weekday = 'UNIQUE' | 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN';
 
@@ -34,10 +36,44 @@ export interface LessonEventForm {
   observations: FormControl<string | null>;
   evalTools: FormGroup<EvalToolsForm>;
   extra: FormGroup<LessonExtraForm>;
+  disabled: FormControl<boolean>;
+  selected: FormControl<boolean>;
+}
+
+export function LessonEventForm(data?: LessonEvent): FormGroup<LessonEventForm> {
+  const fb = new FormBuilder()
+  const { title, date, frequency, observations, evalTools, extra, disabled, selected } = data || {};
+  const { timeSchedule } = frequency || {};
+
+  const extraForm = fb.group({
+    id: fb.control({ value: extra?.id || '', disabled: true }),
+    planning: fb.control({ value: extra?.planning || '', disabled: true })
+  });
+
+  const evalToolsForm = fb.group<EvalToolsForm>({
+    proof: ProofForm.form(evalTools?.proof),
+    work: WorkForm.form(evalTools?.work),
+  });
+
+  const form = fb.group(
+    {
+      title: fb.control({value: title || '', disabled: true}),
+      date: fb.control({value: date || '', disabled: true}),
+      timeSchedule: fb.control({value: timeSchedule || null, disabled: true}),
+      observations: fb.control(observations || ''),
+      activities: fb.array([] as any),
+      evalTools: evalToolsForm,
+      extra: extraForm,
+      disabled: fb.nonNullable.control({ value: !!disabled, disabled: false }),
+      selected: fb.nonNullable.control({ value: !!selected, disabled: false })
+    }
+  );
+
+  return form;
 }
 
 export interface LessonExtraForm {
-  id: FormControl<number | null>;
+  id: FormControl<string | null>;
   planning: FormControl<string | null>;
 }
 
@@ -69,6 +105,8 @@ export interface LessonEvent {
   color?: string;
   observations: string;
   countActivities: CountActivities;
+  disabled?: boolean;
+  selected?: boolean;
 }
 
 export class LessonEvent {
@@ -139,6 +177,8 @@ export interface UniqueLessonEvent {
   classId: number,
   frequencyId: number,
   timeScheduleId: number,
+  proofId: number,
+  workId: number,
   weekday: Weekday,
   selected?: boolean
 }

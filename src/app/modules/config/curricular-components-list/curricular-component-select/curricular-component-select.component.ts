@@ -111,6 +111,7 @@ export class CurricularComponentSelectComponent implements OnInit, OnDestroy, Co
 
   async getCurricularComponent(classYearId: string) {
     this.curricularComponents = await firstValueFrom(this.ccService.getAll(classYearId)) || [];
+    this.completeCC();
 
     if (!this.filteredOptions) {
       this.filteredOptions = this.control.valueChanges.pipe(
@@ -124,6 +125,17 @@ export class CurricularComponentSelectComponent implements OnInit, OnDestroy, Co
     this.cdr.detectChanges();
   }
 
+  completeCC() {
+    let cc = this.control.value as CurricularComponent;
+    if (cc) {
+      if (cc.id && (!cc.name || !cc.classYearId)) {
+        cc = this.curricularComponents.find(c => c.id === cc.id) || cc;
+        this.control.setValue(cc, { emitEvent: false });
+      }
+    }
+    return cc;
+  }
+
   ngOnInit() {
     this.control.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value: unknown) => {
       if (!value) {
@@ -131,7 +143,8 @@ export class CurricularComponentSelectComponent implements OnInit, OnDestroy, Co
         return;
       }
       if (typeof value === 'object') {
-        this.onChangeFn(value as CurricularComponent);
+        const cc = this.completeCC();
+        this.onChangeFn(cc);
       }
     });
 

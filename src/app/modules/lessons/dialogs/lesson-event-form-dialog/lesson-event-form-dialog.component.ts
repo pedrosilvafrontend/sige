@@ -92,6 +92,7 @@ export interface DialogData {
     TextEditor,
     WorkFormModal,
     EventColors,
+    JsonPipe,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit {
@@ -233,6 +234,22 @@ export class LessonEventFormDialogComponent implements OnInit {
     }
   }
 
+  eventsToMulticlassProofs(events: UniqueLessonEvent[]): Proof[] {
+    return (events || []).map(e => {
+      return {
+        id: 0,
+        type: 'MULTICLASS_TEST',
+        schoolId: e.schoolId,
+        lessonId: e.lessonId,
+        timeScheduleId: e.timeScheduleId,
+        date: e.date,
+        content: '',
+        score: '',
+        status: '',
+      } as Proof
+    })
+  }
+
   saveProof(callback?: () => void) {
     if (this.proofForm.valid) {
       const formData = this.form.getRawValue() as LessonEventFormValue;
@@ -242,6 +259,8 @@ export class LessonEventFormDialogComponent implements OnInit {
         return;
       }
       if (proof?.score || proof?.type === 'MULTICLASS_TEST') {
+        const events = proof.events?.filter((e: UniqueLessonEvent) => e.selected) || [];
+        // const tests = proof.tests?.length ? proof.tests || [] : this.eventsToMulticlassProofs(events);
         const data: Proof = {
           id: proof.id || 0,
           type: proof.type || 'TEST',
@@ -254,7 +273,7 @@ export class LessonEventFormDialogComponent implements OnInit {
           timeScheduleId: formData.timeSchedule?.id || 0,
           title: proof.title || '',
           whereToFindIt: proof.whereToFindIt || '',
-          events: proof.events?.filter((e: UniqueLessonEvent) => e.selected) || [],
+          events: events,
           curricularComponentId: proof.curricularComponentId || 0
         }
         const request$ = data.id ? this.proofService.update(data) : this.proofService.add(data);

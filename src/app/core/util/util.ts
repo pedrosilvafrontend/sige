@@ -157,6 +157,8 @@ export class Util {
       frequencyId: event.frequency?.id || 0,
       timeScheduleId: event.frequency?.timeSchedule?.id || 0,
       weekday: (event.weekday || event.frequency?.weekday || 'UNIQUE') as Weekday,
+      proofId: event.evalTools?.proof?.id || 0,
+      workId: event.evalTools?.work?.id || 0,
       selected: (event as any)?.selected || false
     }
   }

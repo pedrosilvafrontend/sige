@@ -87,7 +87,7 @@
               }
               <app-test-form
                 class="d-block mt-3"
-                [data]="proof || {}"
+                [testId]="proof?.id || 0"
                 [schoolId]="schoolId"
                 [timeScheduleId]="timeScheduleId"
                 [date]="event.date"
@@ -96,6 +96,7 @@
                 (form$)="(proofForm = $event)"
               >
               </app-test-form>
+              <pre>{{ proofForm.getRawValue() | json }}</pre>
             </mat-dialog-content>
             <mat-dialog-actions>
               <div class="d-flex gap-2">
