@@ -4,9 +4,11 @@
     <div class="col-md-6">
       <mat-form-field class="mat-mdc-form-field"  appearance="outline" subscriptSizing="dynamic">
         <mat-label>{{ 'Type' | translate }}</mat-label>
-        <mat-select formControlName="type" [compareWith]="compare" [disabled]="!isManager || isMulticlass || !!form.value.id">
+        <mat-select formControlName="type" [compareWith]="compare" [disabled]="isMulticlass || !!form.value.id">
           @for (item of proofTypes; track item) {
-            <mat-option [value]="item">
+<!--            @if (!(auth.role === 'teacher' && item === 'MULTICLASS_TEST')) {-->
+<!--            }-->
+            <mat-option [value]="item" [disabled]="item === 'MULTICLASS_TEST'">
               {{ item | translate }}
             </mat-option>
           }

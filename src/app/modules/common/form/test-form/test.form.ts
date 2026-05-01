@@ -274,7 +274,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
 
     if (!this.isManager) {
       this.ccControl.disable({ emitEvent: false });
-      type.disable({ emitEvent: false });
+      // type.disable({ emitEvent: false });
     }
 
     score.updateValueAndValidity();
