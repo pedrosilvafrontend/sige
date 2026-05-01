@@ -1,3 +1,10 @@
+## [1.1.27](https://github.com/pedrosilvafrontend/sige/compare/v1.1.26...v1.1.27) (2026-05-01)
+
+
+### Features
+
+* multiclass test update ([9a0a41a](https://github.com/pedrosilvafrontend/sige/commit/9a0a41a29698f1de9aa9728565b09a51c6c3cef6))
+
 ## [1.1.26](https://github.com/pedrosilvafrontend/sige/compare/v1.1.25...v1.1.26) (2026-05-01)
 
 
