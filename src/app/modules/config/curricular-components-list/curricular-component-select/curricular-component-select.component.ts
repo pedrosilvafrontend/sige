@@ -63,6 +63,7 @@ export class CurricularComponentSelectComponent implements OnInit, OnDestroy, Co
   public filteredOptions!: Observable<CurricularComponent[]>;
   private value: CurricularComponent | null = null;
   public inputTarget: HTMLInputElement | null = null;
+  disabled = input(false);
 
   classYearId = input('');
   cdr = inject(ChangeDetectorRef);
@@ -77,6 +78,8 @@ export class CurricularComponentSelectComponent implements OnInit, OnDestroy, Co
         this.curricularComponents = [];
         this.getCurricularComponent(this.classYearId()).then();
       }
+
+      this.disabled() ? this.control.disable() : this.control.enable();
     });
   }
 

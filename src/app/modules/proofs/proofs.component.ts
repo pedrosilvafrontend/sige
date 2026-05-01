@@ -79,7 +79,9 @@ export class ProofsComponent implements OnInit, OnDestroy {
   public proofStatusClass: any = Proof.statusClass;
   public auth: User = this.authService.user$.value;
 
-  columnsLabels = ['date', 'curricularComponent', 'class', 'teacher', 'title', 'score', 'status', 'actions'].map((key: string) => this.translate.instant(key));
+  columnsLabels = [
+    'date', 'curricularComponent', 'class', 'Teacher / test administrator', 'title', 'score', 'status', 'actions'
+  ].map((key: string) => this.translate.instant(key));
 
   columnDefinitions = (() => {
     const [date, curricularComponent, classe, teacher, title, score, status, actions] = this.columnsLabels;

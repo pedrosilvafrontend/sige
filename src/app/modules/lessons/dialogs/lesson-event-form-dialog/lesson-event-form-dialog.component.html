@@ -98,7 +98,7 @@
                 (initialSelectedEvents)="(initialSelectedProofEvents = $event)"
               >
               </app-test-form>
-              <pre>{{ proofForm.getRawValue() | json }}</pre>
+<!--              <pre>{{ proofForm.getRawValue() | json }}</pre>-->
             </mat-dialog-content>
             <mat-dialog-actions>
               <div class="d-flex gap-2">
@@ -128,7 +128,7 @@
                       }
                     </ui-button>
                   } @else {
-                    <ui-button [disabled]="proofForm.invalid" (onClick)="saveProof(proofModal.close)">
+                    <ui-button [disabled]="proofForm.invalid" (onClick)="saveProof(proofModal.close, deleteProofOnUpdateModal)">
                       Salvar
                       @if (proof.status && proof.status != 'APPROVED' && isManager) {
                         e aprovar

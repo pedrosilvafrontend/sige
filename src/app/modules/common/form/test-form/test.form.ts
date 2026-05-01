@@ -10,7 +10,7 @@ import {
   output,
   signal
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IProofForm, ProofForm } from '@form/proof.form';
 import { Field } from '@ui/field/field';
 import { CurricularComponent, LessonEvent, Proof, SchoolClass, UniqueLessonEvent, User } from '@models';
@@ -145,12 +145,15 @@ export class TestFormComponent implements OnInit, OnDestroy {
     if (proofId) {
       const proof = await firstValueFrom(this.proofService.getById(proofId));
       if (proof) {
-        const data = proof;
-        this.form.patchValue(data);
-        this.ccControl.setValue(new CurricularComponent({ id: proof.curricularComponentId }));
-        if (data.type === 'MULTICLASS_TEST') {
-          this.changeType();
-        }
+        // const currentLessonId = this.eventInput()?.lesson?.id || 0;
+        // const data = proof;
+        // if (currentLessonId && currentLessonId !== proof.lessonId) {
+        //   data.id = 0;
+        // }
+        // this.form.patchValue({ type: data.type }, { emitEvent: false });
+        this.form.patchValue(proof);
+        const cc = proof.curricularComponent || new CurricularComponent({ id: proof.curricularComponentId });
+        this.ccControl.setValue(cc);
       }
       this.proof = proof;
       // const eventInput = this.eventInput();
@@ -187,7 +190,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
     clearTimeout(this.timeChange);
     this.timeChange = setTimeout(() => this.changeMulti(), 1000)
   }
-  changeMulti() {
+  async changeMulti() {
     const { score, content, events, type } = this.form.controls;
     const multiclass = this.form.controls.type.value === 'MULTICLASS_TEST';
     if (multiclass) {
@@ -198,66 +201,75 @@ export class TestFormComponent implements OnInit, OnDestroy {
       }
       this.eventsLoading.set(true);
 
+      const lessons = await firstValueFrom(this.lessonEventService.getAll(params));
 
-      this.lessonEventService.getAll(params).subscribe({
-        next: (lessons) => {
-          const initialSelecteds: UniqueLessonEvent[] = [];
-          this.events = (lessons || []).map(l => {
-            const type = l.evalTools.proof?.type;
-            const isMulti = type === 'MULTICLASS_TEST';
-            const disabled = type && !isMulti;
-            const isCreate = !this.form.controls.id.value;
-            const selected = isCreate ? !disabled : isMulti && !disabled;
-            const data: any = {
-              ...l,
-              disabled,
-              selected
-            }
-            if (selected) {
-              initialSelecteds.push(Util.toUniqueLessonEvent(data));
-            }
-            return data;
-          });
-
-          this.initialSelectedEvents.emit(initialSelecteds);
-
-          const eventWithMultiClass = this.events.find(
-            (e) => e.evalTools.proof?.type === 'MULTICLASS_TEST');
-          const multiclassTest = eventWithMultiClass?.evalTools.proof;
-          if (multiclassTest && !this.form.controls.id.value) {
-            this.form.patchValue(multiclassTest);
-          }
-          const multiclassEventRef = this.events.find(
-            e => {
-              return e.evalTools.proof?.type === 'MULTICLASS_TEST' && e.evalTools.proof?.lessonId === e.lesson.id
-            });
-          const currentEvent = this.events.find(
-            e => e.lesson.id === this.eventInput()?.lesson.id);
-          this.isMulticlass = currentEvent?.evalTools?.proof?.type === 'MULTICLASS_TEST';
-          const classRef = multiclassEventRef?.schoolClass || this.events[0]?.schoolClass;
-          const classYearId = classRef?.yearId;
-          if (classYearId) {
-            this.classYearId = classYearId;
-            if (!this.proof?.curricularComponentId && multiclassEventRef) {
-              this.ccControl.setValue(multiclassEventRef?.curricularComponent)
-            }
-          }
-
-          this.cdr.detectChanges();
-        },
-        complete: () => {
-          this.eventsLoading.set(false);
+      const initialSelecteds: UniqueLessonEvent[] = [];
+      this.events = (lessons || []).map(l => {
+        const type = l.evalTools.proof?.type;
+        const isMulti = type === 'MULTICLASS_TEST';
+        const disabled = type && !isMulti;
+        const isCreate = !this.form.controls.id.value;
+        const selected = isCreate ? !disabled : isMulti && !disabled;
+        const data: any = {
+          ...l,
+          disabled,
+          selected
         }
+        if (selected) {
+          initialSelecteds.push(Util.toUniqueLessonEvent(data));
+        }
+        return data;
       });
-      score.removeValidators(Validators.required);
-      content.removeValidators(Validators.required);
-    } else {
-      this.events.length = 0;
-      events.clear();
-      this.setEvent(this.eventInput());
 
-      score.addValidators(Validators.required);
-      content.addValidators(Validators.required);
+      this.initialSelectedEvents.emit(initialSelecteds);
+
+      const eventWithMultiClass = this.events.find(
+        (e) => e.evalTools.proof?.type === 'MULTICLASS_TEST');
+      const multiclassTest = eventWithMultiClass?.evalTools.proof;
+      if (multiclassTest?.id && !this.form.controls.id.value) {
+        await this.getProof(multiclassTest.id);
+      }
+      const multiclassEventRef = this.events.find(
+        e => {
+          return e.evalTools.proof?.type === 'MULTICLASS_TEST' && e.evalTools.proof?.lessonId === e.lesson.id
+        });
+      const currentEvent = this.events.find(
+        e => e.lesson.id === this.eventInput()?.lesson.id);
+      this.isMulticlass = currentEvent?.evalTools?.proof?.type === 'MULTICLASS_TEST';
+      const classRef = multiclassEventRef?.schoolClass || this.events[0]?.schoolClass;
+      const classYearId = classRef?.yearId;
+      if (classYearId) {
+        this.classYearId = classYearId;
+        if (!this.proof?.curricularComponentId && multiclassEventRef) {
+          this.ccControl.setValue(multiclassEventRef?.curricularComponent)
+        }
+      }
+      this.eventsLoading.set(false);
+      this.cdr.detectChanges();
+
+      // this.lessonEventService.getAll(params).subscribe({
+      //   next: (lessons) => {
+      //   },
+      //   complete: () => {
+      //     this.eventsLoading.set(false);
+      //   }
+      // });
+      score.clearValidators();
+      content.clearValidators();
+    } else {
+      if (this.events.length > 0) {
+        this.events.length = 0;
+        events.clear();
+        this.setEvent(this.eventInput());
+      }
+
+      const hasRequiredValidator = (control: AbstractControl) => control.validator?.({ value: '' } as any)?.['required'];
+      if (!hasRequiredValidator(score)) {
+        score.addValidators(Validators.required);
+      }
+      if (!hasRequiredValidator(content)) {
+        content.addValidators(Validators.required);
+      }
     }
 
     if (!this.isManager) {
@@ -293,6 +305,10 @@ export class TestFormComponent implements OnInit, OnDestroy {
 
     if (this.testId()) {
       await this.getProof(this.testId() || 0);
+
+      if (this.proof?.type === 'MULTICLASS_TEST') {
+        this.changeType();
+      }
     }
   }
 
