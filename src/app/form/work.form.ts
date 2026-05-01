@@ -10,8 +10,8 @@ export class WorkForm {
     const ctrls = {
       id: [data?.id || null],
       // title: [data?.title],
-      score: [data?.score, [Validators.required]],
-      local: [data?.local, [Validators.required]],
+      score: [data?.score],
+      local: [data?.local],
       evaluationCriteria: [data?.evaluationCriteria],
       // evaluations: this.fb.array<FormGroup<IEvaluationCriterionForm>>([]),
       description: [data?.description],

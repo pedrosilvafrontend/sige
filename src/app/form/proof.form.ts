@@ -12,13 +12,15 @@ export class ProofForm {
       schoolId: [data?.schoolId || null],
       lessonId: [data?.lessonId || null],
       title: [data?.title || null],
-      content: [data?.content || null, [Validators.required]],
+      content: [data?.content || null],
       whereToFindIt: [data?.whereToFindIt || null],
-      score: [data?.score || null, [Validators.required]],
+      score: [data?.score || null],
       status: [data?.status || null],
       date: [data?.date || null],
       timeScheduleId: [data?.timeScheduleId || null],
-      events: this.fb.array<FormControl<UniqueLessonEvent>>([])
+      events: this.fb.array<FormControl<UniqueLessonEvent>>([]),
+      // tests: this.fb.array<FormControl<Proof>>([]),
+      curricularComponentId: [data?.curricularComponentId || 0]
     };
     return this.fb.group(ctrls);
   }
@@ -37,4 +39,6 @@ export interface IProofForm {
   date: FormControl<string | null>;
   timeScheduleId: FormControl<number | null>;
   events: FormArray<FormControl<UniqueLessonEvent>>;
+  // tests: FormArray<FormControl<Proof>>;
+  curricularComponentId: FormControl<number | null>;
 }

@@ -97,7 +97,10 @@
               <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
                 <span class="mobile-label">{{ column.label }}:</span>
                 <span class="truncate-text">
-                  @if (row.lesson?.curricularComponent; as cc) {
+                  @if (row.curricularComponent; as cc) {
+                    {{ cc.id }} - {{ cc.name }}
+                  }
+                  @else if (row.lesson?.curricularComponent; as cc) {
                     {{ cc.id }} - {{ cc.name }}
                   }
                 </span>

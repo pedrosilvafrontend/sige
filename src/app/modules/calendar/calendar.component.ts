@@ -551,7 +551,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
       data: {
         item: {
           ...event,
-          date: row.event.start
+          date: row.event.start?.toISOString()
         },
         date: event.date,
         lessonId,
