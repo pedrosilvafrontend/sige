@@ -1,3 +1,15 @@
+## [1.1.26](https://github.com/pedrosilvafrontend/sige/compare/v1.1.25...v1.1.26) (2026-05-01)
+
+
+### Features
+
+* multiclass new test - fix curricular component select ([3598f8b](https://github.com/pedrosilvafrontend/sige/commit/3598f8b429faa1c8d20b0b56571313d3c710f00e))
+* multiclass test ([11688d0](https://github.com/pedrosilvafrontend/sige/commit/11688d05a80283ad149c28f3d200872fbeaf53c3))
+* multiclass test ([5b2a8d7](https://github.com/pedrosilvafrontend/sige/commit/5b2a8d7ae69f889a8a25718323c87ac9bbe23245))
+* multiclass test delete ([20a57f5](https://github.com/pedrosilvafrontend/sige/commit/20a57f59f8243617966e86492981020ccac6fb38))
+* multiclass test update ([882fa6e](https://github.com/pedrosilvafrontend/sige/commit/882fa6eb29a335300e89f201496b0d45fc667023))
+* multiclass test update ([a8afb76](https://github.com/pedrosilvafrontend/sige/commit/a8afb762294808c388c5e16f8f06ddb441d79240))
+
 ## [1.1.25](https://github.com/pedrosilvafrontend/sige/compare/v1.1.24...v1.1.25) (2026-04-28)
 
 
