@@ -175,9 +175,11 @@ export interface UniqueLessonEvent {
   schoolId: number,
   lessonId: number,
   classId: number,
+  classCode: string,
   frequencyId: number,
   timeScheduleId: number,
   proofId: number,
+  proofType: string,
   workId: number,
   weekday: Weekday,
   selected?: boolean

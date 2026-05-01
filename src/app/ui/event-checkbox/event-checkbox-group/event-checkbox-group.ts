@@ -47,12 +47,6 @@ export class EventCheckboxGroup {
       const events: LessonEvent[] = this.eventsInput() || [];
       for (const event of events) {
         const uEvent = Util.toUniqueLessonEvent(event);
-        // const eventKey = getEventKey(uEvent);
-        // if (eventKeys.has(eventKey)) {
-        //   continue;
-        // }
-        // eventKeys.add(eventKey);
-        // events.push(event);
         this.form().push(this.getEventForm(uEvent));
       }
       if (!events.length && this.events.length > 0) {
@@ -103,10 +97,12 @@ export class EventCheckboxGroup {
       schoolId: [0],
       lessonId: [0],
       classId: [0],
+      classCode: [''],
       frequencyId: [0],
       timeScheduleId: [0],
       weekday: ['UNIQUE'],
       proofId: [0],
+      proofType: [''],
       workId: [0],
       selected: [false]
     });

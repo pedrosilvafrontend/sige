@@ -87,6 +87,7 @@
               }
               <app-test-form
                 class="d-block mt-3"
+                [data]="proof"
                 [testId]="proof?.id || 0"
                 [schoolId]="schoolId"
                 [timeScheduleId]="timeScheduleId"
@@ -94,6 +95,7 @@
                 [event]="event"
                 [disabled]="disableProof"
                 (form$)="(proofForm = $event)"
+                (initialSelectedEvents)="(initialSelectedProofEvents = $event)"
               >
               </app-test-form>
               <pre>{{ proofForm.getRawValue() | json }}</pre>
@@ -117,12 +119,22 @@
 <!--                  </ui-button>-->
 <!--                }-->
                 @if (!disableProof) {
-                  <ui-button [disabled]="proofForm.invalid" (onClick)="saveProof(proofModal.close)">
-                    Salvar
-                    @if (proof.status && proof.status != 'APPROVED' && isManager && (proof.type != 'MULTICLASS_TEST' || (proofForm.controls.score.value && proofForm.controls.content.value))) {
-                      e aprovar
-                    }
-                  </ui-button>
+<!--                  deleteProofOnUpdateModal-->
+                  @if (proof.type == 'MULTICLASS_TEST') {
+                    <ui-button [disabled]="proofForm.invalid" (onClick)="saveProof(proofModal.close, deleteProofOnUpdateModal)">
+                      Salvar
+                      @if (proof.status && proof.status != 'APPROVED' && isManager && (proofForm.controls.score.value && proofForm.controls.content.value)) {
+                        e aprovar
+                      }
+                    </ui-button>
+                  } @else {
+                    <ui-button [disabled]="proofForm.invalid" (onClick)="saveProof(proofModal.close)">
+                      Salvar
+                      @if (proof.status && proof.status != 'APPROVED' && isManager) {
+                        e aprovar
+                      }
+                    </ui-button>
+                  }
                 }
               </div>
             </mat-dialog-actions>
@@ -139,6 +151,30 @@
               <div class="d-flex gap-2">
                 <ui-button color="neutral" (onClick)="deleteProofModal.close()" cdkFocusInitial>Cancelar</ui-button>
                 <ui-button color="danger" (onClick)="deleteProof(proofModal.close);deleteProofModal.close()">Excluír prova</ui-button>
+              </div>
+            </mat-dialog-actions>
+          </ng-template>
+
+          <ui-modal #deleteProofOnUpdateModal [template]="deleteProofOnUpdateTemplate"></ui-modal>
+          <ng-template #deleteProofOnUpdateTemplate let-events="events">
+            @let isPlural = events.length > 1;
+            <h3 mat-dialog-title>A ação excluirá
+              {{ isPlural
+                ? 'as provas das seguintes turmas não selecionadas'
+                : 'a prova da seguinte turma não selecionada'
+              }}:
+            </h3>
+            <mat-dialog-content>
+              @for (uEvent of (events || []); track uEvent.proofId) {
+                <ul>
+                  <li><strong>{{ uEvent.classCode || uEvent.classId }}</strong></li>
+                </ul>
+              }
+            </mat-dialog-content>
+            <mat-dialog-actions>
+              <div class="d-flex gap-2">
+                <ui-button color="neutral" (onClick)="deleteProofOnUpdateModal.close(false)" cdkFocusInitial>Cancelar</ui-button>
+                <ui-button color="danger" (onClick)="deleteProofOnUpdateModal.close(true)">Confirmar</ui-button>
               </div>
             </mat-dialog-actions>
           </ng-template>

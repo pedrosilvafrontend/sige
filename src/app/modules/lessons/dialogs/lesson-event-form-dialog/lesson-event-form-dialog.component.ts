@@ -135,6 +135,7 @@ export class LessonEventFormDialogComponent implements OnInit {
   };
   activities: Map<string, ActivityConfig> = new Map();
   colorBy: ColorBy;
+  initialSelectedProofEvents: UniqueLessonEvent[] = [];
 
   private _work!: Work;
   get work(): Work {
@@ -250,17 +251,48 @@ export class LessonEventFormDialogComponent implements OnInit {
     })
   }
 
-  saveProof(callback?: () => void) {
+  saveOrUpdateProof(data: Proof, callback?: () => void) {
+    const isUpdate = !!data?.id;
+    const isMulticlass = data?.type === 'MULTICLASS_TEST';
+    const lessonId = this.dialogData.item?.lesson?.id || 0;
+    if (!lessonId) {
+      return;
+    }
+    const request$ = isUpdate ? this.proofService.update(data) : this.proofService.add(data);
+    request$.subscribe({
+      next: (response: any) => {
+        this.message.success('Salvo com sucesso!');
+        callback?.();
+        this.closeRefresh = true;
+        let proof: Proof;
+        if (isMulticlass && Array.isArray(response)) {
+          proof = response.find((p: Proof) => p.lessonId === lessonId);
+        }
+        else {
+          proof = response;
+        }
+        this.proof = proof;
+        this.proofForm.patchValue(proof);
+      },
+      error: (error) => {
+        console.error('Proof Update Error:', error);
+        this.form.setErrors({ temp: true });
+      },
+    });
+  }
+
+  saveProof(callback?: () => void, confirmModal?: ModalComponent) {
     if (this.proofForm.valid) {
       const formData = this.form.getRawValue() as LessonEventFormValue;
       const proof = this.proofForm.value;
+      const isUpdate = !!proof?.id;
+      const isMulticlass = proof?.type === 'MULTICLASS_TEST';
       const lessonId = this.dialogData.item?.lesson?.id || 0;
       if (!lessonId) {
         return;
       }
-      if (proof?.score || proof?.type === 'MULTICLASS_TEST') {
+      if (proof?.score || isMulticlass) {
         const events = proof.events?.filter((e: UniqueLessonEvent) => e.selected) || [];
-        // const tests = proof.tests?.length ? proof.tests || [] : this.eventsToMulticlassProofs(events);
         const data: Proof = {
           id: proof.id || 0,
           type: proof.type || 'TEST',
@@ -276,20 +308,52 @@ export class LessonEventFormDialogComponent implements OnInit {
           events: events,
           curricularComponentId: proof.curricularComponentId || 0
         }
-        const request$ = data.id ? this.proofService.update(data) : this.proofService.add(data);
-        request$.subscribe({
-          next: (response) => {
-            this.message.success('Salvo com sucesso!');
-            callback?.();
-            this.closeRefresh = true;
-            this.proofForm.patchValue(response);
-            this.proof = response;
-          },
-          error: (error) => {
-            console.error('Proof Update Error:', error);
-            this.form.setErrors({ temp: true });
-          },
-        });
+
+        // TODO: criar alerta de provas que vão ser excluídas
+        // const proofKeeps = (events || []).map((e: UniqueLessonEvent) => e.proofId);
+        const originalSelected = this.initialSelectedProofEvents.map((e) => e.proofId);
+        // const originalSelected = (this.initialSelectedProofEvents || []).reduce((acc, e) => {
+        //   if (e.proofType === 'MULTICLASS_TEST') {
+        //     acc.push(e.proofId);
+        //   }
+        //   return acc;
+        // }, [] as number[]);
+        const proofExcludes = isUpdate ? proof.events?.filter((e) => !e.selected && originalSelected.includes(e.proofId)) || [] : [];
+        const hasExcludes = proofExcludes.length > 0;
+        if (hasExcludes) {
+          const modalRef = confirmModal?.open({ events: proofExcludes });
+          modalRef?.afterClosed().pipe(take(1))
+            .subscribe((confirmed: boolean) => {
+              if (confirmed) {
+                this.saveOrUpdateProof(data, callback);
+              }
+            });
+          return;
+        }
+
+        this.saveOrUpdateProof(data, callback);
+
+        // const request$ = isUpdate ? this.proofService.update(data) : this.proofService.add(data);
+        // request$.subscribe({
+        //   next: (response: any) => {
+        //     this.message.success('Salvo com sucesso!');
+        //     callback?.();
+        //     this.closeRefresh = true;
+        //     let proof: Proof;
+        //     if (isMulticlass && Array.isArray(response)) {
+        //       proof = response.find((p: Proof) => p.lessonId === lessonId);
+        //     }
+        //     else {
+        //       proof = response;
+        //     }
+        //     this.proof = proof;
+        //     this.proofForm.patchValue(proof);
+        //   },
+        //   error: (error) => {
+        //     console.error('Proof Update Error:', error);
+        //     this.form.setErrors({ temp: true });
+        //   },
+        // });
       }
 
       if (this.action === 'edit') {

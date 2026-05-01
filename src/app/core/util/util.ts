@@ -154,10 +154,12 @@ export class Util {
       schoolId: event.school?.id || 0,
       lessonId: event.lesson?.id || 0,
       classId: event.schoolClass?.id || 0,
+      classCode: event.schoolClass?.code || '',
       frequencyId: event.frequency?.id || 0,
       timeScheduleId: event.frequency?.timeSchedule?.id || 0,
       weekday: (event.weekday || event.frequency?.weekday || 'UNIQUE') as Weekday,
       proofId: event.evalTools?.proof?.id || 0,
+      proofType: event.evalTools?.proof?.type || '',
       workId: event.evalTools?.work?.id || 0,
       selected: (event as any)?.selected || false
     }

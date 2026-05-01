@@ -36,9 +36,9 @@ export interface ModalOutput<T = any> {
 
     <div class="dialogContainer">
     @if (data.type === 'confirm') {
-      <ng-template [ngTemplateOutlet]="data.template || confirm" />
+      <ng-template [ngTemplateOutlet]="data.template || confirm" [ngTemplateOutletContext]="data.context || {}" />
     } @else {
-      <ng-template [ngTemplateOutlet]="data.template" />
+      <ng-template [ngTemplateOutlet]="data.template" [ngTemplateOutletContext]="data.context || {}" />
     }
     </div>
   `,
@@ -48,7 +48,7 @@ export interface ModalOutput<T = any> {
 export class ModalDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ModalDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: {template: TemplateRef<any>, type?: 'confirm' | 'alert'}
+    @Inject(MAT_DIALOG_DATA) public data: {template: TemplateRef<any>, type?: 'confirm' | 'alert', context?: any}
   ) {
   }
 }
@@ -81,7 +81,7 @@ export class ModalComponent implements OnInit {
     this.ref?.close(dialogResult)
   }
 
-  open(): MatDialogRef<ModalDialogComponent, any> {
+  open(context?: any): MatDialogRef<ModalDialogComponent, any> {
     if (this.ref) {
       this.ref.close();
     }
@@ -91,7 +91,8 @@ export class ModalComponent implements OnInit {
       ...options,
       data: {
         ...(options.data || {}),
-        template
+        template,
+        context
       }
     });
 

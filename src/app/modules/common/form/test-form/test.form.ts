@@ -28,6 +28,7 @@ import {
 import { FormUtil } from '@util/form-util';
 import { AuthService } from '@services';
 import { ProofService } from '@core/services/proof.service';
+import { Util } from '@util/util';
 
 @Component({
   selector: 'app-test-form',
@@ -60,6 +61,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
   schoolId = input.required<number>();
   timeScheduleId = input.required<number>();
   dateInput = input.required<string>({ alias: 'date' });
+  initialSelectedEvents = output<UniqueLessonEvent[]>();
   date!: string;
   proof!: Proof;
   // date = input.required<string>({
@@ -199,19 +201,26 @@ export class TestFormComponent implements OnInit, OnDestroy {
 
       this.lessonEventService.getAll(params).subscribe({
         next: (lessons) => {
-          //
+          const initialSelecteds: UniqueLessonEvent[] = [];
           this.events = (lessons || []).map(l => {
             const type = l.evalTools.proof?.type;
             const isMulti = type === 'MULTICLASS_TEST';
             const disabled = type && !isMulti;
             const isCreate = !this.form.controls.id.value;
+            const selected = isCreate ? !disabled : isMulti && !disabled;
             const data: any = {
               ...l,
               disabled,
-              selected: isCreate ? !disabled : isMulti && !disabled
+              selected
+            }
+            if (selected) {
+              initialSelecteds.push(Util.toUniqueLessonEvent(data));
             }
             return data;
           });
+
+          this.initialSelectedEvents.emit(initialSelecteds);
+
           const eventWithMultiClass = this.events.find(
             (e) => e.evalTools.proof?.type === 'MULTICLASS_TEST');
           const multiclassTest = eventWithMultiClass?.evalTools.proof;
