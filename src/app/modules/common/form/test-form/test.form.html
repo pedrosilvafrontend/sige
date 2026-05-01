@@ -19,7 +19,7 @@
         <app-curricular-component-select
           [formControl]="ccControl"
           [classYearId]="classYearId"
-          [disabled]="!isManager"
+          [disabled]="!isManager || !!form.value.id"
         ></app-curricular-component-select>
       </div>
       <div class="col-md-12">

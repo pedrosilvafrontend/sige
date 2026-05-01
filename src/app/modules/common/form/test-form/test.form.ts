@@ -227,26 +227,18 @@ export class TestFormComponent implements OnInit, OnDestroy {
           if (multiclassTest && !this.form.controls.id.value) {
             this.form.patchValue(multiclassTest);
           }
-          console.log('>>> lessons:', lessons);
           const multiclassEventRef = this.events.find(
             e => {
               return e.evalTools.proof?.type === 'MULTICLASS_TEST' && e.evalTools.proof?.lessonId === e.lesson.id
             });
           const currentEvent = this.events.find(
             e => e.lesson.id === this.eventInput()?.lesson.id);
-          // console.log('>>> currentEvent', currentEvent);
           this.isMulticlass = currentEvent?.evalTools?.proof?.type === 'MULTICLASS_TEST';
-          // const { type: typeControl, events: eventsControl } = this.form.controls;
-          // const currentUniqueEvent = (eventsControl.value || []).find(
-          //   e => e.classId === currentEvent?.schoolClass.id);
-          // if (!this.isMulticlass && typeControl.value === 'MULTICLASS_TEST' && !currentUniqueEvent?.selected) {
-          //   // typeControl.setValue('TEST');
-          //   this.form.reset();
-          // }
-          const classYearId = multiclassEventRef?.schoolClass.yearId;
+          const classRef = multiclassEventRef?.schoolClass || this.events[0]?.schoolClass;
+          const classYearId = classRef?.yearId;
           if (classYearId) {
             this.classYearId = classYearId;
-            if (!this.proof?.curricularComponentId) {
+            if (!this.proof?.curricularComponentId && multiclassEventRef) {
               this.ccControl.setValue(multiclassEventRef?.curricularComponent)
             }
           }
