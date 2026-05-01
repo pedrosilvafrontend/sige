@@ -363,6 +363,14 @@ export class LessonEventFormDialogComponent implements OnInit {
     }
   }
 
+  deleteAllProofs(callback?: () => void) {
+    const proof = this.proofForm.value;
+    if (proof.type === 'MULTICLASS_TEST') {
+      this.proofForm.controls.events.clear();
+      this.saveProof(callback);
+    }
+  }
+
   deleteProof(callback?: () => void) {
     const proof = this.proofForm.value;
     this.proofService.deleteItem(proof.id || 0).subscribe(() => {
