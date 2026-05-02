@@ -8,7 +8,7 @@
           @for (item of proofTypes; track item) {
 <!--            @if (!(auth.role === 'teacher' && item === 'MULTICLASS_TEST')) {-->
 <!--            }-->
-            <mat-option [value]="item" [disabled]="item === 'MULTICLASS_TEST'">
+            <mat-option [value]="item" [disabled]="auth.role === 'teacher' && item === 'MULTICLASS_TEST'">
               {{ item | translate }}
             </mat-option>
           }
