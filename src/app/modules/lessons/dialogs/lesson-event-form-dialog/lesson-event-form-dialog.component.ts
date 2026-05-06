@@ -288,6 +288,7 @@ export class LessonEventFormDialogComponent implements OnInit {
       const isUpdate = !!proof?.id;
       const isMulticlass = proof?.type === 'MULTICLASS_TEST';
       const lessonId = this.dialogData.item?.lesson?.id || 0;
+      const ccId = this.dialogData.item?.curricularComponent?.id || 0;
       if (!lessonId) {
         return;
       }
@@ -306,18 +307,11 @@ export class LessonEventFormDialogComponent implements OnInit {
           title: proof.title || '',
           whereToFindIt: proof.whereToFindIt || '',
           events: events,
-          curricularComponentId: proof.curricularComponentId || 0
+          curricularComponentId: proof.curricularComponentId || ccId || 0
         }
 
-        // TODO: criar alerta de provas que vão ser excluídas
-        // const proofKeeps = (events || []).map((e: UniqueLessonEvent) => e.proofId);
+        // alerta de provas a serem excluídas
         const originalSelected = this.initialSelectedProofEvents.map((e) => e.proofId);
-        // const originalSelected = (this.initialSelectedProofEvents || []).reduce((acc, e) => {
-        //   if (e.proofType === 'MULTICLASS_TEST') {
-        //     acc.push(e.proofId);
-        //   }
-        //   return acc;
-        // }, [] as number[]);
         const proofExcludes = isUpdate ? proof.events?.filter((e) => !e.selected && originalSelected.includes(e.proofId)) || [] : [];
         const hasExcludes = proofExcludes.length > 0;
         if (hasExcludes) {
