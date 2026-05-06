@@ -1,3 +1,10 @@
+## [1.1.29](https://github.com/pedrosilvafrontend/sige/compare/v1.1.28...v1.1.29) (2026-05-06)
+
+
+### Bug Fixes
+
+* proof save error handling and nullability checks ([e8359a3](https://github.com/pedrosilvafrontend/sige/commit/e8359a309d9ace788201096805d443eb28dbd660))
+
 ## [1.1.28](https://github.com/pedrosilvafrontend/sige/compare/v1.1.27...v1.1.28) (2026-05-02)
 
 
