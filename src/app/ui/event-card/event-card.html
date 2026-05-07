@@ -1,4 +1,6 @@
-<mat-card class="cursor-pointer" [ngStyle]="{'background-color': color, 'color': color | textColor }">
+<mat-card class="cursor-pointer"
+          [ngStyle]="{'background-color': color, 'color': color | textColor }"
+          [ngClass]="{'multiclass-test': event().evalTools.proof?.type === 'MULTICLASS_TEST' }">
   <mat-card-content>
     @if (event(); as evt) {
       <div class="">
