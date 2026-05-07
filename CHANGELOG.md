@@ -1,3 +1,10 @@
+## [1.1.30](https://github.com/pedrosilvafrontend/sige/compare/v1.1.29...v1.1.30) (2026-05-07)
+
+
+### Features
+
+* multiclass test event card styling ([1e5e85e](https://github.com/pedrosilvafrontend/sige/commit/1e5e85e42fd2a215e1465b5556793f10a1f1a2c6))
+
 ## [1.1.29](https://github.com/pedrosilvafrontend/sige/compare/v1.1.28...v1.1.29) (2026-05-06)
 
 
