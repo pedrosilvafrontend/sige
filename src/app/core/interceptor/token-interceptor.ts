@@ -17,6 +17,7 @@ export const tokenInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown
   const router = inject(Router);
   const store = inject(LocalStorageService);
   const schoolStoreKey = 'school';
+  const classHashStoreKey = 'classHash';
   const handler = () => {
     if (request.url.includes('/logout')) {
       router.navigateByUrl('/login').then();
@@ -25,8 +26,9 @@ export const tokenInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown
   const hasHttpScheme = (url: string) => new RegExp('^http(s)?://', 'i').test(url);
   const shouldAppendToken = (url: string) => !hasHttpScheme(url);
 
+  let headers = request.headers;
   if (tokenService.valid() && shouldAppendToken(request.url)) {
-    let headers = request.headers.append(
+    headers = request.headers.append(
       'Authorization',
       tokenService.getBearerToken()
     )
@@ -34,6 +36,12 @@ export const tokenInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown
     if (school) {
       headers = headers.append('X-School-ID', String(school.id));
     }
+
+    const classHash: string | undefined = store.get(classHashStoreKey);
+    if (typeof classHash === 'string') {
+      headers = headers.append('X-Class-Hash', classHash);
+    }
+
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     headers = headers.append('X-Timezone', timezone);
     // headers = headers.append('X-School-ID', store.get(schoolStoreKey) || '');
@@ -55,8 +63,9 @@ export const tokenInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown
   }
   else {
     if (request.url.startsWith('/api/')) {
-      if (!request.url.startsWith('/api/public/')) {
-        router.navigateByUrl('/login').then();
+      if (!request.url.startsWith('/api/public/') && !request.url.startsWith('/api/health')) {
+        // router.navigateByUrl('/login').then();
+        return next(request).pipe(tap(() => router.navigateByUrl('/login').then()));
       }
     }
   }

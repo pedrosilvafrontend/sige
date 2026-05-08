@@ -20,6 +20,17 @@ export class LessonEventService {
       .pipe(take(1), catchError(this.handleError));
   }
 
+  getPublicAll(params?: any): Observable<LessonEvent[]> {
+    const classHash = params?.classHash
+    if (!classHash) {
+      return throwError(() => new Error('Class hash is required for public lesson events'));
+    }
+    delete params.classHash;
+    return this.http
+      .get<LessonEvent[]>(`${environment.baseUrl}/public/${classHash}/lesson-events`, { params: params || {} })
+      .pipe(take(1), catchError(this.handleError));
+  }
+
   handleError(error: HttpErrorResponse) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {

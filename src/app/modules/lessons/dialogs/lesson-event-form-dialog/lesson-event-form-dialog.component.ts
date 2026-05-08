@@ -288,7 +288,7 @@ export class LessonEventFormDialogComponent implements OnInit {
       const isUpdate = !!proof?.id;
       const isMulticlass = proof?.type === 'MULTICLASS_TEST';
       const lessonId = this.dialogData.item?.lesson?.id || 0;
-      const ccId = this.dialogData.item?.curricularComponent?.id || 0;
+      // const ccId = this.dialogData.item?.curricularComponent?.id || 0;
       if (!lessonId) {
         return;
       }
@@ -307,7 +307,7 @@ export class LessonEventFormDialogComponent implements OnInit {
           title: proof.title || '',
           whereToFindIt: proof.whereToFindIt || '',
           events: events,
-          curricularComponentId: proof.curricularComponentId || ccId || 0
+          curricularComponentId: proof.curricularComponent?.id || 0
         }
 
         // alerta de provas a serem excluídas

@@ -2,13 +2,20 @@ import { of } from 'rxjs';
 
 export class RequestCache<T> {
   private cache = new Map<string, T>();
+  private key = '';
+  private expires = 0;
 
-  setCache(key: string, data: T) {
-    this.cache.set(key, data);
+  setCache(data: T, expiresMin = 5) {
+    this.expires = Date.now() + 1000 * 60 * expiresMin;
+    this.cache.set(this.key, data);
   }
 
   getCache(url: string, params: any): T | null {
+    if (params?.force === true || Date.now() > this.expires) {
+      return null;
+    }
     const cacheKey = this.createCacheKey(url, params);
+    this.key = cacheKey;
     return this.getCacheByKey(cacheKey);
   }
 

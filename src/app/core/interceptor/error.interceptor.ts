@@ -26,7 +26,7 @@ const errorPages = [
 ];
 
 const getMessage = (resp: HttpErrorResponse) => {
-  if (resp.error.errors?.[0]?.field) {
+  if (resp.error?.errors?.[0]?.field) {
     return resp.error.errors.map((e: any) => e.message || String(e)).join(', ');
   }
   return resp.error?.error || resp.error || resp.message || `${resp.status} ${resp.statusText}`

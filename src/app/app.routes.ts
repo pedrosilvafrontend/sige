@@ -121,14 +121,14 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'public/calendar/:classHash',
+    component: CalendarComponent
+  },
+  {
     path: '',
     component: Public,
     loadChildren: () =>
       import('./modules/sessions/sessions.routes').then((m) => m.SESSION_ROUTE),
-  },
-  {
-    path: 'public/calendar/:classHash',
-    component: CalendarComponent
   },
   { path: '**', redirectTo: '404' },
 ];
