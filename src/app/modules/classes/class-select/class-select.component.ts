@@ -73,7 +73,7 @@ export class ClassSelectComponent implements OnInit, OnDestroy, ControlValueAcce
   }
   @Input({transform: numberAttribute})
   set schoolId(value: number) {
-    if (this._schoolId && this._schoolId !== value) {
+    if (value && this._schoolId !== value) {
       this._schoolId = value;
       if (!value) {
         return;

@@ -45,7 +45,7 @@ export class UserService {
 
   getTeachersByClassHash(classHash: string): Observable<User[]> {
     return this.httpClient
-      .get<User[]>( `${this.PUBLIC_API_URL}/teachers/${classHash}`)
+      .get<User[]>( `${this.PUBLIC_API_URL}/${classHash}/teachers`)
       .pipe(take(1), catchError(this.handleError));
   }
 

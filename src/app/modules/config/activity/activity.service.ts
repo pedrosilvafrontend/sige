@@ -3,7 +3,8 @@ import { BaseService } from '@services';
 import { Activity } from '@modules/config/activity/activity.model';
 import { catchError, map } from 'rxjs/operators';
 import { CountActivitiesResponse } from '@models';
-import { BehaviorSubject, firstValueFrom, Observable, take } from 'rxjs';
+import { firstValueFrom, Observable, of, take } from 'rxjs';
+import { RequestCache } from '@util';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,9 @@ import { BehaviorSubject, firstValueFrom, Observable, take } from 'rxjs';
 export class ActivityService extends BaseService<Activity> {
   private activities: Activity[] = [];
   private expires = 0;
+  cache = {
+    getAll: new RequestCache<Activity[]>()
+  }
 
   constructor() {
     super('activities')
@@ -32,15 +36,25 @@ export class ActivityService extends BaseService<Activity> {
   }
 
   override getAll(params?: any): Observable<Activity[]> {
-    if (this.activities.length > 0 && this.expires > Date.now()) {
-      return new Observable<Activity[]>(observer => {
-        observer.next(this.activities);
-        observer.complete();
-      });
+    const classHash = params?.classHash;
+    if (classHash) {
+      delete params.classHash;
+    }
+    const url = classHash ? `/public/${classHash}/activities` : `${this.apiURL}`;
+    const cachedValue = this.cache.getAll.getCache(url, params);
+    if (cachedValue) {
+      return of(cachedValue);
     }
 
+    // if (this.activities.length > 0 && this.expires > Date.now()) {
+    //   return new Observable<Activity[]>(observer => {
+    //     observer.next(this.activities);
+    //     observer.complete();
+    //   });
+    // }
+
     return this.http
-      .get<Activity[]>(`${this.apiURL}`, { params })
+      .get<Activity[]>(url, { params })
       .pipe(
         take(1),
         catchError(this.handleError),
@@ -50,7 +64,8 @@ export class ActivityService extends BaseService<Activity> {
           }
           this.activities.length = 0;
           this.activities.push(...activities);
-          this.expires = Date.now() + 1000 * 60 * 5;
+          // this.expires = Date.now() + 1000 * 60 * 5;
+          this.cache.getAll.setCache(activities);
           return activities;
         })
       );

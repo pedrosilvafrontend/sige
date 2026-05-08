@@ -1,5 +1,5 @@
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Proof, ProofType, UniqueLessonEvent } from '@models';
+import { CurricularComponent, Proof, ProofType, UniqueLessonEvent } from '@models';
 
 export class ProofForm {
   private static fb = new FormBuilder();
@@ -20,7 +20,8 @@ export class ProofForm {
       timeScheduleId: [data?.timeScheduleId || null],
       events: this.fb.array<FormControl<UniqueLessonEvent>>([]),
       // tests: this.fb.array<FormControl<Proof>>([]),
-      curricularComponentId: [data?.curricularComponentId || 0]
+      curricularComponentId: [data?.curricularComponentId || 0],
+      curricularComponent: [data?.curricularComponent || null, [Validators.required]]
     };
     return this.fb.group(ctrls);
   }
@@ -41,4 +42,5 @@ export interface IProofForm {
   events: FormArray<FormControl<UniqueLessonEvent>>;
   // tests: FormArray<FormControl<Proof>>;
   curricularComponentId: FormControl<number | null>;
+  curricularComponent: FormControl<CurricularComponent | null>;
 }

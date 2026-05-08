@@ -55,7 +55,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
   form: FormGroup<IProofForm> = this.createForm();
   classControl: FormControl<SchoolClass | null> = new FormControl<SchoolClass | null>(null);
-  ccControl: FormControl<CurricularComponent | null> = new FormControl<CurricularComponent | null>(null);
+  ccControl = this.form.controls.curricularComponent;
   data = input<Partial<Proof>>({});
   testId = input<number>();
   schoolId = input.required<number>();
@@ -240,8 +240,8 @@ export class TestFormComponent implements OnInit, OnDestroy {
       const classYearId = classRef?.yearId;
       if (classYearId) {
         this.classYearId = classYearId;
-        if (!this.proof?.curricularComponentId && multiclassEventRef) {
-          this.ccControl.setValue(multiclassEventRef?.curricularComponent)
+        if (!this.proof?.curricularComponentId) {
+          this.ccControl.setValue(null)
         }
       }
       this.eventsLoading.set(false);

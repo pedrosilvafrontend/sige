@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, OnInit, signal } from '@angular/core';
+import { Component, HostListener, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import defaultLanguage from '@assets/i18n/pt.json';
@@ -9,7 +9,7 @@ import Swal from 'sweetalert2'
 import { AppService } from '@services/app.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError } from 'rxjs/operators';
-import { firstValueFrom, of } from 'rxjs';
+import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +17,7 @@ import { firstValueFrom, of } from 'rxjs';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App implements OnInit {
+export class App implements OnInit, OnDestroy {
   protected readonly title = signal('sige');
   private translate = inject(TranslateService);
   private service = inject(AppService);
@@ -25,6 +25,7 @@ export class App implements OnInit {
   private auth = inject(AuthService);
   private store = inject(LocalStorageService);
   private router = inject(Router);
+  private destroy$ = new Subject<void>();
   gridLessonsKey = 'gridLessons';
   healthError = signal(false);
 
@@ -43,12 +44,12 @@ export class App implements OnInit {
         throw error;
       }
       const healthCheck$ = this.service.healthCheck().pipe(
-        takeUntilDestroyed(),
         catchError(onError)
       )
       const response = await firstValueFrom(healthCheck$);
       console.log('Health check response:', response);
     } catch (error) {
+      console.error('Health check error:', error);
       const refresh = await Swal.fire({
         title: 'API indisponível',
         text: 'Atualize a página para tentar novamente.',
@@ -114,5 +115,10 @@ export class App implements OnInit {
   ngOnInit() {
     this.loading.show('init', 'Loading...');
     setTimeout(() => this.loading.hide('init'), 2000);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

@@ -161,7 +161,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   openPublicLink() {
     const hash = this.filters.controls['schoolClass']?.value?.hash;
-    const url = `/public/calendar/${hash}`;
+    const url = `/public/${hash}/calendar`;
     const link = document.createElement('a');
     link.href = url;
     link.target = '_blank';
@@ -236,7 +236,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     })
     this.applyFilter();
     this.activities = await firstValueFrom(
-      this.activityService.getAll().pipe(
+      this.activityService.getAll({classHash: this.classHash}).pipe(
         map(activities => {
           return activities.reduce((acc: any, activity: ActivityConfig) => {
             this.elementRef.nativeElement.style.setProperty(`--${activity.id.toLowerCase()}-color`, activity.color);
@@ -324,8 +324,11 @@ export class CalendarComponent implements OnInit, OnDestroy {
           return setData([] as any[]);
         }
         // self.eventService.getAllCalendars(params).pipe(take(1))
-        self.lessonEventService.getAll(params).pipe(take(1))
-          .subscribe({
+        const request$ = !params.schoolId && params.classHash ?
+          self.lessonEventService.getPublicAll(params) :
+          self.lessonEventService.getAll(params);
+
+        request$.subscribe({
             next: (value) => {
               const data: any[] = (value || []).filter(
                 (event: LessonEvent) => {

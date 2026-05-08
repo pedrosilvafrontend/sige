@@ -86,13 +86,13 @@ export class ProofsComponent implements OnInit, OnDestroy {
   columnDefinitions = (() => {
     const [date, curricularComponent, classe, teacher, title, score, status, actions] = this.columnsLabels;
     return [
-      { def: 'date', label: date, type: 'date', visible: true },
-      { def: 'curricularComponent', label: curricularComponent, type: 'curricularComponent', visible: true },
-      { def: 'schoolClass', label: classe, type: 'schoolClass', visible: true },
-      { def: 'teacher', label: teacher, type: 'teacher', visible: true },
-      { def: 'title', label: title, type: 'text', visible: true },
-      { def: 'score', label: score, type: 'text', visible: true },
-      { def: 'status', label: status, type: 'status', visible: true },
+      { def: 'date', label: date, type: 'date', styleClass: 'flex-b-10', visible: true },
+      { def: 'curricularComponent', label: curricularComponent, styleClass: 'flex-b-20', type: 'curricularComponent', visible: true },
+      { def: 'schoolClass', label: classe, styleClass: 'flex-b-10', type: 'schoolClass', visible: true },
+      { def: 'teacher', label: teacher, styleClass: '', type: 'teacher', visible: true },
+      { def: 'title', label: title, styleClass: '', type: 'text', visible: true },
+      { def: 'score', label: score, styleClass: 'flex-b-5', type: 'text', visible: true },
+      { def: 'status', label: status, styleClass: 'flex-b-10', type: 'status', visible: true },
       { def: 'actions', label: actions, type: 'actionBtn', visible: true },
     ]
   })();
