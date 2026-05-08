@@ -1,3 +1,10 @@
+## [1.1.31](https://github.com/pedrosilvafrontend/sige/compare/v1.1.30...v1.1.31) (2026-05-08)
+
+
+### Features
+
+* calendar public view ([bead8dc](https://github.com/pedrosilvafrontend/sige/commit/bead8dc70c785c273f6108375c43b982c89d80eb))
+
 ## [1.1.30](https://github.com/pedrosilvafrontend/sige/compare/v1.1.29...v1.1.30) (2026-05-07)
 
 
