@@ -16,21 +16,22 @@
       </mat-form-field>
     </div>
 
-    @if (multiclassTest) {
-      <div class="col-sm-6">
-        <app-curricular-component-select
-          [formControl]="ccControl"
-          [classYearId]="classYearId"
-          [disabled]="!isManager || !!form.value.id"
-        ></app-curricular-component-select>
-      </div>
-      <div class="col-md-12">
-        <app-event-checkbox-group [form]="form.controls.events" [events]="events" [disabled]="!isManager"></app-event-checkbox-group>
-      </div>
-    }
+    <div class="col-sm-6">
+      <app-curricular-component-select
+        [formControl]="ccControl"
+        [classYearId]="classYearId"
+        [disabled]="!multiclassTest || !isManager || !!form.value.id"
+      ></app-curricular-component-select>
+    </div>
+
+  @if (multiclassTest) {
+    <div class="col-md-12">
+      <app-event-checkbox-group [form]="form.controls.events" [events]="events" [disabled]="!isManager"></app-event-checkbox-group>
+    </div>
+  }
 <!--  }-->
 
-  @if ((isManager && !multiclassTest) || !isManager) {
+  @if ((isManager && !multiclassTest) || (!isManager || proof?.id)) {
     <div class="col-md-12">
       <ui-field
         id="title"

@@ -1,21 +1,31 @@
 <div>
-  <div class="d-flex justify-content-between align-items-center">
+  <div class="d-flex justify-content-between align-items-center inline-fields">
     <h2>Próximas atividades</h2>
-    <div>
-      <mat-label class="msr-3">{{ 'Coloring by' | translate }}:</mat-label>
-      <mat-radio-group [formControl]="coloringByControl" aria-label="Select" required>
-        @if (auth().multiSchools) {
-          <mat-radio-button value="school" color="primary">
-            {{ 'School' | translate }}
+    <div class="row" [formGroup]="filters">
+      <div class="col">
+        <!--<mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ 'Date' | translate }}</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="date">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>-->
+      </div>
+      <div class="col">
+        <mat-label class="msr-3">{{ 'Coloring by' | translate }}:</mat-label>
+        <mat-radio-group formControlName="colorBy" aria-label="Select" required>
+          @if (auth().multiSchools) {
+            <mat-radio-button value="school" color="primary">
+              {{ 'School' | translate }}
+            </mat-radio-button>
+          }
+          <mat-radio-button value="class" color="primary">
+            {{ 'Class' | translate }}
           </mat-radio-button>
-        }
-        <mat-radio-button value="class" color="primary">
-          {{ 'Class' | translate }}
-        </mat-radio-button>
-        <mat-radio-button value="curricularComponent" color="primary">
-          {{ 'Curricular component' | translate }}
-        </mat-radio-button>
-      </mat-radio-group>
+          <mat-radio-button value="curricularComponent" color="primary">
+            {{ 'Curricular component' | translate }}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
     </div>
   </div>
   <div class="">

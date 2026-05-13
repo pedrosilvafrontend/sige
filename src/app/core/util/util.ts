@@ -1,6 +1,8 @@
 import { LessonBatch, LessonEvent, UniqueLessonEvent, Weekday } from '@models';
 
 export class Util {
+  static delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
   static objectCompare(option: any, value: any) : boolean {
     return option.id && (option.id === value?.id);
   }

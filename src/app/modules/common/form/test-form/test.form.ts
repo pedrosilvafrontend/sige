@@ -310,6 +310,12 @@ export class TestFormComponent implements OnInit, OnDestroy {
         this.changeType();
       }
     }
+    else {
+      const cc = this.eventInput().curricularComponent;
+      if (cc) {
+        this.ccControl.setValue(cc)
+      }
+    }
   }
 
   ngOnDestroy() {
