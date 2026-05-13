@@ -1,6 +1,11 @@
+@let proofType = event().evalTools.proof?.type;
 <mat-card class="cursor-pointer"
           [ngStyle]="{'background-color': color, 'color': color | textColor }"
-          [ngClass]="{'multiclass-test': event().evalTools.proof?.type === 'MULTICLASS_TEST' }">
+          [ngClass]="{
+            'test': proofType === 'TEST',
+            'test_of_overcoming': proofType === 'TEST_OF_OVERCOMING',
+            'multiclass_test': proofType === 'MULTICLASS_TEST'
+          }">
   <mat-card-content>
     @if (event(); as evt) {
       <div class="">
@@ -10,7 +15,7 @@
             @let pStatus = evt.evalTools.proof?.status || '';
             @let wStatus = evt.evalTools.work?.status || '';
             @if (pStatus === 'APPROVED') {
-              <span [className]="'badge m-x-2 activity-test'" [ngStyle]="activities().get('TEST')?.color | colorStyle">{{ 'Proof' | translate }}</span>
+              <span [className]="'badge m-x-2 activity-test'" [ngStyle]="activities().get('TEST')?.color | colorStyle">{{ proofType | translate }}</span>
             } @else if (wStatus === 'APPROVED') {
               <span [className]="'badge m-x-2 activity-work'" [ngStyle]="activities().get('WORK')?.color | colorStyle">{{ 'Work' | translate }}</span>
             } @else {

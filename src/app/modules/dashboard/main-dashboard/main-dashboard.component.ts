@@ -5,7 +5,7 @@ import { ActivityConfig, LessonEvent, Proof } from '@models';
 import { DatePipe } from '@angular/common';
 import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { User } from '@core/models/interface';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {
   LessonEventFormDialogComponent
@@ -21,6 +21,15 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { UserColorsService } from '@core/services/user-colors.service';
 import { ColorsBy, newColorsBy, ColorsMap, ColoringBy } from '@models/colors-by';
 import { ColoringByPipe, getColorBy } from '@util/coloring-by-pipe';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInput } from '@angular/material/input';
+import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
+import { Util } from '@util/util';
+
+interface DashFilters {
+  date: FormControl<string>;
+  colorBy: FormControl<ColoringBy>;
+}
 
 @Component({
   selector: 'app-main-dashboard',
@@ -33,13 +42,16 @@ import { ColoringByPipe, getColorBy } from '@util/coloring-by-pipe';
     ReactiveFormsModule,
     EventCard,
     Skeleton,
-    Skeleton,
     MatRadioButton,
     MatRadioGroup,
-    ColoringByPipe
+    // MatDatepickerModule,
+    // MatNativeDateModule,
+    ColoringByPipe,
+    MatInput
   ],
   providers: [
-    TranslatePipe
+    // { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
+    TranslatePipe,
   ],
   templateUrl: './main-dashboard.component.html',
   styleUrl: './main-dashboard.component.scss'
@@ -54,18 +66,27 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   private updateService = inject(UpdateService);
   private activityService = inject(ActivityService);
   private destroy$: Subject<void> = new Subject<void>();
+  private fb = new FormBuilder();
   auth = input.required<User>();
   events: LessonEvent[] = [];
   dateFormat = 'dd/MM/yyyy';
   proofStatusClass: any = Proof.statusClass;
   activities: Map<string, ActivityConfig> = new Map();
   isLoading = signal(true);
-  coloringByControl = new FormControl<"school" | "class" | "curricularComponent" | null>(null);
+  // colorByControl = new FormControl<"school" | "class" | "curricularComponent" | null>(null);
   colors = newColorsBy();
+  filters: FormGroup<DashFilters> = this.fb.group<DashFilters>({
+    date: this.fb.nonNullable.control(''),
+    colorBy: this.fb.control<ColoringBy>(null),
+  });
+
+  get colorByControl(): FormControl<ColoringBy> {
+    return this.filters.controls.colorBy;
+  }
 
   constructor() {
     effect(() => {
-      if(!this.coloringByControl.value) {
+      if(!this.colorByControl.value) {
         let coloringBy: ColoringBy = null;
         const role = this.auth()?.role || '';
         if (role == 'teacher') {
@@ -74,7 +95,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
         if (role == 'coordinator') {
           coloringBy = 'curricularComponent';
         }
-        this.coloringByControl.setValue(coloringBy, { emitEvent: false });
+        this.colorByControl.setValue(coloringBy, { emitEvent: false });
       }
     });
   }
@@ -87,8 +108,8 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     this.activities = await this.activityService.getMap();
     this.isLoading.set(false);
 
-    this.coloringByControl.valueChanges
-      .pipe(takeUntil(this.destroy$), startWith(this.coloringByControl.value))
+    this.colorByControl.valueChanges
+      .pipe(takeUntil(this.destroy$), startWith(this.colorByControl.value))
       .subscribe(() => {
         this.refresh();
       });
@@ -104,11 +125,14 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
 
   async getEvents() {
     // this.isLoading.set(true);
+    await Util.delay(500);
+    const filters = this.filters.value;
+    // filters.date = filters.date ? new Date(filters.date) : undefined;
     const params = {
       // limit: this.auth().role === 'teacher' ? 48 : 36,
       limit: 48,
       prevDate: false,
-      colorBy: this.coloringByControl.value,
+      ...filters,
     }
     this.events = await firstValueFrom(this.lessonEventService.getAll(params));
     // this.isLoading.set(false);
@@ -117,7 +141,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
 
 
   async getColors() {
-    const coloringBy = this.coloringByControl.value as "school" | "class" | "curricularComponent" | null;
+    const coloringBy = this.colorByControl.value as "school" | "class" | "curricularComponent" | null;
     // this.isLoading.set(true);
     const params = { coloringBy }
     const colors = await firstValueFrom<ColorsMap>(this.userColorsService.getMap(params));
@@ -137,7 +161,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   }
 
   openLessonEventDialog(event: LessonEvent) {
-    const coloringBy = this.coloringByControl.value;
+    const coloringBy = this.colorByControl.value;
     const colorBy = getColorBy(this.colors, event, coloringBy);
     const dialogRef = this.dialog.open(LessonEventFormDialogComponent, {
       data: {

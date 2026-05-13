@@ -805,3 +805,10 @@ button.mdc-button[data-badgeColor="info"]::after {
 .flex-b-90 { flex: 0 0 90em; }
 .flex-b-95 { flex: 0 0 95em; }
 .flex-b-100 { flex: 0 0 100em; }
+
+
+.inline-fields {
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
