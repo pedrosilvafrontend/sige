@@ -70,6 +70,16 @@ export class BaseService<T=any> {
     );
   }
 
+  deleteAll(id: number): Observable<number> {
+    return this.http.delete<void>(`${this.apiURL}/${id}/all`).pipe(
+      take(1),
+      map((response: any) => {
+        return response || id;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
   /** Handle Http operation that failed. */
   protected handleError(error: HttpErrorResponse) {
     // Customize this method based on your needs
