@@ -52,6 +52,7 @@ import { take } from 'rxjs';
 import { EventColors } from '@modules/modals/event-colors/event-colors';
 import { ColorBy, newColorBy } from '@models/colors-by';
 import { GeneralEventModal } from '@modules/modals/general-event-modal/general-event-modal';
+import { ActivatedRoute } from '@angular/router';
 
 export interface DialogData {
   item: LessonEvent;
@@ -105,6 +106,7 @@ export class LessonEventFormDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private lessonEventExtraService = inject(LessonEventExtraService);
   private message = inject(MessageService);
+  private route = inject(ActivatedRoute);
   auth = this.authService.user$.value;
   closeRefresh = false;
   event!: LessonEvent;
@@ -136,6 +138,10 @@ export class LessonEventFormDialogComponent implements OnInit {
   activities: Map<string, ActivityConfig> = new Map();
   colorBy: ColorBy;
   initialSelectedProofEvents: UniqueLessonEvent[] = [];
+  get isPublic(): boolean {
+    // this.route.paramMap()
+    return !!this.route.snapshot.paramMap.get('hash');
+  }
 
   private _work!: Work;
   get work(): Work {
@@ -284,7 +290,7 @@ export class LessonEventFormDialogComponent implements OnInit {
   saveProof(callback?: () => void, confirmModal?: ModalComponent) {
     if (this.proofForm.valid) {
       const formData = this.form.getRawValue() as LessonEventFormValue;
-      const proof = this.proofForm.value;
+      const proof = this.proofForm.getRawValue();
       const isUpdate = !!proof?.id;
       const isMulticlass = proof?.type === 'MULTICLASS_TEST';
       const lessonId = this.dialogData.item?.lesson?.id || 0;
@@ -293,7 +299,8 @@ export class LessonEventFormDialogComponent implements OnInit {
         return;
       }
       if (proof?.score || isMulticlass) {
-        const events = proof.events?.filter((e: UniqueLessonEvent) => e.selected) || [];
+        // const events = proof.events?.filter((e: UniqueLessonEvent) => e.selected) || [];
+        const events = proof.events;
         const data: Proof = {
           id: proof.id || 0,
           type: proof.type || 'TEST',
@@ -360,8 +367,17 @@ export class LessonEventFormDialogComponent implements OnInit {
   deleteAllProofs(callback?: () => void) {
     const proof = this.proofForm.value;
     if (proof.type === 'MULTICLASS_TEST') {
-      this.proofForm.controls.events.clear();
-      this.saveProof(callback);
+      this.proofService.deleteAll(proof.id || 0).subscribe(() => {
+        this.message.success('Provas excluídas com sucesso!');
+        this.proofForm.reset();
+        Object.assign(this.event.evalTools.proof || {}, this.proofForm.value);
+        this.closeRefresh = true;
+        callback?.();
+      })
+      // this.saveProof(() => {
+      //   this.proofForm.controls.events.clear();
+      //   callback?.();
+      // });
     }
   }
 

@@ -101,8 +101,9 @@
 <!--              <pre>{{ proofForm.getRawValue() | json }}</pre>-->
             </mat-dialog-content>
             <mat-dialog-actions>
-              <div class="d-flex gap-2">
-                @if (proof?.id && !disableProof) {
+              <div class="dialog-buttons">
+                @let isManager = auth.role && ['admin', 'principal', 'coordinator'].includes(auth.role);
+                @if (proof?.id && !disableProof && (proof.type != 'MULTICLASS_TEST' || isManager)) {
                   <ui-button color="danger" (onClick)="deleteProofModal.open()">Excluír prova</ui-button>
                 }
                 <ui-button color="neutral" (onClick)="proofModal.close()" cdkFocusInitial>
@@ -112,7 +113,6 @@
                     Cancelar
                   }
                 </ui-button>
-                @let isManager = auth.role && ['admin', 'principal', 'coordinator'].includes(auth.role);
 <!--                @if (isManager) {-->
 <!--                  <ui-button (onClick)="approveProof(proofModal.close)">-->
 <!--                    {{ 'Approve' | translate }}-->
@@ -231,20 +231,24 @@
         @let isMaxTotal = count.maxTotal > 0 && (count.total >= count.maxTotal);
         @let isMaxProofs = count.maxProofs > 0 && (count.proofs >= count.maxProofs);
         @let isMaxWorks = count.maxWorks > 0 && (count.works >= count.maxWorks);
-        <ui-button color="default" (onClick)="openColorModal(colorModal)">Cor</ui-button>
-        <ui-button color="default" (onClick)="planningModal.open()">{{ 'Planning' | translate }}</ui-button>
+        @if (!isPublic) {
+          <ui-button color="default" (onClick)="openColorModal(colorModal)">Cor</ui-button>
+          <ui-button color="default" (onClick)="planningModal.open()">{{ 'Planning' | translate }}</ui-button>
+        }
         <app-work-form-modal #workModal [work]="work" [schoolId]="schoolId">
-          <ui-button color="default" (onClick)="workModalOpen(workModal.open)" badge=""
-                     [badgeColor]="activityStatusClass[work.status]" [disabled]="!work.id && (isMaxTotal || isMaxWorks)">
-            {{ 'Work' | translate }}
-          </ui-button>
+          @if (!isPublic || work.id) {
+            <ui-button color="default" (onClick)="workModalOpen(workModal.open)" badge=""
+                       [badgeColor]="activityStatusClass[work.status]" [disabled]="!work.id && (isMaxTotal || isMaxWorks)">
+              {{ 'Work' | translate }}
+            </ui-button>
+          }
         </app-work-form-modal>
-
-
-        <ui-button color="default" (onClick)="proofModal.open()" badge=""
-                   [badgeColor]="activityStatusClass[proof.status]" [disabled]="!proof.id && (isMaxTotal || isMaxProofs)">
-          {{ 'Proof' | translate }}
-        </ui-button>
+        @if (!isPublic || proof.id) {
+          <ui-button color="default" (onClick)="proofModal.open()" badge=""
+                     [badgeColor]="activityStatusClass[proof.status]" [disabled]="!proof.id && (isMaxTotal || isMaxProofs)">
+            {{ 'Proof' | translate }}
+          </ui-button>
+        }
         <!--<app-general-event-modal #gEvent>
           <ui-button color="default" (onClick)="gEventOpen(gEvent.open)" type="button">{{ 'Event' | translate }}</ui-button>
         </app-general-event-modal>-->
