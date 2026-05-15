@@ -83,13 +83,13 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe({
-      next: (user) => {
-        if (user) {
-          this.router.navigate(['/dashboard']).then();
-        }
-      }
-    })
+    // this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe({
+    //   next: (user) => {
+    //     if (user) {
+    //       this.router.navigate(['/dashboard']).then();
+    //     }
+    //   }
+    // })
   }
 
   ngOnDestroy() {
