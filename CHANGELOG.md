@@ -1,3 +1,11 @@
+## [1.1.34](https://github.com/pedrosilvafrontend/sige/compare/v1.1.33...v1.1.34) (2026-05-15)
+
+
+### Features
+
+* replace "Proof" with "Test" across app and implement new features for disable state handling in text editor and calendar filters ([2d791aa](https://github.com/pedrosilvafrontend/sige/commit/2d791aa22f95af484507817e642d9acdae127f35))
+* replace "Proof" with "Test" across app and implement new features for disable state handling in text editor and calendar filters ([e61bf2e](https://github.com/pedrosilvafrontend/sige/commit/e61bf2ee74f5ad9adf4720925c1caa2bac7c3320))
+
 ## [1.1.33](https://github.com/pedrosilvafrontend/sige/compare/v1.1.32...v1.1.33) (2026-05-13)
 
 
