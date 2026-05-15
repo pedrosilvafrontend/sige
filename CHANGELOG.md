@@ -1,3 +1,11 @@
+## [1.1.37](https://github.com/pedrosilvafrontend/sige/compare/v1.1.36...v1.1.37) (2026-05-15)
+
+
+### Bug Fixes
+
+* public calendar link and disable work form ([85baff2](https://github.com/pedrosilvafrontend/sige/commit/85baff20f21b2457302f5221def866dc4a35195a))
+* public calendar link and disable work form ([aa0c0cc](https://github.com/pedrosilvafrontend/sige/commit/aa0c0cc1f4da28132fe75d9ebd525dac1d6deb16))
+
 ## [1.1.36](https://github.com/pedrosilvafrontend/sige/compare/v1.1.35...v1.1.36) (2026-05-15)
 
 ## [1.1.35](https://github.com/pedrosilvafrontend/sige/compare/v1.1.34...v1.1.35) (2026-05-15)
