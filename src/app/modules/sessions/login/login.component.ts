@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService, SettingsService } from '@services';
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,6 +13,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { Button } from '@ui/button/button';
 import { LoadingService } from '@services/loading.service';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 
 
 @Component({
@@ -34,12 +35,13 @@ import { Router } from '@angular/router';
     NgOptimizedImage
   ],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
-  private auth = inject(AuthService);
+  private authService = inject(AuthService);
   private settings = inject(SettingsService);
   private loadingService = inject(LoadingService);
   private router = inject(Router);
+  private destroy$ = new Subject<void>();
   loading = this.loadingService.isShow;
 
   isSubmitting = false;
@@ -72,7 +74,7 @@ export class LoginComponent implements OnInit {
 
   async login() {
     this.isSubmitting = true;
-    await this.auth.login(
+    await this.authService.login(
       this.username.value,
       this.password.value,
       this.rememberMe.value
@@ -80,37 +82,19 @@ export class LoginComponent implements OnInit {
     setTimeout(() => (this.isSubmitting = false), 3000)
   }
 
-  admin() {
-    this.form.patchValue({
-      username: 'admin@mail.com',
-      password: 'admin.admin',
-      rememberMe: false
-    });
-    this.login();
-  }
-
-  principal() {
-    this.form.patchValue({
-      username: 'diretor@mail.com',
-      password: 'admin.admin',
-      rememberMe: false
-    });
-    this.login().then();
-  }
-
-  teacher() {
-    this.form.patchValue({
-      username: 'prof@mail.com',
-      password: 'admin.admin',
-      rememberMe: false
-    });
-    this.login();
-  }
-
   ngOnInit() {
-    if (this.auth.isAuthenticated()) {
-      this.router.navigate(['/dashboard']).then();
-    }
+    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (user) => {
+        if (user) {
+          this.router.navigate(['/dashboard']).then();
+        }
+      }
+    })
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 }
