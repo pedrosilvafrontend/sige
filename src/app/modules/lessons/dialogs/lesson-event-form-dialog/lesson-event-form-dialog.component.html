@@ -240,7 +240,7 @@
           <ui-button color="default" (onClick)="openColorModal(colorModal)">Cor</ui-button>
         }
         <ui-button color="default" (onClick)="planningModal.open()">{{ 'Planning' | translate }}</ui-button>
-        <app-work-form-modal #workModal [work]="work" [schoolId]="schoolId" [hidden]="readonly && !work.id">
+        <app-work-form-modal #workModal [work]="work" [schoolId]="schoolId" [hidden]="readonly && !work.id" [disabled]="readonly">
           @if (!readonly || work.id) {
             <ui-button color="default" (onClick)="workModalOpen(workModal.open)" badge=""
                        [badgeColor]="activityStatusClass[work.status]" [disabled]="!work.id && (isMaxTotal || isMaxWorks)">
