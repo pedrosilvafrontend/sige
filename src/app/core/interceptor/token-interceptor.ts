@@ -11,11 +11,13 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { LocalStorageService, TokenService } from '@services';
 import { School } from '@models';
+import { MatDialog } from '@angular/material/dialog';
 
 export const tokenInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
   const tokenService = inject(TokenService);
   const router = inject(Router);
   const store = inject(LocalStorageService);
+  const dialog = inject(MatDialog);
   const schoolStoreKey = 'school';
   const classHashStoreKey = 'classHash';
   const handler = () => {
@@ -55,6 +57,7 @@ export const tokenInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown
         catchError((error: HttpErrorResponse) => {
           if (error.status === 401) {
             tokenService.clear();
+            dialog.closeAll();
           }
           return throwError(error);
         }),
@@ -65,6 +68,7 @@ export const tokenInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown
     if (request.url.startsWith('/api/')) {
       if (!request.url.startsWith('/api/public/') && !request.url.startsWith('/api/health')) {
         // router.navigateByUrl('/login').then();
+        dialog.closeAll();
         return next(request).pipe(tap(() => router.navigateByUrl('/login').then()));
       }
     }

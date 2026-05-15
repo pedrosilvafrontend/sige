@@ -2,7 +2,7 @@ import { Component, computed, effect, input, output } from '@angular/core';
 import { DatePipe, NgClass, NgStyle } from '@angular/common';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ActivityConfig, LessonEvent, Proof, User } from '@models';
+import { ActivityConfig, LessonEvent, Test, User } from '@models';
 import { MatTooltip } from '@angular/material/tooltip';
 import { activityStatusClassPipe, ColorPipe, ColorStylePipe } from '@util/color-pipe';
 
@@ -29,7 +29,7 @@ export class EventCard {
   colorI = input<string>('', { alias: 'color' });
   activities = input<Map<string, ActivityConfig>>(new Map());
   onClick = output();
-  statusClass: any = Proof.statusClass;
+  statusClass: any = Test.statusClass;
   dateFormat = 'dd/MM/yyyy';
   color = '';
 

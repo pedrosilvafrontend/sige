@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from '@services';
-import { Proof } from '@models';
+import { Test } from '@models';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProofService extends BaseService<Proof> {
+export class ProofService extends BaseService<Test> {
 
   constructor() {
     super('proofs')
@@ -13,12 +13,12 @@ export class ProofService extends BaseService<Proof> {
 
   // this.updateService.proof.set(response);
 
-  approve(proof: Proof) {
-    return this.http.post<Proof>(`${this.apiURL}/${proof.id}/approve`, proof);
+  approve(proof: Test) {
+    return this.http.post<Test>(`${this.apiURL}/${proof.id}/approve`, proof);
   }
 
-  reject(proof: Proof) {
-    return this.http.post<Proof>(`${this.apiURL}/${proof.id}/reject`, proof);
+  reject(proof: Test) {
+    return this.http.post<Test>(`${this.apiURL}/${proof.id}/reject`, proof);
   }
 
 }

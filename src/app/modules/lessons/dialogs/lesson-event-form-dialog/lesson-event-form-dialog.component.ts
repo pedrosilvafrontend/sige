@@ -31,7 +31,7 @@ import {
   LessonEvent, LessonEventExtra,
   LessonEventForm,
   LessonEventFormValue,
-  Proof,
+  Test,
   School,
   SchoolClass, UniqueLessonEvent, Work,
 } from '@models';
@@ -108,9 +108,10 @@ export class LessonEventFormDialogComponent implements OnInit {
   private message = inject(MessageService);
   private route = inject(ActivatedRoute);
   auth = this.authService.user$.value;
+  readonly = !this.auth.id;
   closeRefresh = false;
   event!: LessonEvent;
-  proof: Proof = new Proof();
+  proof: Test = new Test();
   generalEvent!: GeneralEvent;
   extra: LessonEventExtra = new class implements LessonEventExtra {}
   action = 'edit';
@@ -126,9 +127,8 @@ export class LessonEventFormDialogComponent implements OnInit {
   classes: SchoolClass[] = [];
   teachers: UserTable[] = [];
   schools: School[] = [];
-  readonly: boolean;
   disabled = false;
-  activityStatusClass: any = Proof.statusClass;
+  activityStatusClass: any = Test.statusClass;
   planningModalOptions: MatDialogConfig = {
     minWidth: '800px',
     maxWidth: '1400px',
@@ -138,10 +138,6 @@ export class LessonEventFormDialogComponent implements OnInit {
   activities: Map<string, ActivityConfig> = new Map();
   colorBy: ColorBy;
   initialSelectedProofEvents: UniqueLessonEvent[] = [];
-  get isPublic(): boolean {
-    // this.route.paramMap()
-    return !!this.route.snapshot.paramMap.get('hash');
-  }
 
   private _work!: Work;
   get work(): Work {
@@ -167,10 +163,14 @@ export class LessonEventFormDialogComponent implements OnInit {
     return this.event?.frequency?.timeSchedule?.id || 0;
   }
 
+  setReadonly(isReadonly: boolean) {
+    this.readonly = !this.auth.id || isReadonly;
+  }
+
   constructor() {
     const { action, lessonId, timeScheduleId, date, colorBy } = this.dialogData || {}
     const work = new Work();
-    this.readonly = action === 'view';
+    this.setReadonly(action === 'view');
     if (lessonId) {
       work.lessonId = lessonId;
     }
@@ -241,7 +241,7 @@ export class LessonEventFormDialogComponent implements OnInit {
     }
   }
 
-  eventsToMulticlassProofs(events: UniqueLessonEvent[]): Proof[] {
+  eventsToMulticlassProofs(events: UniqueLessonEvent[]): Test[] {
     return (events || []).map(e => {
       return {
         id: 0,
@@ -253,11 +253,11 @@ export class LessonEventFormDialogComponent implements OnInit {
         content: '',
         score: '',
         status: '',
-      } as Proof
+      } as Test
     })
   }
 
-  saveOrUpdateProof(data: Proof, callback?: () => void) {
+  saveOrUpdateProof(data: Test, callback?: () => void) {
     const isUpdate = !!data?.id;
     const isMulticlass = data?.type === 'MULTICLASS_TEST';
     const lessonId = this.dialogData.item?.lesson?.id || 0;
@@ -270,9 +270,9 @@ export class LessonEventFormDialogComponent implements OnInit {
         this.message.success('Salvo com sucesso!');
         callback?.();
         this.closeRefresh = true;
-        let proof: Proof;
+        let proof: Test;
         if (isMulticlass && Array.isArray(response)) {
-          proof = response.find((p: Proof) => p.lessonId === lessonId);
+          proof = response.find((p: Test) => p.lessonId === lessonId);
         }
         else {
           proof = response;
@@ -301,7 +301,7 @@ export class LessonEventFormDialogComponent implements OnInit {
       if (proof?.score || isMulticlass) {
         // const events = proof.events?.filter((e: UniqueLessonEvent) => e.selected) || [];
         const events = proof.events;
-        const data: Proof = {
+        const data: Test = {
           id: proof.id || 0,
           type: proof.type || 'TEST',
           lessonId: lessonId,

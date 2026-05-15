@@ -1,10 +1,10 @@
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { CurricularComponent, Proof, ProofType, UniqueLessonEvent } from '@models';
+import { CurricularComponent, Test, ProofType, UniqueLessonEvent } from '@models';
 
 export class ProofForm {
   private static fb = new FormBuilder();
 
-  static form(data?: Partial<Proof>): FormGroup<IProofForm> {
+  static form(data?: Partial<Test>): FormGroup<IProofForm> {
     const fb = this.fb.nonNullable;
     const ctrls = {
       id: [data?.id || null],

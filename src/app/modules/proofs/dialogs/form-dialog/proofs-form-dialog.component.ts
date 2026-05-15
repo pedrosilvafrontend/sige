@@ -23,7 +23,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { Proof } from '@models';
+import { Test } from '@models';
 import { Button } from '@ui/button/button';
 import { IProofForm, ProofForm } from '@form/proof.form';
 import { AuthService } from '@services';
@@ -33,7 +33,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 export interface DialogData {
   id: number;
   action: string;
-  proof: Proof;
+  proof: Test;
 }
 
 @Component({
@@ -68,7 +68,7 @@ export class ProofsFormDialogComponent {
   action: string;
   dialogTitle: string;
   form: FormGroup<IProofForm>;
-  proof: Proof;
+  proof: Test;
   disabled = input(false);
 
   constructor(
@@ -82,7 +82,7 @@ export class ProofsFormDialogComponent {
       this.proof = data.proof;
     } else {
       this.dialogTitle = 'New record';
-      this.proof = new Proof();
+      this.proof = new Test();
     }
     this.form = ProofForm.form(this.proof);
   }
@@ -128,14 +128,14 @@ export class ProofsFormDialogComponent {
   }
 
   protected onApprove() {
-    this.service.approve(this.proof).subscribe((proof: Proof) => {
+    this.service.approve(this.proof).subscribe((proof: Test) => {
       this.showNotification('snackbar-success', 'Aprovado com sucesso!');
       this.dialogRef.close(proof);
     });
   }
 
   protected onReject() {
-    this.service.reject(this.proof).subscribe((proof: Proof) => {
+    this.service.reject(this.proof).subscribe((proof: Test) => {
       this.showNotification('snackbar-success', 'Reprovado com sucesso!');
       this.dialogRef.close(proof);
     });

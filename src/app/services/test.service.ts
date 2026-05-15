@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from '@services/base-service';
-import { Proof } from '@models';
+import { Test } from '@models';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TestService extends BaseService<Proof> {
+export class TestService extends BaseService<Test> {
   constructor() {
     super('tests');
   }

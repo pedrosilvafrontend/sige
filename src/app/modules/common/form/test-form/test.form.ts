@@ -13,14 +13,14 @@ import {
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IProofForm, ProofForm } from '@form/proof.form';
 import { Field } from '@ui/field/field';
-import { CurricularComponent, LessonEvent, Proof, SchoolClass, UniqueLessonEvent, User } from '@models';
+import { CurricularComponent, LessonEvent, Test, SchoolClass, UniqueLessonEvent, User } from '@models';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Textarea } from '@ui/field/textarea/textarea';
 import { LessonEventService } from '@services/lesson-event.service';
 import { EventCheckboxGroup } from '@ui/event-checkbox/event-checkbox-group/event-checkbox-group';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { ProofTypes } from '@core/const/proof-type.data';
+import { TestTypes } from '@core/const/proof-type.data';
 import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 import {
   CurricularComponentSelectComponent
@@ -56,14 +56,14 @@ export class TestFormComponent implements OnInit, OnDestroy {
   form: FormGroup<IProofForm> = this.createForm();
   classControl: FormControl<SchoolClass | null> = new FormControl<SchoolClass | null>(null);
   ccControl = this.form.controls.curricularComponent;
-  data = input<Partial<Proof>>({});
+  data = input<Partial<Test>>({});
   testId = input<number>();
   schoolId = input.required<number>();
   timeScheduleId = input.required<number>();
   dateInput = input.required<string>({ alias: 'date' });
   initialSelectedEvents = output<UniqueLessonEvent[]>();
   date!: string;
-  proof!: Proof;
+  proof!: Test;
   // date = input.required<string>({
   //   transform: v => {
   //     const type = typeof v;
@@ -82,7 +82,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
   form$ = output<FormGroup<IProofForm>>();
   events: LessonEvent[] = [];
   eventsLoading = signal(true);
-  proofTypes = ProofTypes;
+  proofTypes = TestTypes;
   isMulticlassRef = false;
   isMulticlass = false;
   // degreeId: string = '';

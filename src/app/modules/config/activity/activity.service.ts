@@ -40,7 +40,7 @@ export class ActivityService extends BaseService<Activity> {
     if (classHash) {
       delete params.classHash;
     }
-    const url = classHash ? `/public/${classHash}/activities` : `${this.apiURL}`;
+    const url = classHash ? `${this.baseUrl}/public/${classHash}/activities` : `${this.apiURL}`;
     const cachedValue = this.cache.getAll.getCache(url, params);
     if (cachedValue) {
       return of(cachedValue);

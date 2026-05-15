@@ -1,4 +1,5 @@
 import { LessonBatch, LessonEvent, UniqueLessonEvent, Weekday } from '@models';
+import { Subject, switchMap, debounceTime, ObservableInput } from 'rxjs';
 
 export class Util {
   static delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -88,6 +89,18 @@ export class Util {
         fn(...args).then(callback);
       }, delay);
     };
+  }
+
+  static debounceFn<T=any>(fn: (value: T, index: number) => ObservableInput<T>) {
+    const triggerRequest = new Subject<T>();
+    triggerRequest.pipe(
+      debounceTime(500),
+      switchMap(fn)
+    ).subscribe({
+      next: resultado => console.log('Sucesso:', resultado),
+      error: erro => console.error('Erro:', erro)
+    });
+    return triggerRequest;
   }
 
   static eventCompare(a: LessonEvent, b: LessonEvent): boolean {

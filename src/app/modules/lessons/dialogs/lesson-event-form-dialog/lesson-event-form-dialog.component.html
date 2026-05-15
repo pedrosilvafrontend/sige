@@ -56,15 +56,20 @@
                   <ui-text-editor
                     id="planning"
                     [required]="true"
+                    [disabled]="disabled || readonly"
                     formControlName="planning"
                   ></ui-text-editor>
                 </div>
               </div>
             </mat-dialog-content>
             <mat-dialog-actions>
-              <div class="d-flex gap-2">
-                <ui-button color="neutral" (onClick)="planningModal.close()" cdkFocusInitial>Cancelar</ui-button>
-                <ui-button (onClick)="savePlanning(planningModal.close)">Salvar</ui-button>
+              <div class="dialog-buttons">
+                <ui-button color="neutral" (onClick)="planningModal.close()" cdkFocusInitial>
+                  {{ disabled || readonly ? 'Fechar' : 'Cancelar' }}
+                </ui-button>
+                @if (!disabled && !readonly) {
+                  <ui-button (onClick)="savePlanning(planningModal.close)">Salvar</ui-button>
+                }
               </div>
             </mat-dialog-actions>
           </ng-template>
@@ -77,7 +82,7 @@
               </button>
             </div>
             <mat-dialog-content>
-              @let disableProof = disabled || (proof.status == 'APPROVED' && auth.role == 'teacher');
+              @let disableProof = disabled || readonly || (proof.status == 'APPROVED' && auth.role == 'teacher');
               @if (proof && proof.status) {
                 <div class="my-3">
                   <span class="badge" [ngClass]="'text-bg-'+activityStatusClass[proof.status]">
@@ -149,7 +154,7 @@
                 Deseja excluír a prova para a turma atual ({{ event.schoolClass.code }})? Ou para todas as turmas relacionadas?
               </mat-dialog-content>
               <mat-dialog-actions>
-                <div class="d-flex gap-2">
+                <div class="dialog-buttons">
                   <ui-button color="neutral" (onClick)="deleteProofModal.close()" cdkFocusInitial>Cancelar</ui-button>
                   <ui-button color="danger" (onClick)="deleteProof(proofModal.close);deleteProofModal.close()">
                     Excluír apenas para {{ event.schoolClass.code }}
@@ -166,7 +171,7 @@
                 Deseja realmente excluír a prova ?
               </mat-dialog-content>
               <mat-dialog-actions>
-                <div class="d-flex gap-2">
+                <div class="dialog-buttons">
                   <ui-button color="neutral" (onClick)="deleteProofModal.close()" cdkFocusInitial>Cancelar</ui-button>
                   <ui-button color="danger" (onClick)="deleteProof(proofModal.close);deleteProofModal.close()">
                     Excluír prova
@@ -175,7 +180,7 @@
               </mat-dialog-actions>
             }
             <!--<mat-dialog-actions>
-              <div class="d-flex gap-2">
+              <div class="dialog-buttons">
                 <ui-button color="neutral" (onClick)="deleteProofModal.close()" cdkFocusInitial>Cancelar</ui-button>
                 <ui-button color="danger" (onClick)="deleteProof(proofModal.close);deleteProofModal.close()">
                   Excluír prova {{ isMulticlass ? 'para todas as turmas' : '' }}
@@ -201,7 +206,7 @@
               }
             </mat-dialog-content>
             <mat-dialog-actions>
-              <div class="d-flex gap-2">
+              <div class="dialog-buttons">
                 <ui-button color="neutral" (onClick)="deleteProofOnUpdateModal.close(false)" cdkFocusInitial>Cancelar</ui-button>
                 <ui-button color="danger" (onClick)="deleteProofOnUpdateModal.close(true)">Confirmar</ui-button>
               </div>
@@ -216,7 +221,7 @@
               Deseja realmente excluír o trabalho ?
             </mat-dialog-content>
             <mat-dialog-actions>
-              <div class="d-flex gap-2">
+              <div class="dialog-buttons">
                 <ui-button color="neutral" (onClick)="deleteWorkModal.close()" cdkFocusInitial>Cancelar</ui-button>
                 <ui-button color="danger" (onClick)="deleteWork(workModal.close);deleteWorkModal.close()" cdkFocusInitial>Excluír trabalho</ui-button>
               </div>
@@ -231,19 +236,19 @@
         @let isMaxTotal = count.maxTotal > 0 && (count.total >= count.maxTotal);
         @let isMaxProofs = count.maxProofs > 0 && (count.proofs >= count.maxProofs);
         @let isMaxWorks = count.maxWorks > 0 && (count.works >= count.maxWorks);
-        @if (!isPublic) {
+        @if (!readonly) {
           <ui-button color="default" (onClick)="openColorModal(colorModal)">Cor</ui-button>
-          <ui-button color="default" (onClick)="planningModal.open()">{{ 'Planning' | translate }}</ui-button>
         }
-        <app-work-form-modal #workModal [work]="work" [schoolId]="schoolId">
-          @if (!isPublic || work.id) {
+        <ui-button color="default" (onClick)="planningModal.open()">{{ 'Planning' | translate }}</ui-button>
+        <app-work-form-modal #workModal [work]="work" [schoolId]="schoolId" [hidden]="readonly && !work.id">
+          @if (!readonly || work.id) {
             <ui-button color="default" (onClick)="workModalOpen(workModal.open)" badge=""
                        [badgeColor]="activityStatusClass[work.status]" [disabled]="!work.id && (isMaxTotal || isMaxWorks)">
               {{ 'Work' | translate }}
             </ui-button>
           }
         </app-work-form-modal>
-        @if (!isPublic || proof.id) {
+        @if (!readonly || proof.id) {
           <ui-button color="default" (onClick)="proofModal.open()" badge=""
                      [badgeColor]="activityStatusClass[proof.status]" [disabled]="!proof.id && (isMaxTotal || isMaxProofs)">
             {{ 'Proof' | translate }}
