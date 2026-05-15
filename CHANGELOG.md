@@ -1,3 +1,10 @@
+## [1.1.35](https://github.com/pedrosilvafrontend/sige/compare/v1.1.34...v1.1.35) (2026-05-15)
+
+
+### Features
+
+* redirect if logged in ([543b79d](https://github.com/pedrosilvafrontend/sige/commit/543b79da68de57dd92fcbe9e7a0282d4c8294f7f))
+
 ## [1.1.34](https://github.com/pedrosilvafrontend/sige/compare/v1.1.33...v1.1.34) (2026-05-15)
 
 
