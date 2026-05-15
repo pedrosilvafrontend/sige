@@ -47,6 +47,9 @@ export class WorkFormModal extends BaseModal<Work> {
   }
 
   onSubmit() {
+    if (this.readonly()) {
+      return;
+    }
     if (this.form.valid) {
       const work = this.form.getRawValue() as Work;
       const {lessonId, date, timeScheduleId} = this.data;

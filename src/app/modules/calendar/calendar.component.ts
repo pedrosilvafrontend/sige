@@ -162,7 +162,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   openPublicLink() {
     const hash = this.filters.controls['schoolClass']?.value?.hash;
-    const url = `/public/${hash}/calendar`;
+    const url = `/public/calendar/${hash}`;
     const link = document.createElement('a');
     link.href = url;
     link.target = '_blank';

@@ -42,7 +42,7 @@
         <app-delete-work-modal [work]="data" (close)="onDeleteWork($event)"></app-delete-work-modal>
       }
 
-      @if (isWorkManager) {
+      @if (!disabled() && isWorkManager) {
         @if (data.status === 'PENDING_APPROVAL') {
           <ui-button color="danger" tabindex="-1" type="button" (onClick)="onReject()">{{ 'Reject' | translate }}</ui-button>
         }
