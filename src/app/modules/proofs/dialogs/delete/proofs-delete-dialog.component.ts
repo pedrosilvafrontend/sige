@@ -10,7 +10,7 @@ import { Component, Inject } from '@angular/core';
 import { ProofService } from '@core/services/proof.service';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { Proof } from '@models';
+import { Test } from '@models';
 
 @Component({
   selector: 'app-proofs-delete',
@@ -29,7 +29,7 @@ import { Proof } from '@models';
 export class ProofsDeleteDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ProofsDeleteDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Proof,
+    @Inject(MAT_DIALOG_DATA) public data: Test,
     public service: ProofService
   ) {}
 

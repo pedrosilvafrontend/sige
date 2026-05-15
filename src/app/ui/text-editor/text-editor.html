@@ -1,9 +1,12 @@
 <div class="NgxEditor__Wrapper">
-  <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"> </ngx-editor-menu>
+  @if (!disabled()) {
+    <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"> </ngx-editor-menu>
+  }
   <ngx-editor
     [editor]="editor"
     [formControl]="control"
     [placeholder]="''"
+    [disabled]="disabled()"
     (blur)="handleBlur()"
   ></ngx-editor>
 </div>

@@ -334,11 +334,11 @@ export class LessonEventsComponent extends BaseListComponent<LessonEvent> implem
     clearTimeout(tmo);
     this.observeRouteParams();
 
-    this.updateService.proof$.pipe(takeUntil(this.destroy$)).subscribe((proof) => {
-      if (proof) {
-        this.loadData({ lessonId: this.lessonId }).then();
-      }
-    });
+    // this.updateService.test$.pipe(takeUntil(this.destroy$)).subscribe((proof) => {
+    //   if (proof) {
+    //     this.loadData({ lessonId: this.lessonId }).then();
+    //   }
+    // });
 
     this.activities = await this.activityService.getMap();
   }

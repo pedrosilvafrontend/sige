@@ -45,7 +45,7 @@ import { UserType } from '@modules/users/users.model';
 import { User } from '@core/models/interface';
 import { ClassSelectComponent } from '@modules/classes/class-select/class-select.component';
 import { ActivatedRoute } from '@angular/router';
-import { ActivityConfig, Degree, LessonEvent, Proof, School, SchoolClass } from '@models';
+import { ActivityConfig, Degree, LessonEvent, Test, School, SchoolClass } from '@models';
 import { AuthService, EventService, LessonsService, SchoolsService } from '@services';
 import { Button } from '@ui/button/button';
 import { debounceTime, map } from 'rxjs/operators';
@@ -54,6 +54,7 @@ import { LessonEventService } from '@services/lesson-event.service';
 import { ActivityService } from '@modules/config/activity/activity.service';
 import { LessonsFormDialogComponent } from '@modules/lessons';
 import { Skeleton } from '@ui/skeleton/skeleton';
+import { startOfMonth } from 'date-fns';
 
 @Component({
   selector: 'app-calendar',
@@ -117,7 +118,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   objectCompare = Util.objectCompare;
   private destroy$ = new Subject<void>();
   protected classHash = '';
-  public proofStatusClass: any = Proof.statusClass;
+  public proofStatusClass: any = Test.statusClass;
 
   calendarEvents: EventInput[] = [];
 
@@ -252,9 +253,32 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.calendarComponent?.getApi().refetchEvents();
   }
 
+  getFilters() {
+    const filters = {
+      school: null as any,
+      degreeId: 0,
+      activities: {
+        test: false,
+        work: false
+      }
+    }
+    return Object.keys(filters).reduce(
+      (acc, k) => {
+        let val = this.filters.get(k)?.value;
+        if (val) {
+          // @ts-ignore
+          acc[k] = val;
+        }
+        return acc;
+      },
+      filters
+    )
+  }
+
   calendarOptions: CalendarOptions = (() => {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
+    const startRange = new Date();
     return {
       timeZone: 'local',
       height: 'auto',
@@ -286,14 +310,13 @@ export class CalendarComponent implements OnInit, OnDestroy {
       eventsSet: this.handleEvents.bind(this),
       locale: this.translate.getCurrentLang(),
       validRange: {
-        start: new Date()
+        start: startRange
       },
       eventColor: '#a8a8a8',
       events: function(info, successCallback, failureCallback) {
         const classHash = self.classHash;
-        const schoolId = self.filters.get('school')?.value?.id;
-        const degreeId = self.filters.get('degreeId')?.value;
-        const activities = self.filters.get('activities')?.value;
+        const { school, degreeId, activities } = self.getFilters();
+        const schoolId = school?.id || 0;
         const params: any = {
           start: info.startStr,
           end: info.endStr,
@@ -359,6 +382,9 @@ export class CalendarComponent implements OnInit, OnDestroy {
                         item.className = `${item.className || ''} event-activity-${key.toLowerCase()}`;
                         item.borderColor = color;
                         item.backgroundColor = color;
+                        if (evalTool.type) {
+                          item.className += ` activity-type-${evalTool.type.toLowerCase()}`;
+                        }
                       } else if (evalTool.status) {
                         statuses.push(evalTool.status);
                       }

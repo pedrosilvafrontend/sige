@@ -3,7 +3,7 @@ import { CurricularComponent } from '@models/curricular-component.model';
 
 export type ProofType = 'TEST' | 'MULTICLASS_TEST' | 'TEST_OF_OVERCOMING'
 
-export interface Proof {
+export interface Test {
   id: number;
   type: ProofType;
   schoolId: number;
@@ -23,8 +23,8 @@ export interface Proof {
   updatedAt?: string;
 }
 
-export class Proof {
-  constructor(proof: Partial<Proof> = {}) {
+export class Test {
+  constructor(proof: Partial<Test> = {}) {
     {
       this.id = proof.id || 0;
       this.type = proof.type || 'TEST';

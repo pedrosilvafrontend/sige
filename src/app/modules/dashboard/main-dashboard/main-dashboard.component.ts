@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, effect, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { firstValueFrom, startWith, Subject, takeUntil } from 'rxjs';
-import { ActivityConfig, LessonEvent, Proof } from '@models';
+import { debounce, distinctUntilChanged, firstValueFrom, startWith, Subject, takeUntil } from 'rxjs';
+import { ActivityConfig, LessonEvent, Test } from '@models';
 import { DatePipe } from '@angular/common';
 import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { User } from '@core/models/interface';
@@ -21,13 +21,17 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { UserColorsService } from '@core/services/user-colors.service';
 import { ColorsBy, newColorsBy, ColorsMap, ColoringBy } from '@models/colors-by';
 import { ColoringByPipe, getColorBy } from '@util/coloring-by-pipe';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInput } from '@angular/material/input';
-import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { Util } from '@util/util';
+import { endOfYear, format, isValid, setDay, setMonth, setYear, startOfDay } from 'date-fns';
+import { DatePickerFormatDirective } from '@util/datepicker-format.directive';
+import { LoadingBar } from '@ui/loading-bar/loading-bar';
+import { debounceTime } from 'rxjs/operators';
+import { Debounce } from '@util/debounce';
 
 interface DashFilters {
-  date: FormControl<string>;
+  date: FormControl<Date | null>;
   colorBy: FormControl<ColoringBy>;
 }
 
@@ -44,13 +48,13 @@ interface DashFilters {
     Skeleton,
     MatRadioButton,
     MatRadioGroup,
-    // MatDatepickerModule,
-    // MatNativeDateModule,
+    MatDatepickerModule,
     ColoringByPipe,
-    MatInput
+    MatInput,
+    DatePickerFormatDirective,
+    LoadingBar
   ],
   providers: [
-    // { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
     TranslatePipe,
   ],
   templateUrl: './main-dashboard.component.html',
@@ -68,15 +72,18 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
   private fb = new FormBuilder();
   auth = input.required<User>();
+  isManager = false
   events: LessonEvent[] = [];
   dateFormat = 'dd/MM/yyyy';
-  proofStatusClass: any = Proof.statusClass;
+  proofStatusClass: any = Test.statusClass;
   activities: Map<string, ActivityConfig> = new Map();
   isLoading = signal(true);
   // colorByControl = new FormControl<"school" | "class" | "curricularComponent" | null>(null);
   colors = newColorsBy();
+  minDate = startOfDay(new Date());
+  maxDate = endOfYear(new Date());
   filters: FormGroup<DashFilters> = this.fb.group<DashFilters>({
-    date: this.fb.nonNullable.control(''),
+    date: this.fb.control<Date | null>(null),
     colorBy: this.fb.control<ColoringBy>(null),
   });
 
@@ -84,11 +91,22 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     return this.filters.controls.colorBy;
   }
 
+  timeLoading = 0;
+  get loading() {
+    return this.isLoading();
+  }
+  set loading(value: boolean) {
+    clearTimeout(this.timeLoading);
+    this.timeLoading = setTimeout(() => {
+      this.isLoading.set(value);
+    }, 3000);
+  }
+
   constructor() {
     effect(() => {
+      const role = this.auth()?.role || '';
       if(!this.colorByControl.value) {
         let coloringBy: ColoringBy = null;
-        const role = this.auth()?.role || '';
         if (role == 'teacher') {
           coloringBy = 'class';
         }
@@ -97,44 +115,70 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
         }
         this.colorByControl.setValue(coloringBy, { emitEvent: false });
       }
+      this.isManager = ['admin', 'association', 'principal', 'coordinator'].includes(role)
     });
   }
 
+  monthSelected(normalizedMonthAndYear: Date, datepicker: MatDatepicker<Date>) {
+    if (this.isManager) {
+      return;
+    }
+    const ctrl = this.filters.controls.date;
+    let ctrlValue = ctrl.value ? new Date(ctrl.value) : new Date();
+
+    // Use date-fns functions to shift calendar metrics safely
+    // ctrlValue = setDay(ctrlValue, 0);
+    ctrlValue = setMonth(ctrlValue, normalizedMonthAndYear.getMonth());
+    ctrlValue = setYear(ctrlValue, normalizedMonthAndYear.getFullYear());
+
+    ctrl.setValue(ctrlValue);
+    datepicker.close(); // Halts navigation so it doesn't drill down to days
+  }
+
   async ngOnInit() {
-    this.updateService.proof$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.getEvents().then();
-    });
+    // this.updateService.test$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    //   this.refresh().then();
+    // });
 
     this.activities = await this.activityService.getMap();
-    this.isLoading.set(false);
+    this.loading = false;
 
-    this.colorByControl.valueChanges
-      .pipe(takeUntil(this.destroy$), startWith(this.colorByControl.value))
+    this.filters.valueChanges
+      .pipe(takeUntil(this.destroy$), startWith(this.filters.getRawValue()))
       .subscribe(() => {
         this.refresh();
       });
   }
 
   async refresh() {
-    this.isLoading.set(true);
+    this.loading = true;
     // await this.getColors();
     await this.getEvents();
     this.cdr.detectChanges();
-    this.isLoading.set(false);
+    this.loading = false;
   }
 
-  async getEvents() {
+  // getEvents$ = new Debounce(this._getEvents.bind(this));
+  // // getEvents$ = Util.debounceFn(this._getEvents.bind(this));
+  // async getEvents() {
+  //   return this.getEvents$.trigger$.next();
+  // }
+  private async getEvents() {
     // this.isLoading.set(true);
-    await Util.delay(500);
-    const filters = this.filters.value;
-    // filters.date = filters.date ? new Date(filters.date) : undefined;
+    // await Util.delay(500);
+    const { date, ...filters } = this.filters.getRawValue();
+    const now = format(new Date(), 'yyyy-MM-dd');
+    const formattedDate = date instanceof Date && isValid(date)
+      ? format(date, 'yyyy-MM-dd')
+      : undefined;
     const params = {
       // limit: this.auth().role === 'teacher' ? 48 : 36,
-      limit: 48,
+      limit: 150,
       prevDate: false,
       ...filters,
+      ...{ date: formattedDate || now },
     }
-    this.events = await firstValueFrom(this.lessonEventService.getAll(params));
+    this.events = await firstValueFrom(this.lessonEventService.getAll(params).pipe(debounceTime(500),distinctUntilChanged()));
     // this.isLoading.set(false);
     this.cdr.detectChanges();
   }

@@ -226,4 +226,12 @@ export class AuthService {
     // Return an observable that emits the new user value
     return this.user$.asObservable();
   }
+
+  isAuthenticated() {
+    let isAuth = () => this.user$.getValue() !== undefined;
+    if (!isAuth()) {
+      this.checkSession();
+    }
+    return isAuth();
+  }
 }

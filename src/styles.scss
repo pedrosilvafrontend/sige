@@ -733,6 +733,16 @@ button.mdc-button[data-badgeColor="info"]::after {
     color: $white;
   }
 }
+.activity-type-multiclass_test .fc-list-event-graphic {
+  &::after {
+    content: 'Bimestral';
+  }
+}
+.activity-type-test_of_overcoming .fc-list-event-graphic {
+  &::after {
+    content: 'Superação';
+  }
+}
 
 .event-activity-work .fc-list-event-graphic {
   &::after {

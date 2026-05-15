@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService, SettingsService } from '@services';
 import { TranslateModule } from '@ngx-translate/core';
@@ -12,6 +12,7 @@ import { Field } from '@ui/field/field';
 import { NgOptimizedImage } from '@angular/common';
 import { Button } from '@ui/button/button';
 import { LoadingService } from '@services/loading.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -33,11 +34,12 @@ import { LoadingService } from '@services/loading.service';
     NgOptimizedImage
   ],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private settings = inject(SettingsService);
   private loadingService = inject(LoadingService);
+  private router = inject(Router);
   loading = this.loadingService.isShow;
 
   isSubmitting = false;
@@ -103,6 +105,12 @@ export class LoginComponent {
       rememberMe: false
     });
     this.login();
+  }
+
+  ngOnInit() {
+    if (this.auth.isAuthenticated()) {
+      this.router.navigate(['/dashboard']).then();
+    }
   }
 
 }

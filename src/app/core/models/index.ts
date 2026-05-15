@@ -15,7 +15,7 @@ export * from './day-shifts.model';
 export * from './class-suffixes.model';
 export * from './class-years.model';
 export * from './menu.model';
-export * from './proof';
+export * from './test';
 export * from './work';
 export * from './evaluation';
 export * from './degree.model';

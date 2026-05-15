@@ -1,4 +1,4 @@
-import { Component, forwardRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, effect, forwardRef, input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Editor, NgxEditorComponent, NgxEditorMenuComponent, Toolbar } from 'ngx-editor';
 import { ControlValueAccessor, FormControl, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -28,6 +28,7 @@ export class TextEditor implements OnInit, OnDestroy, ControlValueAccessor {
   private valueChangesSub?: Subscription;
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
+  disabled = input(false);
 
   toolbar: Toolbar = [
     ['bold', 'italic'],
@@ -39,6 +40,16 @@ export class TextEditor implements OnInit, OnDestroy, ControlValueAccessor {
     ['text_color', 'background_color'],
     ['align_left', 'align_center', 'align_right', 'align_justify'],
   ];
+
+  constructor() {
+    effect(() => {
+      if (this.disabled()) {
+        this.control.disable();
+      } else {
+        this.control.enable();
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.editor = new Editor();

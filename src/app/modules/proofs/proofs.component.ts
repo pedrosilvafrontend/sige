@@ -34,7 +34,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Proof, User } from '@models';
+import { Test, User } from '@models';
 import { PageHeaderComponent } from '@ui/page-header/page-header.component';
 import { AuthService } from '@services';
 
@@ -76,7 +76,7 @@ export class ProofsComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private snackBar = inject(MatSnackBar);
   public translate = inject(TranslateService);
-  public proofStatusClass: any = Proof.statusClass;
+  public proofStatusClass: any = Test.statusClass;
   public auth: User = this.authService.user$.value;
 
   columnsLabels = [
@@ -97,8 +97,8 @@ export class ProofsComponent implements OnInit, OnDestroy {
     ]
   })();
 
-  dataSource = new MatTableDataSource<Proof>([]);
-  selection = new SelectionModel<Proof>(true, []);
+  dataSource = new MatTableDataSource<Test>([]);
+  selection = new SelectionModel<Test>(true, []);
   contextMenuPosition = { x: '0px', y: '0px' };
   isLoading = true;
   private destroy$ = new Subject<void>();
@@ -131,18 +131,18 @@ export class ProofsComponent implements OnInit, OnDestroy {
     this.openDialog('add');
   }
 
-  editCall(row: Proof) {
+  editCall(row: Test) {
     this.openDialog('edit', row);
   }
 
-  approveItem(row: Proof) {
+  approveItem(row: Test) {
     this.service.approve(row).subscribe(() => {
       this.refresh();
       this.showNotification('snackbar-success', 'Aprovado com sucesso!');
     });
   }
 
-  openDialog(action: 'add' | 'edit', data?: Proof) {
+  openDialog(action: 'add' | 'edit', data?: Test) {
     const dialogRef = this.dialog.open(ProofsFormDialogComponent, {
       width: '60vw',
       maxWidth: '100vw',
@@ -168,7 +168,7 @@ export class ProofsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private updateRecord(updatedRecord: Proof) {
+  private updateRecord(updatedRecord: Test) {
     const index = this.dataSource.data.findIndex(
       (record) => record.id === updatedRecord.id
     );
@@ -178,7 +178,7 @@ export class ProofsComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteItem(row: Proof) {
+  deleteItem(row: Test) {
     const dialogRef = this.dialog.open(
       ProofsDeleteDialogComponent,
       {
@@ -243,7 +243,7 @@ export class ProofsComponent implements OnInit, OnDestroy {
         this.dataSource.data = data;
         this.refreshTable();
         this.dataSource.filterPredicate = (
-          data: Proof,
+          data: Test,
           filter: string
         ) =>
           Object.values(data).some((value) =>
@@ -268,7 +268,7 @@ export class ProofsComponent implements OnInit, OnDestroy {
     });
   }
 
-  onContextMenu(event: MouseEvent, item: Proof) {
+  onContextMenu(event: MouseEvent, item: Test) {
     event.preventDefault();
     this.contextMenuPosition = {
       x: `${event.clientX}px`,

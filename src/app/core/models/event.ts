@@ -6,7 +6,7 @@ import {
   Frequency,
   School,
   TimeSchedule,
-  Proof, Work, Entity, User
+  Test, Work, Entity, User
 } from '@models';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { EvalTools, EvalToolsForm } from '@models/eval-tools';

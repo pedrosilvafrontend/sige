@@ -1,7 +1,7 @@
 import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Activity } from '@modules/config/activity/activity.model';
 import { IProofForm } from '@form/proof.form';
-import { LessonBatch, School, Proof, Work } from '@models';
+import { LessonBatch, School, Test, Work } from '@models';
 import { IWorkForm } from '@form/work.form';
 
 export interface SchoolEvent {
@@ -13,7 +13,7 @@ export interface SchoolEvent {
   observations: string;
   activities: Activity[];
   school?: School;
-  test?: Proof;
+  test?: Test;
   work?: Work;
   lesson?: Partial<LessonBatch>;
 }
@@ -42,6 +42,6 @@ export interface LesEventFormValue {
   endHour: string;
   observations: string;
   activities: Activity[];
-  test?: Proof
+  test?: Test
   work?: Work
 }

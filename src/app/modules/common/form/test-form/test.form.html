@@ -1,4 +1,5 @@
 @let multiclassTest = form.controls.type.getRawValue() === 'MULTICLASS_TEST';
+@let isDisabled = disabled() || readOnly();
 <div class="row" [formGroup]="form">
 <!--  @if (isManager) {-->
     <div class="col-md-6">
@@ -20,13 +21,14 @@
       <app-curricular-component-select
         [formControl]="ccControl"
         [classYearId]="classYearId"
-        [disabled]="!multiclassTest || !isManager || !!form.value.id"
+        [disabled]="isDisabled || !multiclassTest || !isManager || !!form.value.id"
       ></app-curricular-component-select>
     </div>
 
   @if (multiclassTest) {
     <div class="col-md-12">
-      <app-event-checkbox-group [form]="form.controls.events" [events]="events" [disabled]="!isManager"></app-event-checkbox-group>
+      <app-event-checkbox-group [form]="form.controls.events" [events]="events" [disabled]="isDisabled || !isManager">
+      </app-event-checkbox-group>
     </div>
   }
 <!--  }-->

@@ -86,7 +86,7 @@
     <strong>Você perderá os dados alterados, confirma?</strong>
   </mat-dialog-content>
   <mat-dialog-actions>
-    <div class="d-flex gap-2">
+    <div class="dialog-buttons">
       <ui-button color="neutral" (onClick)="cancelModal.close()" cdkFocusInitial>Cancelar</ui-button>
       <ui-button color="danger" (onClick)="reset(false, cancelModal.close)">Confirmar</ui-button>
     </div>

@@ -32,7 +32,7 @@
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>
-    <div class="d-flex gap-2">
+    <div class="dialog-buttons">
       <ui-button color="neutral" (onClick)="modal.close()" cdkFocusInitial>Cancelar</ui-button>
       <ui-button [disabled]="form.invalid || submitting" (onClick)="submit()">Salvar</ui-button>
     </div>
