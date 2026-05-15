@@ -1,3 +1,5 @@
+## [1.1.36](https://github.com/pedrosilvafrontend/sige/compare/v1.1.35...v1.1.36) (2026-05-15)
+
 ## [1.1.35](https://github.com/pedrosilvafrontend/sige/compare/v1.1.34...v1.1.35) (2026-05-15)
 
 
