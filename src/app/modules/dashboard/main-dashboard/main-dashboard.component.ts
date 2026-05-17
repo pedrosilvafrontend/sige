@@ -29,6 +29,7 @@ import { DatePickerFormatDirective } from '@util/datepicker-format.directive';
 import { LoadingBar } from '@ui/loading-bar/loading-bar';
 import { debounceTime } from 'rxjs/operators';
 import { Debounce } from '@util/debounce';
+import { DateUtil } from '@util';
 
 interface DashFilters {
   date: FormControl<Date | null>;
@@ -166,8 +167,9 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   private async getEvents() {
     // this.isLoading.set(true);
     // await Util.delay(500);
-    const { date, ...filters } = this.filters.getRawValue();
-    const now = format(new Date(), 'yyyy-MM-dd');
+    const { date: dateFilter, ...filters } = this.filters.getRawValue();
+    const date = DateUtil.nextBusinessDay(dateFilter ?? new Date());
+    // const now = format(new Date(), 'yyyy-MM-dd');
     const formattedDate = date instanceof Date && isValid(date)
       ? format(date, 'yyyy-MM-dd')
       : undefined;
@@ -176,7 +178,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
       limit: 150,
       prevDate: false,
       ...filters,
-      ...{ date: formattedDate || now },
+      ...{ date: formattedDate },
     }
     this.events = await firstValueFrom(this.lessonEventService.getAll(params).pipe(debounceTime(500),distinctUntilChanged()));
     // this.isLoading.set(false);
