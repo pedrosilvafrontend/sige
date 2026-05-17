@@ -1,3 +1,10 @@
+## [1.1.38](https://github.com/pedrosilvafrontend/sige/compare/v1.1.37...v1.1.38) (2026-05-17)
+
+
+### Bug Fixes
+
+* dashboard show next business day ([81c0dfe](https://github.com/pedrosilvafrontend/sige/commit/81c0dfe5d03be125aefa22b2983666c13936b989))
+
 ## [1.1.37](https://github.com/pedrosilvafrontend/sige/compare/v1.1.36...v1.1.37) (2026-05-15)
 
 
