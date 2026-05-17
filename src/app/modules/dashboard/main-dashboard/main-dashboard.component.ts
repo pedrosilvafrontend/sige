@@ -127,8 +127,6 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     const ctrl = this.filters.controls.date;
     let ctrlValue = ctrl.value ? new Date(ctrl.value) : new Date();
 
-    // Use date-fns functions to shift calendar metrics safely
-    // ctrlValue = setDay(ctrlValue, 0);
     ctrlValue = setMonth(ctrlValue, normalizedMonthAndYear.getMonth());
     ctrlValue = setYear(ctrlValue, normalizedMonthAndYear.getFullYear());
 
@@ -137,9 +135,6 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    // this.updateService.test$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-    //   this.refresh().then();
-    // });
 
     this.activities = await this.activityService.getMap();
     this.loading = false;
@@ -159,29 +154,21 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     this.loading = false;
   }
 
-  // getEvents$ = new Debounce(this._getEvents.bind(this));
-  // // getEvents$ = Util.debounceFn(this._getEvents.bind(this));
-  // async getEvents() {
-  //   return this.getEvents$.trigger$.next();
-  // }
   private async getEvents() {
-    // this.isLoading.set(true);
-    // await Util.delay(500);
-    const { date: dateFilter, ...filters } = this.filters.getRawValue();
-    const date = DateUtil.nextBusinessDay(dateFilter ?? new Date());
-    // const now = format(new Date(), 'yyyy-MM-dd');
+    const { date, ...filters } = this.filters.getRawValue();
+    const nextBusinessDay = DateUtil.nextBusinessDay(new Date());
+    const dateFormat = 'yyyy-MM-dd';
+
     const formattedDate = date instanceof Date && isValid(date)
-      ? format(date, 'yyyy-MM-dd')
-      : undefined;
+      ? format(date, dateFormat)
+      : format(nextBusinessDay, dateFormat);
     const params = {
-      // limit: this.auth().role === 'teacher' ? 48 : 36,
       limit: 150,
       prevDate: false,
       ...filters,
       ...{ date: formattedDate },
     }
     this.events = await firstValueFrom(this.lessonEventService.getAll(params).pipe(debounceTime(500),distinctUntilChanged()));
-    // this.isLoading.set(false);
     this.cdr.detectChanges();
   }
 
