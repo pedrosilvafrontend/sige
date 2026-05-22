@@ -58,6 +58,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
   ccControl = this.form.controls.curricularComponent;
   data = input<Partial<Test>>({});
   testId = input<number>();
+  classHash = input<string>();
   schoolId = input.required<number>();
   timeScheduleId = input.required<number>();
   dateInput = input.required<string>({ alias: 'date' });
@@ -141,9 +142,16 @@ export class TestFormComponent implements OnInit, OnDestroy {
     })
   }
 
-  async getProof(proofId: number) {
+  async getProof(proofId: number, classHash?: string) {
+    if (!proofId) {
+      return;
+    }
+
     if (proofId) {
-      const proof = await firstValueFrom(this.proofService.getById(proofId));
+      const request$ = classHash
+        ? this.proofService.getByHash(classHash || '', proofId)
+        : this.proofService.getById(proofId);
+      const proof = await firstValueFrom(request$);
       if (proof) {
         // const currentLessonId = this.eventInput()?.lesson?.id || 0;
         // const data = proof;
@@ -198,6 +206,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
         schoolId: this.schoolId(),
         timeScheduleId: this.timeScheduleId(),
         date: (this.date || '').substring(0, 10),
+        classHash: this.classHash() || '',
       }
       this.eventsLoading.set(true);
 
@@ -304,7 +313,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
     })
 
     if (this.testId()) {
-      await this.getProof(this.testId() || 0);
+      await this.getProof(this.testId() || 0, this.classHash() || '');
 
       if (this.proof?.type === 'MULTICLASS_TEST') {
         this.changeType();

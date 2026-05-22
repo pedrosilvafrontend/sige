@@ -86,6 +86,8 @@ export interface LessonEventFormValue {
   observations: string;
 }
 
+export type EventMerge = Partial<LessonEvent & LiteEvent>;
+
 export interface LessonEvent {
   title?: string;
   groupId?: string;
@@ -104,7 +106,7 @@ export interface LessonEvent {
   extra?: LessonEventExtra;
   color?: string;
   observations: string;
-  countActivities: CountActivities;
+  countActivities?: CountActivities;
   disabled?: boolean;
   selected?: boolean;
 }
@@ -127,29 +129,79 @@ export class LessonEvent {
   extra?: LessonEventExtra;
   color?: string;
   observations: string = '';
-  countActivities!: CountActivities;
+  countActivities?: CountActivities;
 
-  constructor(lesson: Partial<LessonEvent> = {}) {
-    {
-      this.title = lesson.title || '';
-      this.groupId = lesson.groupId || '';
-      this.activities = lesson.activities || [];
-      this.evalTools = lesson.evalTools || new EvalTools();
-      this.schoolClass = lesson.schoolClass || new SchoolClass();
-      this.curricularComponent = lesson.curricularComponent || new CurricularComponent();
-      this.date = lesson.date || '';
-      this.frequency = lesson.frequency || new Frequency();
-      this.lesson = lesson.lesson || new LessonBatch();
-      this.school = lesson.school || new School();
-      this.weekday = lesson.weekday || 'UNIQUE';
-      this.styleClass = lesson.styleClass || '';
-      this.start = lesson.start || '';
-      this.end = lesson.end || '';
-      this.extra = lesson.extra || undefined;
-      this.color = lesson.color || '';
-      this.observations = lesson.observations || '';
-      this.countActivities = <CountActivities>lesson.countActivities || undefined;
-    }
+  constructor(event: Partial<LessonEvent> = {}) {
+    this.title = event.title || '';
+    this.groupId = event.groupId || '';
+    this.activities = event.activities || [];
+    this.evalTools = event.evalTools || new EvalTools();
+    this.schoolClass = event.schoolClass || new SchoolClass();
+    this.curricularComponent = event.curricularComponent || new CurricularComponent();
+    this.date = event.date || '';
+    this.frequency = event.frequency || new Frequency();
+    this.lesson = event.lesson || new LessonBatch();
+    this.school = event.school || new School();
+    this.weekday = event.weekday || 'UNIQUE';
+    this.styleClass = event.styleClass || '';
+    this.start = event.start || '';
+    this.end = event.end || '';
+    this.extra = event.extra || undefined;
+    this.color = event.color || '';
+    this.observations = event.observations || '';
+    this.countActivities = <CountActivities>event.countActivities || undefined;
+  }
+}
+
+export class LiteEvent {
+  date: string;
+  weekday!: Weekday;
+  startTime: string = '';
+  endTime: string = '';
+  schoolId: number = 0;
+  schoolAcronym: string = '';
+  lessonId: number = 0;
+  classId: number = 0;
+  classCode: string = '';
+  timeScheduleId: number = 0;
+  degreeId: number = 0;
+  curricularComponentId: number = 0;
+  curricularComponentName: string = '';
+  teacherId: number = 0;
+  teacherName: string = '';
+  testId: number = 0;
+  testType: string = '';
+  testStatus: string = '';
+  workId: number = 0;
+  workStatus: string = '';
+  color: string = '';
+  countActivities: Partial<CountActivities> = {};
+  groupId: string = 'LESSON';
+
+  constructor(event: Partial<LiteEvent> = {}) {
+    this.date = event.date || '';
+    this.weekday = event.weekday || 'UNIQUE';
+    this.startTime = event.startTime || '';
+    this.endTime = event.endTime || '';
+    this.schoolId = event.schoolId || 0;
+    this.schoolAcronym = event.schoolAcronym || '';
+    this.lessonId = event.lessonId || 0;
+    this.classId = event.classId || 0;
+    this.classCode = event.classCode || '';
+    this.timeScheduleId = event.timeScheduleId || 0;
+    this.degreeId = event.degreeId || 0;
+    this.curricularComponentId = event.curricularComponentId || 0;
+    this.curricularComponentName = event.curricularComponentName || '';
+    this.teacherId = event.teacherId || 0;
+    this.teacherName = event.teacherName || '';
+    this.testId = event.testId || 0;
+    this.testType = event.testType || '';
+    this.testStatus = event.testStatus || '';
+    this.workId = event.workId || 0;
+    this.workStatus = event.workStatus || '';
+    this.color = event.color || '';
+    this.countActivities = event.countActivities || {};
+    this.groupId = event.groupId || 'LESSON';
   }
 }
 

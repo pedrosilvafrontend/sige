@@ -33,7 +33,7 @@ import {
   LessonEventFormValue,
   Test,
   School,
-  SchoolClass, UniqueLessonEvent, Work,
+  SchoolClass, UniqueLessonEvent, Work, LiteEvent, EventMerge,
 } from '@models';
 import { AuthService } from '@services';
 import { Button } from '@ui/button/button';
@@ -48,19 +48,21 @@ import { TextEditor } from '@ui/text-editor/text-editor';
 import { IWorkForm } from '@form/work.form';
 import { WorkService } from '@services/work.service';
 import { WorkFormModal } from '@modules/works/modals/work-form-modal/work-form-modal';
-import { take } from 'rxjs';
+import { firstValueFrom, take } from 'rxjs';
 import { EventColors } from '@modules/modals/event-colors/event-colors';
 import { ColorBy, newColorBy } from '@models/colors-by';
 import { GeneralEventModal } from '@modules/modals/general-event-modal/general-event-modal';
 import { ActivatedRoute } from '@angular/router';
+import { LessonEventService } from '@services/lesson-event.service';
 
 export interface DialogData {
-  item: LessonEvent;
+  item: EventMerge;
   lessonId: number;
   timeScheduleId: number;
   date: string;
   action: string;
   colorBy?: ColorBy;
+  classHash?: string;
 }
 
 @Component({
@@ -93,7 +95,6 @@ export interface DialogData {
     TextEditor,
     WorkFormModal,
     EventColors,
-    JsonPipe,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit {
@@ -104,13 +105,14 @@ export class LessonEventFormDialogComponent implements OnInit {
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
   private fb = inject(FormBuilder);
+  private lessonEventService = inject(LessonEventService);
   private lessonEventExtraService = inject(LessonEventExtraService);
   private message = inject(MessageService);
   private route = inject(ActivatedRoute);
   auth = this.authService.user$.value;
   readonly = !this.auth.id;
   closeRefresh = false;
-  event!: LessonEvent;
+  event = new LessonEvent();
   proof: Test = new Test();
   generalEvent!: GeneralEvent;
   extra: LessonEventExtra = new class implements LessonEventExtra {}
@@ -138,6 +140,8 @@ export class LessonEventFormDialogComponent implements OnInit {
   activities: Map<string, ActivityConfig> = new Map();
   colorBy: ColorBy;
   initialSelectedProofEvents: UniqueLessonEvent[] = [];
+  lessonId = 0;
+  classHash = '';
 
   private _work!: Work;
   get work(): Work {
@@ -168,7 +172,9 @@ export class LessonEventFormDialogComponent implements OnInit {
   }
 
   constructor() {
-    const { action, lessonId, timeScheduleId, date, colorBy } = this.dialogData || {}
+    const { item, action, lessonId, timeScheduleId, date, colorBy, classHash } = this.dialogData || {};
+    this.classHash = classHash || '';
+    this.lessonId = item.lessonId || item.lesson?.id || 0;
     const work = new Work();
     this.setReadonly(action === 'view');
     if (lessonId) {
@@ -187,7 +193,7 @@ export class LessonEventFormDialogComponent implements OnInit {
   }
 
   savePlanning(callback?: () => void) {
-    const lessonId = this.dialogData.item?.lesson?.id || 0;
+    const lessonId = this.lessonId;
     if (!lessonId || this.extraForm.invalid) {
       return;
     }
@@ -260,7 +266,7 @@ export class LessonEventFormDialogComponent implements OnInit {
   saveOrUpdateProof(data: Test, callback?: () => void) {
     const isUpdate = !!data?.id;
     const isMulticlass = data?.type === 'MULTICLASS_TEST';
-    const lessonId = this.dialogData.item?.lesson?.id || 0;
+    const lessonId = this.lessonId;
     if (!lessonId) {
       return;
     }
@@ -293,7 +299,7 @@ export class LessonEventFormDialogComponent implements OnInit {
       const proof = this.proofForm.getRawValue();
       const isUpdate = !!proof?.id;
       const isMulticlass = proof?.type === 'MULTICLASS_TEST';
-      const lessonId = this.dialogData.item?.lesson?.id || 0;
+      const lessonId = this.lessonId;
       // const ccId = this.dialogData.item?.curricularComponent?.id || 0;
       if (!lessonId) {
         return;
@@ -412,9 +418,35 @@ export class LessonEventFormDialogComponent implements OnInit {
     this.ref.close(this.closeRefresh);
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     if (this.dialogData.item) {
-      this.event = this.dialogData.item;
+      const item = this.dialogData.item;
+      const classHash = this.classHash || '';
+      let event = new LessonEvent();
+      if (item.lessonId) {
+        const {schoolId, lessonId, classId, timeScheduleId, date} = item;
+        const params = {
+          schoolId,
+          lessonId,
+          classId,
+          timeScheduleId,
+          date,
+          classHash,
+        };
+        const request$ = classHash
+          ? this.lessonEventService.getPublicAll(params)
+          : this.lessonEventService.getAll(params);
+        const events = await firstValueFrom(request$);
+
+        if (events.length == 1) {
+          event = events[0];
+        }
+      } else if (item.lesson?.id) {
+        event = item as LessonEvent;
+      }
+
+      // this.event = this.dialogData.item;
+      this.event = event;
       if (this.event?.evalTools?.proof?.id) {
         const proof = this.event.evalTools.proof;
         if (!this.proof.timeScheduleId) {
@@ -429,6 +461,7 @@ export class LessonEventFormDialogComponent implements OnInit {
         this.extra = this.event.extra;
       }
       this.extraForm.patchValue(this.extra || {})
+      this.cdr.detectChanges();
     }
 
   }

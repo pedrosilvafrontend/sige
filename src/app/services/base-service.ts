@@ -5,7 +5,7 @@ import { Observable, take, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 export class BaseService<T=any> {
-  protected readonly baseUrl = environment.baseUrl;
+  public readonly baseUrl = environment.baseUrl;
   protected path = '';
   protected http: HttpClient = inject(HttpClient);
   protected urlParams: any = {};

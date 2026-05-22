@@ -104,7 +104,7 @@ export class EventColors {
 
   onEventInput(event: LessonEvent) {
     this.form.patchValue({
-      classId: event.schoolClass.id || 0,
+      classId: event.schoolClass?.id || 0,
       curricularComponentId: event.curricularComponent?.id || 0,
       color: event.color || '#ffffff'
     }, { emitEvent: false })

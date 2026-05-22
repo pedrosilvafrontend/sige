@@ -76,6 +76,7 @@
 
           <ng-template #proofTemplate>
             <div class="modalHeader">
+<!--              TODO: adicionar class code ao título-->
               <h3 mat-dialog-title>Prova</h3>
               <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="proofModal.close()">
                 <mat-icon>close</mat-icon>
@@ -94,6 +95,7 @@
                 class="d-block mt-3"
                 [data]="proof"
                 [testId]="proof?.id || 0"
+                [classHash]="classHash"
                 [schoolId]="schoolId"
                 [timeScheduleId]="timeScheduleId"
                 [date]="event.date"
@@ -233,13 +235,13 @@
     <div matDialogActions>
       <div class="dialog-buttons">
         @let count = event.countActivities;
-        @let isMaxTotal = count.maxTotal > 0 && (count.total >= count.maxTotal);
-        @let isMaxProofs = count.maxProofs > 0 && (count.proofs >= count.maxProofs);
-        @let isMaxWorks = count.maxWorks > 0 && (count.works >= count.maxWorks);
+        @let isMaxTotal = count && count.maxTotal > 0 && (count.total >= count.maxTotal);
+        @let isMaxProofs = count && count.maxProofs > 0 && (count.proofs >= count.maxProofs);
+        @let isMaxWorks = count && count.maxWorks > 0 && (count.works >= count.maxWorks);
         @if (!readonly) {
           <ui-button color="default" (onClick)="openColorModal(colorModal)">Cor</ui-button>
+          <ui-button color="default" (onClick)="planningModal.open()">{{ 'Planning' | translate }}</ui-button>
         }
-        <ui-button color="default" (onClick)="planningModal.open()">{{ 'Planning' | translate }}</ui-button>
         <app-work-form-modal #workModal [work]="work" [schoolId]="schoolId" [hidden]="readonly && !work.id" [disabled]="readonly">
           @if (!readonly || work.id) {
             <ui-button color="default" (onClick)="workModalOpen(workModal.open)" badge=""

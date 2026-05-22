@@ -24,11 +24,11 @@
               </span>
             }
           </div>
-          @if (evt.countActivities.total; as total) {
+          @if (evt.countActivities?.total; as total) {
             @let act = evt.countActivities;
-            @let msgProofs = act.proofs ? act.proofs + ' ' + ((act.proofs > 1 ? 'proofs' : 'proof') | translate) : '';
-            @let msgWorks = act.works ? act.works + ' ' + ((act.works > 1 ? 'works' : 'work') | translate) : '';
-            @let sep = act.proofs && act.works ? (' and ' | translate) : '';
+            @let msgProofs = act && act.proofs ? act.proofs + ' ' + ((act.proofs > 1 ? 'proofs' : 'proof') | translate) : '';
+            @let msgWorks = act && act.works ? act.works + ' ' + ((act.works > 1 ? 'works' : 'work') | translate) : '';
+            @let sep = act && act.proofs && act.works ? (' and ' | translate) : '';
             <div class="badge badge-solid-gray circle"
                  [matTooltip]="msgProofs + sep + msgWorks">
               {{ total }}
