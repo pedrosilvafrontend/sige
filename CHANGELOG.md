@@ -1,3 +1,15 @@
+## [1.1.39](https://github.com/pedrosilvafrontend/sige/compare/v1.1.38...v1.1.39) (2026-05-22)
+
+
+### Bug Fixes
+
+* dashboard show next business day ([aebe766](https://github.com/pedrosilvafrontend/sige/commit/aebe766adf9c6d7b96f335563bd7b7eb55579204))
+
+
+### Features
+
+* lesson event merge and lite ([79452f8](https://github.com/pedrosilvafrontend/sige/commit/79452f810452058e80b2007762f61238d3b2005d))
+
 ## [1.1.38](https://github.com/pedrosilvafrontend/sige/compare/v1.1.37...v1.1.38) (2026-05-17)
 
 
