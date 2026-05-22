@@ -8,7 +8,7 @@ import {
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
-import { CalendarOptions, DateSelectArg, EventApi, EventClickArg, EventInput, } from '@fullcalendar/core';
+import { CalendarOptions, DateSelectArg, EventApi, EventClickArg, EventInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -45,7 +45,7 @@ import { UserType } from '@modules/users/users.model';
 import { User } from '@core/models/interface';
 import { ClassSelectComponent } from '@modules/classes/class-select/class-select.component';
 import { ActivatedRoute } from '@angular/router';
-import { ActivityConfig, Degree, LessonEvent, Test, School, SchoolClass } from '@models';
+import { ActivityConfig, Degree, LessonEvent, Test, School, SchoolClass, LiteEvent } from '@models';
 import { AuthService, EventService, LessonsService, SchoolsService } from '@services';
 import { Button } from '@ui/button/button';
 import { debounceTime, map } from 'rxjs/operators';
@@ -55,6 +55,7 @@ import { ActivityService } from '@modules/config/activity/activity.service';
 import { LessonsFormDialogComponent } from '@modules/lessons';
 import { Skeleton } from '@ui/skeleton/skeleton';
 import { startOfMonth } from 'date-fns';
+import { test } from 'vitest';
 
 @Component({
   selector: 'app-calendar',
@@ -346,58 +347,114 @@ export class CalendarComponent implements OnInit, OnDestroy {
         if (!schoolId && !classHash) {
           return setData([] as any[]);
         }
-        // self.eventService.getAllCalendars(params).pipe(take(1))
+
         const request$ = !params.schoolId && params.classHash ?
-          self.lessonEventService.getPublicAll(params) :
-          self.lessonEventService.getAll(params);
+          self.lessonEventService.getPublicAllLite(params) :
+          self.lessonEventService.getAllLite(params);
 
         request$.subscribe({
             next: (value) => {
-              const data: any[] = (value || []).filter(
-                (event: LessonEvent) => {
-                  const item: any = event;
-                  if (!item.groupId) {
-                    item.groupId = 'LESSON';
-                  }
-                  const { lesson, school, schoolClass, curricularComponent, evalTools, countActivities } = item;
+              // value = value.filter(v => v.date <= '2026-05-20') // TODO: remover
+              const data: EventInput[] = [];
+              // const data: any[] = (value || []).filter(
+              (value || []).forEach(
+                (event: LiteEvent, index: number) => {
+                  const item: EventInput = {};
+                  // const item: EventInput = event;
+                  // if (!item.groupId) {
+                  //   item.groupId = 'LESSON';
+                  // }
+                  // const { lesson, school, schoolClass, curricularComponent, evalTools, countActivities } = item;
+                  const {
+                    schoolId, lessonId, classId, timeScheduleId, date, classCode, curricularComponentName,
+                    teacherName, countActivities, startTime, endTime
+                  } = event;
                   let title: string[] = [];
                   const hasFilterSchool = !!self.filters.get('school')?.value?.id;
                   const hasFilterClass = !!self.filters.get('schoolClass')?.value?.id;
                   const hasFilterTeacher = !!self.filters.get('teacher')?.value?.id;
-                  if (lesson) {
+                  if (lessonId) {
                     const num = ['⓪', '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'];
                     if (school?.acronym && !hasFilterSchool && self.schools.length > 1) title.push(school.acronym);
-                    if (schoolClass?.code && !hasFilterClass) title.push(schoolClass.code);
-                    if (curricularComponent?.name) title.push(curricularComponent.name);
-                    if (lesson.teacher?.fullName && !hasFilterTeacher) title.push(lesson.teacher.fullName);
+                    if (classCode && !hasFilterClass) title.push(classCode);
+                    if (curricularComponentName) title.push(curricularComponentName);
+                    if (teacherName && !hasFilterTeacher) title.push(teacherName);
                     if (countActivities?.total) title.push(num[countActivities.total] || `(${countActivities.total})`);
                   }
                   item.title = title.join(' - ');
-                  const { proof, work } = evalTools || {};
-                  const statuses: string[] = [];
-                  [['TEST', proof], ['WORK', work]].forEach(([key, evalTool]) => {
-                    if (evalTool?.id) {
-                      if (evalTool.status === 'APPROVED') {
-                        const color = self.activities[key]?.color || '';
-                        item.className = `${item.className || ''} event-activity-${key.toLowerCase()}`;
-                        item.borderColor = color;
-                        item.backgroundColor = color;
-                        if (evalTool.type) {
-                          item.className += ` activity-type-${evalTool.type.toLowerCase()}`;
-                        }
-                      } else if (evalTool.status) {
-                        statuses.push(evalTool.status);
-                      }
+
+                  // item.start = `${event.date}`;
+                  item.start = new Date(`${date}T${startTime}`);
+                  item.end = new Date(`${date}T${endTime}`);
+                  item.id = `${schoolId}|${lessonId}|${classId}|${timeScheduleId}|${date}`;
+
+                  const statuses = [event.testStatus, event.workStatus];
+                  const status = ['REJECTED', 'PENDING_APPROVAL', 'APPROVED'].find(status => statuses.includes(status));
+
+                  if (status === 'APPROVED') {
+                    if (event.testId) {
+                      item.className = `${item.className || ''} event-activity-test`;
                     }
-                  })
-                  const status = ['REJECTED', 'PENDING_APPROVAL'].find(status => statuses.includes(status));
-                  if (status) {
+                    if (event.testType) {
+                      item.className = `${item.className || ''} activity-type-${event.testType.toLowerCase()}`;
+                    }
+                    if (event.workId) {
+                      item.className = `${item.className || ''} event-activity-work`;
+                    }
+                  }
+                  else if (status) {
                     item.className = `${item.className || ''} activity-status-${self.proofStatusClass[status]}`;
                   }
+
                   item.extendedProps = {
-                    date: item.date
+                    ...event
                   }
-                  return self._filter(item);
+
+                  data.push(item);
+                  return;
+
+
+                  // const test: any = {
+                  //   id: event.testId,
+                  //   type: event.testType,
+                  //   status: event.testStatus
+                  // }
+                  // const work: any = {
+                  //   id: event.workId,
+                  //   status: event.workStatus
+                  // }
+                  // const statuses: string[] = [];
+                  // [['TEST', test], ['WORK', work]].forEach(([key, evalTool]) => {
+                  //   if (evalTool?.id) {
+                  //     if (evalTool.status === 'APPROVED') {
+                  //       const color = self.activities[key]?.color || '';
+                  //       item.className = `${item.className || ''} event-activity-${key.toLowerCase()}`;
+                  //       item.borderColor = color;
+                  //       item.backgroundColor = color;
+                  //       if (evalTool.type) {
+                  //         item.className += ` activity-type-${evalTool.type.toLowerCase()}`;
+                  //       }
+                  //     } else if (evalTool.status) {
+                  //       statuses.push(evalTool.status);
+                  //     }
+                  //   }
+                  // })
+                  // const status = ['REJECTED', 'PENDING_APPROVAL'].find(status => statuses.includes(status));
+                  // if (status) {
+                  //   item.className = `${item.className || ''} activity-status-${self.proofStatusClass[status]}`;
+                  // }
+                  // if (index > 60) return false;
+                  // item.id = `${event.date}|${event.timeScheduleId}|${event.classCode}`;
+                  // item.start = new Date(`${event.date}T${event.startTime}`);
+                  // item.end = new Date(`${event.date}T${event.endTime}`);
+                  // item.date = item.start;
+                  // item.extendedProps = {
+                  //   date: item.date
+                  // }
+                  // item.backgroundColor = event.color;
+                  // console.log(index, item);
+                  // // return item;
+                  // return self._filter(item as LiteEvent);
                 }
               );
               setData(data);
@@ -515,7 +572,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.refresh();
   }
 
-  private _filter(item: LessonEvent): boolean {
+  private _filter(item: LiteEvent): boolean {
     const filters = this.filters.value as {
       activities: Record<string, boolean>,
       group: Record<string, boolean>,
@@ -527,32 +584,32 @@ export class CalendarComponent implements OnInit, OnDestroy {
       }
     };
 
-    const { lesson, school, schoolClass, evalTools, groupId } = item || {} as LessonEvent;
+    const { schoolId, classId, teacherId, testId, workId } = item || {} as LiteEvent;
 
     /** exclusive **/
 
     if (!this.classHash) {
-      if (filters.school?.id && school?.id !== filters.school.id) {
+      if (filters.school?.id && schoolId !== filters.school.id) {
         return false;
       }
 
-      if (filters.schoolClass?.id && schoolClass?.id !== filters.schoolClass.id) {
+      if (filters.schoolClass?.id && classId !== filters.schoolClass.id) {
         return false;
       }
     }
 
-    if (filters.teacher?.id && lesson?.teacher?.id !== filters.teacher?.id) {
+    if (filters.teacher?.id && teacherId !== filters.teacher?.id) {
       return false;
     }
 
     /** inclusive **/
-    const hasActivity = !!(evalTools.proof?.id || evalTools?.work?.id);
+    const hasActivity = !!(testId || workId);
 
     if (hasActivity) {
       return true;
     }
 
-    if (filters.group[(groupId || '').toLowerCase()]) {
+    if (filters.group[(item.groupId || '').toLowerCase()]) {
       return true;
     }
 
@@ -564,16 +621,16 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   eventClick(row: EventClickArg) {
-    if (row.event.groupId === 'LESSON') {
-      this.openLesEventDialog(row);
+    if (!row.event.groupId || row.event.groupId === 'LESSON') {
+      this.openLessonEventDialog(row);
       return;
     }
     this.openEventDialog(row);
   }
 
-  openLesEventDialog(row: EventClickArg) {
-    const event = row.event.extendedProps as LessonEvent;
-    const lessonId: number = event['lesson']?.id || 0;
+  openLessonEventDialog(row: EventClickArg) {
+    const event = row.event.extendedProps as LiteEvent;
+    const lessonId: number = event.lessonId || 0;
     this.lesEventService.setParams({lessonId: lessonId});
 
     const dialogRef = this.dialog.open(LessonEventFormDialogComponent, {
@@ -584,7 +641,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
         },
         date: event.date,
         lessonId,
-        timeScheduleId: event.frequency.timeSchedule?.id || 0,
+        classHash: this.classHash,
+        timeScheduleId: event.timeScheduleId || 0,
         action: this.public ? 'view' : 'edit'
       },
       autoFocus: false,

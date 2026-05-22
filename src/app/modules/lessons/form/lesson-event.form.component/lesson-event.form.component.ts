@@ -22,6 +22,7 @@ import { provideNgxMask } from 'ngx-mask';
 import { User } from '@core/models/interface';
 import { Activity } from '@modules/config/activity/activity.model';
 import {
+  EventMerge,
   LessonEvent,
   LessonEventForm,
   LessonEventFormValue,
@@ -146,25 +147,33 @@ export class LessonEventFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  lessonEventToFormValue(event: LessonEvent): LessonEventFormValue {
-    const { title, date, frequency: { timeSchedule }, observations, evalTools, activities } = event || {};
+  lessonEventToFormValue(event: EventMerge): LessonEventFormValue {
+    const { title, date, frequency, observations, evalTools, activities } = event || {};
+    const { timeSchedule } = frequency || {};
     const masterAccess = ['admin', 'association'].includes(this.user.role || '');
     const managerAccess = ['principal', 'coordinator'].includes(this.user.role || '');
     const getTitle = () => {
+      if (!event) return '';
+      const {
+        schoolAcronym, school, classCode, schoolClass, curricularComponentId, curricularComponentName,
+        curricularComponent: cc, lesson, teacherName
+      } = event;
+      const ccId = curricularComponentId || cc?.id || 0;
+      const ccName = curricularComponentName || cc?.name || '';
       return [
-        masterAccess ? event.school.acronym : '',
-        event.schoolClass.code || '',
-        event.curricularComponent.id+' '+event.curricularComponent.name,
-        managerAccess ? event.lesson.teacher?.fullName : '',
+        masterAccess ? schoolAcronym || school?.acronym : '',
+        classCode || schoolClass?.code || '',
+        ccId+' '+ccName,
+        managerAccess ? teacherName || lesson?.teacher?.fullName : '',
       ].filter(v => !!v).join(' - ')
     }
     return {
       title: title || getTitle(),
       date: date || '',
-      timeSchedule: timeSchedule as TimeSchedule,
+      timeSchedule: (timeSchedule || new TimeSchedule()),
       observations: observations || '',
       evalTools: evalTools || new class implements EvalTools {},
-      activities
+      activities: activities || []
     }
   }
 

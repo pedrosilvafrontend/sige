@@ -76,7 +76,9 @@ export class CurricularComponentSelectComponent implements OnInit, OnDestroy, Co
 
       if (this.classYearId()) {
         this.curricularComponents = [];
-        this.getCurricularComponent(this.classYearId()).then();
+        if (!this.disabled()) {
+          this.getCurricularComponent(this.classYearId()).then();
+        }
       }
 
       this.disabled() ? this.control.disable() : this.control.enable();
@@ -113,6 +115,9 @@ export class CurricularComponentSelectComponent implements OnInit, OnDestroy, Co
   }
 
   async getCurricularComponent(classYearId: string) {
+    if (!classYearId) {
+      return;
+    }
     this.curricularComponents = await firstValueFrom(this.ccService.getAll(classYearId)) || [];
     this.completeCC();
 

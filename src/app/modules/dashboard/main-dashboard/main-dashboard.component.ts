@@ -30,6 +30,7 @@ import { LoadingBar } from '@ui/loading-bar/loading-bar';
 import { debounceTime } from 'rxjs/operators';
 import { Debounce } from '@util/debounce';
 import { DateUtil } from '@util';
+import { FnsPipe } from '@util/fns-pipe';
 
 interface DashFilters {
   date: FormControl<Date | null>;
@@ -53,7 +54,9 @@ interface DashFilters {
     ColoringByPipe,
     MatInput,
     DatePickerFormatDirective,
-    LoadingBar
+    LoadingBar,
+    DatePipe,
+    FnsPipe
   ],
   providers: [
     TranslatePipe,
@@ -87,6 +90,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     date: this.fb.control<Date | null>(null),
     colorBy: this.fb.control<ColoringBy>(null),
   });
+  loadedEvents = false;
 
   get colorByControl(): FormControl<ColoringBy> {
     return this.filters.controls.colorBy;
@@ -155,6 +159,8 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   }
 
   private async getEvents() {
+    this.loadedEvents = false;
+    this.events.length = 0;
     const { date, ...filters } = this.filters.getRawValue();
     const nextBusinessDay = DateUtil.nextBusinessDay(new Date());
     const dateFormat = 'yyyy-MM-dd';
@@ -169,6 +175,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
       ...{ date: formattedDate },
     }
     this.events = await firstValueFrom(this.lessonEventService.getAll(params).pipe(debounceTime(500),distinctUntilChanged()));
+    this.loadedEvents = true;
     this.cdr.detectChanges();
   }
 
