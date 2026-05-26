@@ -29,7 +29,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { PageHeaderComponent } from '@ui/page-header/page-header.component';
 import { MatCardModule } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { firstValueFrom, lastValueFrom, Subject, take, takeUntil } from 'rxjs';
+import { firstValueFrom, lastValueFrom, Observable, of, Subject, take, takeUntil } from 'rxjs';
 import {
   LessonEventFormDialogComponent
 } from '@modules/lessons/dialogs/lesson-event-form-dialog/lesson-event-form-dialog.component';
@@ -56,6 +56,7 @@ import { LessonsFormDialogComponent } from '@modules/lessons';
 import { Skeleton } from '@ui/skeleton/skeleton';
 import { startOfMonth } from 'date-fns';
 import { test } from 'vitest';
+import { LoadingService } from '@services/loading.service';
 
 @Component({
   selector: 'app-calendar',
@@ -112,6 +113,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   public addCusForm: UntypedFormGroup;
   dialogTitle: string;
   originalData: any[] = [];
+  lastParams: any;
   calendarData!: Calendar;
   eventCategories: string[] = [];
   schools: School[] = [];
@@ -120,7 +122,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   protected classHash = '';
   public proofStatusClass: any = Test.statusClass;
-
   calendarEvents: EventInput[] = [];
 
   /** school controls added in template **/
@@ -258,6 +259,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     const filters = {
       school: null as any,
       degreeId: 0,
+      teacherId: 0,
       activities: {
         test: false,
         work: false
@@ -265,15 +267,86 @@ export class CalendarComponent implements OnInit, OnDestroy {
     }
     return Object.keys(filters).reduce(
       (acc, k) => {
+        if (k === 'teacherId') {
+          acc.teacherId = this.filters.get('teacher')?.value?.id || 0;
+          return acc;
+        }
+
         let val = this.filters.get(k)?.value;
         if (val) {
-          // @ts-ignore
           acc[k] = val;
         }
         return acc;
       },
-      filters
+      filters as any
     )
+  }
+
+  getParams(initialParams?: any) {
+    const classHash = this.classHash;
+    const { school, degreeId, activities, teacherId } = this.getFilters();
+    const schoolId = school?.id || 0;
+    if (!schoolId && !classHash) {
+      return {} as any;
+    }
+
+    const params: any = initialParams || {}
+    if (activities.test) {
+      params.proof = true;
+    }
+    if (activities.work) {
+      params.work = true;
+    }
+    if (classHash) {
+      params.classHash = classHash;
+    }
+    if (degreeId) {
+      params.degreeId = degreeId;
+    }
+    if (schoolId) {
+      params.schoolId = schoolId;
+    }
+    if (teacherId) {
+      params.teacherId = teacherId;
+    }
+    return params;
+  }
+
+  filterOriginal() {
+    return this.originalData.filter(this._filter.bind(this));
+  }
+
+  getRequest(params: any) {
+    if (!params.start || !params.end) {
+      return;
+    }
+    const { start, end } = this.lastParams || {};
+    if (start == params.start && end == params.end && this.originalData.length) {
+      return;
+    }
+
+    this.lastParams = params;
+
+    return !params.schoolId && params.classHash ?
+      this.lessonEventService.getPublicAllLite(params) :
+      this.lessonEventService.getAllLite(params);
+  }
+
+  loadingService = inject(LoadingService);
+  isFcLoading = true;
+  timeFcLoading = 0;
+  fcLoading(isLoading: boolean) {
+    clearTimeout(this.timeFcLoading);
+    if (isLoading) {
+      this.isFcLoading = true;
+      this.loadingService.show('isFcLoading');
+    } else {
+      this.timeFcLoading = setTimeout(() => {
+        this.isFcLoading = false;
+        this.loadingService.hide('isFcLoading');
+        this.cdr.detectChanges();
+      }, 1000);
+    }
   }
 
   calendarOptions: CalendarOptions = (() => {
@@ -315,62 +388,52 @@ export class CalendarComponent implements OnInit, OnDestroy {
       },
       eventColor: '#a8a8a8',
       events: function(info, successCallback, failureCallback) {
-        const classHash = self.classHash;
-        const { school, degreeId, activities } = self.getFilters();
-        const schoolId = school?.id || 0;
-        const params: any = {
+        const params: any = self.getParams({
           start: info.startStr,
           end: info.endStr,
           prevDate: true,
-        }
-        const setData = (data: any[]) => {
-          self.originalData = Object.assign([], data || []);
+        });
+
+        const { schoolId, classHash } = params;
+
+
+        const setData = (data: any[], force?: boolean) => {
+          if (force) {
+            self.originalData = Object.assign([], data || []);
+            if (self.public && self.originalData.length) {
+              return setData(self.filterOriginal());
+            }
+          }
+          // if (!data.length && !self.originalData.length) {
+          //   return;
+          // }
           successCallback(data);
           self.isLoading.set(false);
           self.cdr.detectChanges();
-        }
-        if (activities.test) {
-          params.proof = true;
-        }
-        if (activities.work) {
-          params.work = true;
-        }
-        if (classHash) {
-          params.classHash = classHash;
-        }
-        if (degreeId) {
-          params.degreeId = degreeId;
-        }
-        if (schoolId) {
-          params.schoolId = schoolId;
         }
         if (!schoolId && !classHash) {
           return setData([] as any[]);
         }
 
-        const request$ = !params.schoolId && params.classHash ?
-          self.lessonEventService.getPublicAllLite(params) :
-          self.lessonEventService.getAllLite(params);
+        const request$ = self.getRequest(params);
+
+        if (!request$) {
+          return setData(self.filterOriginal());
+        }
 
         request$.subscribe({
-            next: (value) => {
-              // value = value.filter(v => v.date <= '2026-05-20') // TODO: remover
+            next: (value: LiteEvent[]) => {
               const data: EventInput[] = [];
-              // const data: any[] = (value || []).filter(
               (value || []).forEach(
                 (event: LiteEvent, index: number) => {
                   const item: EventInput = {};
-                  // const item: EventInput = event;
-                  // if (!item.groupId) {
-                  //   item.groupId = 'LESSON';
-                  // }
-                  // const { lesson, school, schoolClass, curricularComponent, evalTools, countActivities } = item;
                   const {
                     schoolId, lessonId, classId, timeScheduleId, date, classCode, curricularComponentName,
                     teacherName, countActivities, startTime, endTime
                   } = event;
                   let title: string[] = [];
-                  const hasFilterSchool = !!self.filters.get('school')?.value?.id;
+                  const school = self.filters.get('school')?.value as School | undefined;
+                  const hasFilterSchool = !!school?.id;
                   const hasFilterClass = !!self.filters.get('schoolClass')?.value?.id;
                   const hasFilterTeacher = !!self.filters.get('teacher')?.value?.id;
                   if (lessonId) {
@@ -383,7 +446,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
                   }
                   item.title = title.join(' - ');
 
-                  // item.start = `${event.date}`;
                   item.start = new Date(`${date}T${startTime}`);
                   item.end = new Date(`${date}T${endTime}`);
                   item.id = `${schoolId}|${lessonId}|${classId}|${timeScheduleId}|${date}`;
@@ -412,63 +474,23 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
                   data.push(item);
                   return;
-
-
-                  // const test: any = {
-                  //   id: event.testId,
-                  //   type: event.testType,
-                  //   status: event.testStatus
-                  // }
-                  // const work: any = {
-                  //   id: event.workId,
-                  //   status: event.workStatus
-                  // }
-                  // const statuses: string[] = [];
-                  // [['TEST', test], ['WORK', work]].forEach(([key, evalTool]) => {
-                  //   if (evalTool?.id) {
-                  //     if (evalTool.status === 'APPROVED') {
-                  //       const color = self.activities[key]?.color || '';
-                  //       item.className = `${item.className || ''} event-activity-${key.toLowerCase()}`;
-                  //       item.borderColor = color;
-                  //       item.backgroundColor = color;
-                  //       if (evalTool.type) {
-                  //         item.className += ` activity-type-${evalTool.type.toLowerCase()}`;
-                  //       }
-                  //     } else if (evalTool.status) {
-                  //       statuses.push(evalTool.status);
-                  //     }
-                  //   }
-                  // })
-                  // const status = ['REJECTED', 'PENDING_APPROVAL'].find(status => statuses.includes(status));
-                  // if (status) {
-                  //   item.className = `${item.className || ''} activity-status-${self.proofStatusClass[status]}`;
-                  // }
-                  // if (index > 60) return false;
-                  // item.id = `${event.date}|${event.timeScheduleId}|${event.classCode}`;
-                  // item.start = new Date(`${event.date}T${event.startTime}`);
-                  // item.end = new Date(`${event.date}T${event.endTime}`);
-                  // item.date = item.start;
-                  // item.extendedProps = {
-                  //   date: item.date
-                  // }
-                  // item.backgroundColor = event.color;
-                  // console.log(index, item);
-                  // // return item;
-                  // return self._filter(item as LiteEvent);
                 }
               );
-              setData(data);
+              setData(data, true);
             },
             error: (err: Error) => {
               failureCallback(err);
             }
           })
       },
-      // eventDidMount: function(info: any) {
-      //   if (info.event.extendedProps.activityColor) {
-      //     info.el.setAttribute('data-activity_color', info.event.extendedProps.activityColor);
-      //   }
-      // },
+      loading: (isLoading) => {
+        console.log('Loading state changed:', isLoading);
+        if (!isLoading) {
+          // isLoading passa para 'false' quando todos os eventos são renderizados
+          console.log('Todos os eventos foram renderizados');
+        }
+        self.fcLoading(isLoading);
+      },
       ...this.calendarOptionsForm.value
     }
   })();
@@ -490,37 +512,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
       autoFocus: false,
       disableClose: true
     });
-    const lessonForm$ = dialogRef.componentInstance.lessonForm$;
-
-    // TODO: verificar porque não funciona os valueChanges
-    // lessonForm$.subscribe(lessonForm => {
-    //   console.log('>>> calendar', lessonForm);
-    //   // formChanges() {
-    //   const form = lessonForm.form;
-    //   if (!lessonForm?.form) return;
-    //   const fieldChange = () => {
-    //     const { school, schoolClass, teacher, curricularComponent } = form.getRawValue();
-    //     if (school?.id && schoolClass?.code && teacher?.id && curricularComponent?.id) {
-    //       this.lessonsService.getAll({
-    //         schoolId: school.id,
-    //         classCode: schoolClass.code,
-    //         curricularComponentId: curricularComponent.id,
-    //         teacherId: teacher.id,
-    //       }).subscribe(response => {
-    //         if (!response?.[0]) return;
-    //         const lessonKey = Util.lessonUK(response[0]);
-    //         if (lessonKey === this.lastLessonKey) return;
-    //         lessonForm.patchValue(response[0] as any);
-    //         this.lastLessonKey = lessonKey;
-    //       })
-    //     }
-    //   }
-    //   const { school, schoolClass, teacher, curricularComponent } = form.controls;
-    //   school?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(fieldChange.bind(this));
-    //   schoolClass?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(fieldChange.bind(this));
-    //   teacher?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(fieldChange.bind(this));
-    //   curricularComponent?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(fieldChange.bind(this));
-    // })
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
@@ -562,19 +553,31 @@ export class CalendarComponent implements OnInit, OnDestroy {
     });
   }
 
-  lastParams = '';
+  lastFilters = '';
   applyFilter() {
-    const strParams = JSON.stringify(this.filters.value);
-    if (this.lastParams === strParams) {
+    const filters = this.filters.getRawValue();
+    const strParams = JSON.stringify(filters);
+    if (this.lastFilters === strParams) {
       return;
     }
-    this.lastParams = strParams;
+    this.lastFilters = strParams;
     this.refresh();
   }
 
-  private _filter(item: LiteEvent): boolean {
+  private _filter(val: Partial<EventInput & LiteEvent>): boolean {
+    let item: LiteEvent;
+    if (val.extendedProps) {
+      item = val.extendedProps as LiteEvent;
+    }
+    else {
+      item = val as LiteEvent;
+    }
+    if (!item) {
+      return false;
+    }
+
     const filters = this.filters.value as {
-      activities: Record<string, boolean>,
+      activities: { test: boolean, work: boolean },
       group: Record<string, boolean>,
       school: { id: number, name: string, acronym: string },
       teacher: { id: number, fullName: string, email: string },
@@ -584,7 +587,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
       }
     };
 
-    const { schoolId, classId, teacherId, testId, workId } = item || {} as LiteEvent;
+    const { schoolId, classId, teacherId, testId, workId, testStatus, workStatus } = item || {} as LiteEvent;
 
     /** exclusive **/
 
@@ -606,10 +609,19 @@ export class CalendarComponent implements OnInit, OnDestroy {
     const hasActivity = !!(testId || workId);
 
     if (hasActivity) {
-      return true;
+      if (
+        (filters.activities.test && testId)
+        || (filters.activities.work && workId)
+      ) {
+        if (this.public) {
+          return [testStatus, workStatus].includes('APPROVED');
+        }
+        return true;
+      }
+      // return true;
     }
 
-    if (filters.group[(item.groupId || '').toLowerCase()]) {
+    if ((!item.groupId && filters.group['lesson']) || filters.group[(item.groupId || '').toLowerCase()]) {
       return true;
     }
 
