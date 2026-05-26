@@ -56,6 +56,7 @@ import { LessonsFormDialogComponent } from '@modules/lessons';
 import { Skeleton } from '@ui/skeleton/skeleton';
 import { startOfMonth } from 'date-fns';
 import { test } from 'vitest';
+import { LoadingService } from '@services/loading.service';
 
 @Component({
   selector: 'app-calendar',
@@ -331,6 +332,23 @@ export class CalendarComponent implements OnInit, OnDestroy {
       this.lessonEventService.getAllLite(params);
   }
 
+  loadingService = inject(LoadingService);
+  isFcLoading = true;
+  timeFcLoading = 0;
+  fcLoading(isLoading: boolean) {
+    clearTimeout(this.timeFcLoading);
+    if (isLoading) {
+      this.isFcLoading = true;
+      this.loadingService.show('isFcLoading');
+    } else {
+      this.timeFcLoading = setTimeout(() => {
+        this.isFcLoading = false;
+        this.loadingService.hide('isFcLoading');
+        this.cdr.detectChanges();
+      }, 1000);
+    }
+  }
+
   calendarOptions: CalendarOptions = (() => {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
@@ -464,6 +482,14 @@ export class CalendarComponent implements OnInit, OnDestroy {
               failureCallback(err);
             }
           })
+      },
+      loading: (isLoading) => {
+        console.log('Loading state changed:', isLoading);
+        if (!isLoading) {
+          // isLoading passa para 'false' quando todos os eventos são renderizados
+          console.log('Todos os eventos foram renderizados');
+        }
+        self.fcLoading(isLoading);
       },
       ...this.calendarOptionsForm.value
     }

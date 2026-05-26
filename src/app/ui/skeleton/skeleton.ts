@@ -17,16 +17,23 @@ export class Skeleton {
   type = input<string>('list');
   isLoading = signal(true);
   loading = input(true);
+  delay = input(1000);
   initOn = +new Date();
+  delayTimer = 0;
 
   constructor() {
     effect(() => {
       const loading = this.loading();
-      if (!loading && (+new Date() - this.initOn < 1000)) {
-        setTimeout(() => this.isLoading.set(false), 500);
-        return;
+      // if (!loading && (+new Date() - this.initOn < 1000)) {
+      //   setTimeout(() => this.isLoading.set(false), 500);
+      //   return;
+      // }
+      if (loading) {
+        clearTimeout(this.delayTimer);
+        this.isLoading.set(true);
+      } else {
+        this.delayTimer = setTimeout(() => this.isLoading.set(false), this.delay());
       }
-      this.isLoading.set(loading);
     });
 
     // setTimeout(() => this.isLoading.set(false), 3000);

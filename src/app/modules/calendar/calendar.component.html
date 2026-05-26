@@ -118,8 +118,12 @@
               </div>
             </div>
             <div class="panel-body">
+<!--              @if (isFcLoading) {-->
+<!--                <ui-skeleton type="list" [loading]="true">-->
+<!--                </ui-skeleton>-->
+<!--              }-->
               <ui-skeleton type="list" [loading]="isLoading()">
-                <full-calendar [hidden]="isLoading()" #calendar [options]='calendarOptions'>
+                <full-calendar [hidden]="isFcLoading || isLoading()" #calendar [options]='calendarOptions'>
                 </full-calendar>
               </ui-skeleton>
             </div>
