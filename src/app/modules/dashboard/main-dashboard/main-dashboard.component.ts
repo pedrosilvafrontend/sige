@@ -164,15 +164,18 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     const { date, ...filters } = this.filters.getRawValue();
     const nextBusinessDay = DateUtil.nextBusinessDay(new Date());
     const dateFormat = 'yyyy-MM-dd';
-
     const formattedDate = date instanceof Date && isValid(date)
       ? format(date, dateFormat)
       : format(nextBusinessDay, dateFormat);
-    const params = {
+    const params: any = {
       limit: 150,
       prevDate: false,
       ...filters,
-      ...{ date: formattedDate },
+    }
+    if (this.auth()?.role === 'teacher') {
+      params.month = formattedDate;
+    } else {
+      params.date = formattedDate;
     }
     this.events = await firstValueFrom(this.lessonEventService.getAll(params).pipe(debounceTime(500),distinctUntilChanged()));
     this.loadedEvents = true;
