@@ -1,3 +1,10 @@
+## [1.1.41](https://github.com/pedrosilvafrontend/sige/compare/v1.1.40...v1.1.41) (2026-05-26)
+
+
+### Bug Fixes
+
+* lesson events date filter ([9eebac5](https://github.com/pedrosilvafrontend/sige/commit/9eebac587468b91faa64c730bf39bfd9f533c576))
+
 ## [1.1.40](https://github.com/pedrosilvafrontend/sige/compare/v1.1.39...v1.1.40) (2026-05-26)
 
 
