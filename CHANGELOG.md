@@ -1,3 +1,10 @@
+## [1.1.42](https://github.com/pedrosilvafrontend/sige/compare/v1.1.41...v1.1.42) (2026-05-27)
+
+
+### Features
+
+* proof modal for teachers ([15b7e20](https://github.com/pedrosilvafrontend/sige/commit/15b7e206ff4412be81d157d261f44d666c8ccf5d))
+
 ## [1.1.41](https://github.com/pedrosilvafrontend/sige/compare/v1.1.40...v1.1.41) (2026-05-26)
 
 
