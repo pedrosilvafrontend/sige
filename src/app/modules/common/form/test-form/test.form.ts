@@ -210,7 +210,10 @@ export class TestFormComponent implements OnInit, OnDestroy {
       }
       this.eventsLoading.set(true);
 
-      const lessons = await firstValueFrom(this.lessonEventService.getAll(params));
+      let lessons: LessonEvent[] = [];
+      if (this.isManager) {
+        lessons = await firstValueFrom(this.lessonEventService.getAll(params));
+      }
 
       const initialSelecteds: UniqueLessonEvent[] = [];
       this.events = (lessons || []).map(l => {

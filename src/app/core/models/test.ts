@@ -1,5 +1,8 @@
 import { UniqueLessonEvent } from '@models/event';
 import { CurricularComponent } from '@models/curricular-component.model';
+import { SchoolClass } from '@models/classes.model';
+import { User } from '@models/interface';
+import { TimeSchedule } from '@models/time-schedule.model';
 
 export type ProofType = 'TEST' | 'MULTICLASS_TEST' | 'TEST_OF_OVERCOMING'
 
@@ -9,6 +12,7 @@ export interface Test {
   schoolId: number;
   lessonId: number;
   timeScheduleId: number;
+  timeSchedule?: TimeSchedule;
   curricularComponentId?: number;
   curricularComponent?: CurricularComponent;
   date: string;
@@ -17,6 +21,8 @@ export interface Test {
   whereToFindIt: string;
   score: string;
   status: string;
+  schoolClass?: SchoolClass;
+  Teacher?: User;
   events: UniqueLessonEvent[];
   // tests: Proof[];
   createdAt?: string;
@@ -31,6 +37,7 @@ export class Test {
       this.lessonId = proof.lessonId || 0;
       this.schoolId = proof.schoolId || 0;
       this.timeScheduleId = proof.timeScheduleId || 0;
+      this.timeSchedule = proof.timeSchedule || undefined;
       this.curricularComponentId = proof.curricularComponentId || 0;
       this.curricularComponent = proof.curricularComponent || undefined;
       this.date = proof.date || '';
@@ -39,6 +46,8 @@ export class Test {
       this.whereToFindIt = proof.whereToFindIt || '';
       this.score = proof.score || '';
       this.status = proof.status || '';
+      this.schoolClass = proof.schoolClass;
+      this.Teacher = proof.Teacher;
       this.events = proof.events || [];
       // this.tests = proof.tests || [];
       this.createdAt = proof.createdAt || '';
