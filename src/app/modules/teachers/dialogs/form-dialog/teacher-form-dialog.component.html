@@ -1,14 +1,10 @@
 <div class="dialogContainer">
-  <div class="modalHeader">
-    <div class="avatarDetails">
-      <div class="modalTitle">
-        {{'teacher' | translate}}: {{ dialogTitle | translate }}
-      </div>
-    </div>
-    <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
-      <mat-icon>close</mat-icon>
-    </button>
+  <div class="modalTitle">
+    {{'teacher' | translate}}: {{ dialogTitle | translate }}
   </div>
+  <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
+    <mat-icon>close</mat-icon>
+  </button>
   <form class=" form-field-full" [formGroup]="form" (ngSubmit)="submit()">
     <div mat-dialog-content>
       <div class="row m-b-24">

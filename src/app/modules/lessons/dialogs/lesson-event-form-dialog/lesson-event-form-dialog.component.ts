@@ -41,7 +41,7 @@ import { ProofService } from '@core/services/proof.service';
 import { ModalComponent, ModalDialogComponent } from '@ui/modal/modal.component';
 import { LessonEventExtraService } from '@services/lesson-event-extra.service';
 import { TestFormComponent } from '@modules/common/form/test-form/test.form';
-import { JsonPipe, NgClass, NgStyle } from '@angular/common';
+import { DatePipe, JsonPipe, NgClass, NgStyle } from '@angular/common';
 import { IProofForm } from '@form/proof.form';
 import { MessageService } from '@services/message.service';
 import { TextEditor } from '@ui/text-editor/text-editor';
@@ -95,6 +95,8 @@ export interface DialogData {
     TextEditor,
     WorkFormModal,
     EventColors,
+    JsonPipe,
+    DatePipe,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit {
@@ -425,14 +427,16 @@ export class LessonEventFormDialogComponent implements OnInit {
       let event = new LessonEvent();
       if (item.lessonId) {
         const {schoolId, lessonId, classId, timeScheduleId, date} = item;
-        const params = {
+        const params: any = {
           schoolId,
           lessonId,
           classId,
           timeScheduleId,
           date,
-          classHash,
         };
+        if (classHash) {
+          params.classHash = classHash;
+        }
         const request$ = classHash
           ? this.lessonEventService.getPublicAll(params)
           : this.lessonEventService.getAll(params);
