@@ -22,7 +22,7 @@ export interface Test {
   score: string;
   status: string;
   schoolClass?: SchoolClass;
-  Teacher?: User;
+  teacher?: User;
   events: UniqueLessonEvent[];
   // tests: Proof[];
   createdAt?: string;
@@ -47,7 +47,7 @@ export class Test {
       this.score = proof.score || '';
       this.status = proof.status || '';
       this.schoolClass = proof.schoolClass;
-      this.Teacher = proof.Teacher;
+      this.teacher = proof.teacher;
       this.events = proof.events || [];
       // this.tests = proof.tests || [];
       this.createdAt = proof.createdAt || '';
