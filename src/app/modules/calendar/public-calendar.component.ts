@@ -140,7 +140,7 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
   activities: { [key: string]: ActivityConfig } = {};
 
   protected deferredPrompt = signal<any>(null);
-  protected showInstallButton = signal<boolean>(false);
+  protected showInstallButton = signal<boolean>(true);
 
   constructor() {
     this.dialogTitle = 'Add New Event';
