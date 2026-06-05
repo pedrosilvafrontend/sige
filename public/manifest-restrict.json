@@ -1,6 +1,6 @@
 {
-  "name": "SIGE - Calendário",
-  "short_name": "Calendário",
+  "name": "Calendário Escolar",
+  "short_name": "CalEscolar",
   "start_url": "/public/calendar",
   "scope": "/public/calendar",
   "display": "standalone",
