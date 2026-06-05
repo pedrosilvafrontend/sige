@@ -40,7 +40,7 @@ import { NgClass, TitleCasePipe, UpperCasePipe } from '@angular/common';
 import { Util } from '@core/util/util';
 import { TeacherSelectComponent } from '@modules/teachers/teacher-select/teacher-select.component';
 import { User } from '@core/models/interface';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ActivityConfig, Degree, Test, School, SchoolClass, LiteEvent } from '@models';
 import { AuthService, EventService, SchoolsService } from '@services';
 import { Button } from '@ui/button/button';
@@ -93,6 +93,7 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
   private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   private elementRef = inject(ElementRef);
   isLoading = signal(true);
@@ -141,6 +142,7 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
 
   protected deferredPrompt = signal<any>(null);
   protected showInstallButton = signal<boolean>(true);
+  protected utmSource: string = '';
 
   constructor() {
     this.dialogTitle = 'Add New Event';
@@ -166,6 +168,9 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
   }
 
   installApp() {
+    // if (this.utmSource === 'PWA') {
+    //   return;
+    // }
     const promptEvent = this.deferredPrompt();
     if (!promptEvent) return;
 
@@ -182,6 +187,16 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
       this.deferredPrompt.set(null);
       this.showInstallButton.set(false);
     });
+  }
+
+  changeToRestrictManifest() {
+    let link = document.querySelector('link[rel="manifest"]');
+    if (!link) {
+      link = document.createElement('link');
+      link.setAttribute('rel', 'manifest');
+      document.head.appendChild(link);
+    }
+    link.setAttribute('href', 'manifest-restrict.json');
   }
 
   isFormFilterComplete() {
@@ -263,6 +278,13 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.classHash = this.activatedRoute.snapshot.paramMap.get('classHash') || '';
+    if (this.classHash) {
+      localStorage.setItem('classHash', this.classHash);
+    }
+
+    // this.utmSource = this.activatedRoute.snapshot.queryParams['utm_source'];
+    this.changeToRestrictManifest();
+
     if (!this.public) {
       this.eventCategories = await firstValueFrom(this.eventService.getEventCategories());
       this.schools = await lastValueFrom(this.schoolsService.getAll());

@@ -6,6 +6,7 @@ import { Page404Component } from './modules/sessions/page404/page404.component';
 import { Page500Component } from './modules/sessions/page500/page500.component';
 import { Public } from './core/layout/public/public';
 import { PublicCalendarComponent } from '@modules/calendar/public-calendar.component';
+import { PublicRedirect } from './pages/public-redirect/public-redirect';
 
 export const routes: Routes = [
   {
@@ -123,6 +124,10 @@ export const routes: Routes = [
   {
     path: 'public/calendar/:classHash',
     component: PublicCalendarComponent
+  },
+  {
+    path: 'public/calendar',
+    component: PublicRedirect
   },
   {
     path: '',

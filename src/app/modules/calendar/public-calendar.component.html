@@ -1,5 +1,5 @@
 <div [ngClass]="{'public-container': public}">
-  @if (showInstallButton()) {
+  @if (deferredPrompt() && showInstallButton()) {
     <div class="align-items-center d-flex gap-2 justify-content-end w-100">
       <ui-button (onClick)="installApp()" color="primary" size="small" icon="get_app">
         Instalar App
