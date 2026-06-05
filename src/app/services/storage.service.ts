@@ -8,7 +8,12 @@ export class LocalStorageService {
   storageChange$ = new Subject<StorageEvent>();
 
   get(key: string) {
-    return JSON.parse(localStorage.getItem(key) || '{}') || {};
+    const value = localStorage.getItem(key);
+    try {
+      return JSON.parse(value || '{}') || {};
+    } catch (e) {
+      return value;
+    }
   }
 
   set(key: string, value: any): boolean {
