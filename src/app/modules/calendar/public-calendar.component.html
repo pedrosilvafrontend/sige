@@ -1,4 +1,13 @@
 <div [ngClass]="{'public-container': public}">
+  @if (showInstallButton()) {
+    <div class="align-items-center d-flex gap-2 justify-content-end w-100">
+      <ui-button (onClick)="installApp()" color="primary" size="small" icon="get_app">
+        Instalar App
+      </ui-button>
+      <ui-button (onClick)="showInstallButton.set(false)" color="neutral" size="small" fabIcon="close">
+      </ui-button>
+    </div>
+  }
   <div class="row">
     <div class="col-sm-12">
       <div class="calendar-block">

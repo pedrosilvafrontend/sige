@@ -6,6 +6,7 @@
     "start": "ng serve",
     "start:8080": "cross-env BACKEND_URL=http://localhost:8080 ng serve",
     "start:local": "cross-env BACKEND_URL=http://localhost:8081 ng serve --host 0.0.0.0 --port 4200",
+    "start:local:ssl": "cross-env BACKEND_URL=http://localhost:8081 http-server dist/sige/browser -p 4200 -S -C .cert/localhost.crt -K .cert/localhost.key --proxy http://localhost:8081?",
     "version:generate": "./scripts/generate-version-json.sh",
     "build": "npm run version:generate && ng build",
     "watch": "ng build --watch --configuration development",
@@ -67,6 +68,8 @@
     "@semantic-release/github": "^11.0.6",
     "@semantic-release/release-notes-generator": "^14.1.0",
     "cross-env": "^10.1.0",
+    "express": "^5.2.1",
+    "http-proxy-middleware": "^4.0.0",
     "jsdom": "^27.1.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"

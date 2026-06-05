@@ -4,7 +4,7 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withHashLocation } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -57,7 +57,6 @@ export const appConfig: ApplicationConfig = {
     }),
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideRouter(routes),
     provideDateFnsAdapter(),
     { provide: MAT_DATE_LOCALE, useValue: pt },
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
