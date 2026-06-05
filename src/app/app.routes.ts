@@ -5,7 +5,7 @@ import { Page403Component } from './modules/sessions/page403/page403.component';
 import { Page404Component } from './modules/sessions/page404/page404.component';
 import { Page500Component } from './modules/sessions/page500/page500.component';
 import { Public } from './core/layout/public/public';
-import { CalendarComponent } from './modules/calendar/calendar.component';
+import { PublicCalendarComponent } from '@modules/calendar/public-calendar.component';
 
 export const routes: Routes = [
   {
@@ -122,7 +122,7 @@ export const routes: Routes = [
   },
   {
     path: 'public/calendar/:classHash',
-    component: CalendarComponent
+    component: PublicCalendarComponent
   },
   {
     path: '',

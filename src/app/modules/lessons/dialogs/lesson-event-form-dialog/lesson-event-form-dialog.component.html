@@ -74,25 +74,29 @@
 
           <ng-template #proofTemplate>
             <div class="modalHeader">
-              @let classCode = testFormComponent.proof?.schoolClass?.code;
+              @let fullProof = testFormComponent.proof;
+              @let classCode = fullProof?.schoolClass?.code;
               <div mat-dialog-title>
                 <div class="modalTitle">
                   {{ (proof?.type || "Test") | translate }}
                 </div>
-                <div class="modalSubtitle">
-                  @if (classCode) {
+                @if (classCode) {
+                  <div class="modalSubtitle">
                     <span>Turma: <strong>{{ classCode }}</strong></span>
                     <span>Data: <strong>{{ proof?.date | date:'dd/MM/yyyy' }}</strong></span>
-                    <span>Hora: <strong>{{ testFormComponent.proof?.timeSchedule?.startTime }}</strong></span>
-                  }
-                </div>
+                    <span>Hora: <strong>{{ fullProof?.timeSchedule?.startTime }}</strong></span>
+                  </div>
+                }
               </div>
               <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="proofModal.close()">
                 <mat-icon>close</mat-icon>
               </button>
             </div>
             <mat-dialog-content>
-              @let disableProof = disabled || readonly || (proof.status == 'APPROVED' && auth.role == 'teacher');
+<!--              TODO: comparar o componente curricular com o do usuario logado e não teacherId-->
+<!--              @let notAllowedTeacher = !!(auth.role == 'teacher' && proof?.id && (fullProof?.teacher?.id !== auth.id || proof.status == 'APPROVED'));-->
+              @let notAllowedTeacher = false;
+              @let disableProof = disabled || readonly || notAllowedTeacher;
               @if (proof && proof.status) {
                 <div class="my-3">
                   <span class="badge" [ngClass]="'text-bg-'+activityStatusClass[proof.status]">

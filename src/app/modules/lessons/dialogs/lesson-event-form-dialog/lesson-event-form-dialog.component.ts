@@ -33,7 +33,7 @@ import {
   LessonEventFormValue,
   Test,
   School,
-  SchoolClass, UniqueLessonEvent, Work, LiteEvent, EventMerge,
+  SchoolClass, UniqueLessonEvent, Work, EventMerge,
 } from '@models';
 import { AuthService } from '@services';
 import { Button } from '@ui/button/button';
@@ -41,7 +41,7 @@ import { ProofService } from '@core/services/proof.service';
 import { ModalComponent, ModalDialogComponent } from '@ui/modal/modal.component';
 import { LessonEventExtraService } from '@services/lesson-event-extra.service';
 import { TestFormComponent } from '@modules/common/form/test-form/test.form';
-import { DatePipe, JsonPipe, NgClass, NgStyle } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
 import { IProofForm } from '@form/proof.form';
 import { MessageService } from '@services/message.service';
 import { TextEditor } from '@ui/text-editor/text-editor';
@@ -51,7 +51,6 @@ import { WorkFormModal } from '@modules/works/modals/work-form-modal/work-form-m
 import { firstValueFrom, take } from 'rxjs';
 import { EventColors } from '@modules/modals/event-colors/event-colors';
 import { ColorBy, newColorBy } from '@models/colors-by';
-import { GeneralEventModal } from '@modules/modals/general-event-modal/general-event-modal';
 import { ActivatedRoute } from '@angular/router';
 import { LessonEventService } from '@services/lesson-event.service';
 
@@ -95,7 +94,6 @@ export interface DialogData {
     TextEditor,
     WorkFormModal,
     EventColors,
-    JsonPipe,
     DatePipe,
   ],
 })
@@ -469,4 +467,6 @@ export class LessonEventFormDialogComponent implements OnInit {
     }
 
   }
+
+  protected readonly ProofService = ProofService;
 }
