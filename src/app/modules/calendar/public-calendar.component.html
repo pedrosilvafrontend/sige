@@ -1,0 +1,73 @@
+<div [ngClass]="{'public-container': public}">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="calendar-block">
+        <div class="row">
+          <div class="col-md-12 col-lg-12">
+            <div class="filter-container mt-2">
+              <form [formGroup]="filters" (ngSubmit)="applyFilter()" class="filter-form" novalidate>
+                <div class="row">
+                  <div class="col">
+                    <app-teacher-select
+                      formControlName="teacher"
+                      [schoolId]="filters.get('school')?.value?.id"
+                      [classHash]="classHash"
+                    >
+                    </app-teacher-select>
+                  </div>
+                </div>
+                <div class="d-flex gap-3 align-items-center">
+                  <ul class="filterCheck d-flex gap-2">
+                    @for (entry of filters.controls['group'] | formGroupEntries; track entry[0]) {
+                      @let key = entry[0];
+                      @let control = entry[1];
+                      <li>
+                        <mat-checkbox color="primary" [formControl]="control">
+                          {{key | uppercase | translate | titlecase}}
+                        </mat-checkbox>
+                      </li>
+                    }
+
+                    @for (entry of filters.controls['activities'] | formGroupEntries; track entry[0]) {
+                      @let key = entry[0];
+                      @let control = entry[1];
+                      <li>
+                        <mat-checkbox color="primary" [formControl]="control">
+                          {{key | uppercase | translate | titlecase}}
+                        </mat-checkbox>
+                      </li>
+                    }
+                  </ul>
+
+                  <ui-button type="submit" color="neutral" size="small">Buscar</ui-button>
+                </div>
+              </form>
+
+            </div>
+<!--                <pre>{{ filters.getRawValue() | json }}</pre>-->
+          </div>
+          <div class="col-md-12 col-lg-12">
+            <div class="panel-heading">
+              <div [formGroup]="calendarOptionsForm" class="d-flex align-items-center justify-content-end p-b-16 p-r-12">
+                <mat-checkbox color="primary" formControlName="weekends"
+                              (change)="setCalendarOptions()">
+                  {{ 'Display weekends' | translate }}
+                </mat-checkbox>
+              </div>
+            </div>
+            <div class="panel-body">
+<!--              @if (isFcLoading) {-->
+<!--                <ui-skeleton type="list" [loading]="true">-->
+<!--                </ui-skeleton>-->
+<!--              }-->
+              <ui-skeleton type="list" [loading]="isLoading()">
+                <full-calendar [hidden]="isFcLoading || isLoading()" #calendar [options]='calendarOptions'>
+                </full-calendar>
+              </ui-skeleton>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

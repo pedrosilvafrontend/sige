@@ -26,10 +26,9 @@ import { MatSnackBar, } from '@angular/material/snack-bar';
 import { MatCheckboxModule, } from '@angular/material/checkbox';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import { MatButtonModule } from '@angular/material/button';
-import { PageHeaderComponent } from '@ui/page-header/page-header.component';
 import { MatCardModule } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { firstValueFrom, lastValueFrom, Observable, of, Subject, take, takeUntil } from 'rxjs';
+import { firstValueFrom, lastValueFrom, Observable, of, Subject, switchMap, take, takeUntil } from 'rxjs';
 import {
   LessonEventFormDialogComponent
 } from '@modules/lessons/dialogs/lesson-event-form-dialog/lesson-event-form-dialog.component';
@@ -39,14 +38,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormGroupEntriesPipe } from '@core/util/form-group-entries.pipe';
 import { NgClass, TitleCasePipe, UpperCasePipe } from '@angular/common';
 import { Util } from '@core/util/util';
-import { SchoolSelectComponent } from '@modules/schools/school-select/school-select.component';
 import { TeacherSelectComponent } from '@modules/teachers/teacher-select/teacher-select.component';
-import { UserType } from '@modules/users/users.model';
 import { User } from '@core/models/interface';
-import { ClassSelectComponent } from '@modules/classes/class-select/class-select.component';
 import { ActivatedRoute } from '@angular/router';
-import { ActivityConfig, Degree, LessonEvent, Test, School, SchoolClass, LiteEvent } from '@models';
-import { AuthService, EventService, LessonsService, SchoolsService } from '@services';
+import { ActivityConfig, Degree, Test, School, SchoolClass, LiteEvent } from '@models';
+import { AuthService, EventService, SchoolsService } from '@services';
 import { Button } from '@ui/button/button';
 import { debounceTime, map } from 'rxjs/operators';
 import { DegreesService } from '@services/degrees.service';
@@ -55,17 +51,16 @@ import { ActivityService } from '@modules/config/activity/activity.service';
 import { LessonsFormDialogComponent } from '@modules/lessons';
 import { Skeleton } from '@ui/skeleton/skeleton';
 import { LoadingService } from '@services/loading.service';
-import { startOfYear } from 'date-fns';
+import { endOfYear, format, startOfYear } from 'date-fns';
 
 @Component({
   selector: 'app-calendar',
-  templateUrl: './calendar.component.html',
+  templateUrl: './public-calendar.component.html',
   styleUrls: ['./calendar.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    PageHeaderComponent,
     MatCardModule,
     MatButtonModule,
     MatCheckboxModule,
@@ -77,17 +72,15 @@ import { startOfYear } from 'date-fns';
     FormGroupEntriesPipe,
     TranslateModule,
     TitleCasePipe,
-    SchoolSelectComponent,
     TeacherSelectComponent,
     UpperCasePipe,
-    ClassSelectComponent,
-    Button,
     NgClass,
     Skeleton,
     Skeleton,
+    Button,
   ]
 })
-export class CalendarComponent implements OnInit, OnDestroy {
+export class PublicCalendarComponent implements OnInit, OnDestroy {
   private fb = inject(UntypedFormBuilder);
   private dialog = inject(MatDialog);
   private eventService = inject(EventService);
@@ -102,8 +95,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private elementRef = inject(ElementRef);
-  private lessonsService = inject(LessonsService);
-  private lastLessonKey = '';
   isLoading = signal(true);
   auth = this.authService.user$.value;
 
@@ -140,9 +131,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
   calendarOptionsForm = this.fb.group({
     weekends: [false]
   })
-  authRole: UserType = '';
   authUser: User = {};
-  public = false;
+  public = true;
   dataFilters: any = {
     school: {},
     schoolClass: {}
@@ -154,25 +144,12 @@ export class CalendarComponent implements OnInit, OnDestroy {
     const blankObject = {} as Calendar;
     this.calendar = new Calendar(blankObject);
     this.addCusForm = this.createCalendarForm(this.calendar);
-    this.authRole = this.authService.user$.value.role || '';
     this.authUser = this.authService.user$.value;
-    if (this.activatedRoute.snapshot.url[0]?.path === 'public') {
-      this.public = true;
-    }
-  }
-
-  openPublicLink() {
-    const hash = this.filters.controls['schoolClass']?.value?.hash;
-    const url = `/public/calendar/${hash}`;
-    const link = document.createElement('a');
-    link.href = url;
-    link.target = '_blank';
-    link.click();
   }
 
   isFormFilterComplete() {
     const { group, activities, school, schoolClass: classControl, teacher } = this.filters.controls;
-    const incomplete = (!group || !activities || !school || !classControl || (this.authRole !== 'teacher' && !teacher));
+    const incomplete = (!group || !activities || !school || !classControl || !teacher);
     return !incomplete;
   }
 
@@ -208,6 +185,38 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   }
 
+  toggleView() {
+    const api = this.calendarComponent?.getApi();
+    if (!api) return;
+    const viewType = api.view.type === 'listMonth' ? 'listYear' : 'listMonth';
+    api.changeView(viewType);
+    this.cdr.detectChanges();
+  }
+
+  setCalendarView(viewType: 'multiMonthYear' | 'listMonth' | 'listYear') {
+    // dayGridMonth: Visão mensal tradicional em grade.
+    // dayGridWeek: Visão semanal em grade (sem divisão por horários).
+    // dayGridDay: Visão diária em grade (mostra apenas o dia atual).
+    // dayGrid: Visão customizada em grade (permite definir um número específico de dias).
+    // timeGridWeek: Visão semanal com divisões horizontais de horários (agenda).
+    // timeGridDay: Visão diária com divisões horizontais de horários.Visões de Lista (List Views)
+    // listYear: Lista consecutiva de eventos programados para o ano inteiro.
+    // listMonth: Lista de eventos programados para o mês atual.
+    // listWeek: Lista de eventos programados para a semana atual.
+    // listDay: Lista de eventos programados apenas para o dia atual.Visões Multimês (Multi-Month Views)
+    // multiMonthYear: Visão em grade que exibe os 12 meses do ano na mesma tela.
+    const api = this.calendarComponent?.getApi();
+    if (!api) return;
+    const now = new Date();
+    if (viewType === 'listYear' || viewType === 'multiMonthYear') {
+      api.setOption('validRange', {start: startOfYear(now)});
+    } else {
+      api.setOption('validRange', {start: now});
+    }
+    api.changeView(viewType);
+    this.cdr.detectChanges();
+  }
+
   setCalendarOptions() {
     const api = this.calendarComponent?.getApi();
     if (!api) return;
@@ -230,13 +239,13 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
     this.filterChanges();
 
-    this.filters.valueChanges.pipe(
-      takeUntil(this.destroy$),
-      debounceTime(700)
-    ).subscribe((data: any) => {
-      this.applyFilter();
-    })
-    this.applyFilter();
+    // this.filters.valueChanges.pipe(
+    //   takeUntil(this.destroy$),
+    //   debounceTime(700)
+    // ).subscribe((data: any) => {
+    //   this.applyFilter();
+    // })
+    // this.applyFilter();
     this.activities = await firstValueFrom(
       this.activityService.getAll({classHash: this.classHash}).pipe(
         map(activities => {
@@ -259,7 +268,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
       school: null as any,
       degreeId: 0,
       teacherId: 0,
-      classId: 0,
       activities: {
         test: false,
         work: false
@@ -269,10 +277,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
       (acc, k) => {
         if (k === 'teacherId') {
           acc.teacherId = this.filters.get('teacher')?.value?.id || 0;
-          return acc;
-        }
-        if (k === 'classId') {
-          acc.classId = this.filters.get('schoolClass')?.value?.id || 0;
           return acc;
         }
 
@@ -288,7 +292,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   getParams(initialParams?: any) {
     const classHash = this.classHash;
-    const { school, degreeId, activities, teacherId, classId } = this.getFilters();
+    const { school, degreeId, activities, teacherId } = this.getFilters();
     const schoolId = school?.id || 0;
     if (!schoolId && !classHash) {
       return {} as any;
@@ -303,9 +307,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
     }
     if (classHash) {
       params.classHash = classHash;
-    }
-    if (classId) {
-      params.classId = classId;
     }
     if (degreeId) {
       params.degreeId = degreeId;
@@ -331,23 +332,16 @@ export class CalendarComponent implements OnInit, OnDestroy {
     // if (start == params.start && end == params.end && this.originalData.length) {
     //   return;
     // }
-    const paramsEntries = Object.entries(params || {});
-    const lastParamsEntries = Object.entries(this.lastParams || {});
-    let isEqual = false;
-    if (paramsEntries.length === lastParamsEntries.length) {
-      isEqual = paramsEntries.every(([k, v]) => {
-        return this.lastParams[k] === v;
-      })
-    }
-    if (isEqual && this.originalData.length) {
-      return;
-    }
+    //
+    // this.lastParams = params;
 
-    this.lastParams = params;
+    // resultados$ = this.requisicaoSubject.pipe(
+    //   switchMap(({ termo, buscarFn }) => buscarFn(termo))
+    // );
 
     return !params.schoolId && params.classHash ?
-      this.lessonEventService.getPublicAllLite(params) :
-      this.lessonEventService.getAllLite(params);
+      this.lessonEventService.getPublicAllLite(params).pipe(take(1)) :
+      this.lessonEventService.getAllLite(params).pipe(take(1));
   }
 
   loadingService = inject(LoadingService);
@@ -406,13 +400,26 @@ export class CalendarComponent implements OnInit, OnDestroy {
       },
       eventColor: '#a8a8a8',
       events: function(info, successCallback, failureCallback) {
+        // let viewType: any = 'listMonth';
         const params: any = self.getParams({
           start: info.startStr,
           end: info.endStr,
           prevDate: true,
         });
 
-        const { schoolId, classHash, classId } = params;
+        const { schoolId, classHash } = params;
+        // const { schoolId, classHash, proof, work } = params;
+        // const api = self.calendarComponent?.getApi();
+        //
+        // if ((proof || work) && api?.view.type !== 'listYear') {
+        //   viewType = 'listYear';
+        //   self.setCalendarView(viewType);
+        //   return;
+        // } else if (api?.view.type === 'listYear') {
+        //   viewType = 'listMonth';
+        //   self.setCalendarView(viewType);
+        //   return;
+        // }
 
 
         const setData = (data: any[], force?: boolean) => {
@@ -429,7 +436,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
           self.isLoading.set(false);
           self.cdr.detectChanges();
         }
-        if (!schoolId && !classHash && !classId) {
+        if (!schoolId && !classHash) {
           return setData([] as any[]);
         }
 
@@ -440,66 +447,66 @@ export class CalendarComponent implements OnInit, OnDestroy {
         }
 
         request$.subscribe({
-            next: (value: LiteEvent[]) => {
-              const data: EventInput[] = [];
-              (value || []).forEach(
-                (event: LiteEvent, index: number) => {
-                  const item: EventInput = {};
-                  const {
-                    schoolId, lessonId, classId, timeScheduleId, date, classCode, curricularComponentName,
-                    teacherName, countActivities, startTime, endTime
-                  } = event;
-                  let title: string[] = [];
-                  const school = self.filters.get('school')?.value as School | undefined;
-                  const hasFilterSchool = !!school?.id;
-                  const hasFilterClass = !!self.filters.get('schoolClass')?.value?.id;
-                  const hasFilterTeacher = !!self.filters.get('teacher')?.value?.id;
-                  if (lessonId) {
-                    const num = ['⓪', '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'];
-                    if (school?.acronym && !hasFilterSchool && self.schools.length > 1) title.push(school.acronym);
-                    if (classCode && !hasFilterClass) title.push(classCode);
-                    if (curricularComponentName) title.push(curricularComponentName);
-                    if (teacherName && !hasFilterTeacher) title.push(teacherName);
-                    if (countActivities?.total) title.push(num[countActivities.total] || `(${countActivities.total})`);
-                  }
-                  item.title = title.join(' - ');
-
-                  item.start = new Date(`${date}T${startTime}`);
-                  item.end = new Date(`${date}T${endTime}`);
-                  item.id = `${schoolId}|${lessonId}|${classId}|${timeScheduleId}|${date}`;
-
-                  const statuses = [event.testStatus, event.workStatus];
-                  const status = ['REJECTED', 'PENDING_APPROVAL', 'APPROVED'].find(status => statuses.includes(status));
-
-                  if (status === 'APPROVED') {
-                    if (event.testId) {
-                      item.className = `${item.className || ''} event-activity-test`;
-                    }
-                    if (event.testType) {
-                      item.className = `${item.className || ''} activity-type-${event.testType.toLowerCase()}`;
-                    }
-                    if (event.workId) {
-                      item.className = `${item.className || ''} event-activity-work`;
-                    }
-                  }
-                  else if (status) {
-                    item.className = `${item.className || ''} activity-status-${self.proofStatusClass[status]}`;
-                  }
-
-                  item.extendedProps = {
-                    ...event
-                  }
-
-                  data.push(item);
-                  return;
+          next: (value: LiteEvent[]) => {
+            const data: EventInput[] = [];
+            (value || []).forEach(
+              (event: LiteEvent, index: number) => {
+                const item: EventInput = {};
+                const {
+                  schoolId, lessonId, classId, timeScheduleId, date, classCode, curricularComponentName,
+                  teacherName, countActivities, startTime, endTime
+                } = event;
+                let title: string[] = [];
+                const school = self.filters.get('school')?.value as School | undefined;
+                const hasFilterSchool = !!school?.id;
+                const hasFilterClass = !!self.filters.get('schoolClass')?.value?.id;
+                const hasFilterTeacher = !!self.filters.get('teacher')?.value?.id;
+                if (lessonId) {
+                  const num = ['⓪', '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'];
+                  if (school?.acronym && !hasFilterSchool && self.schools.length > 1) title.push(school.acronym);
+                  if (classCode && !hasFilterClass) title.push(classCode);
+                  if (curricularComponentName) title.push(curricularComponentName);
+                  if (teacherName && !hasFilterTeacher) title.push(teacherName);
+                  if (countActivities?.total) title.push(num[countActivities.total] || `(${countActivities.total})`);
                 }
-              );
-              setData(data, true);
-            },
-            error: (err: Error) => {
-              failureCallback(err);
-            }
-          })
+                item.title = title.join(' - ');
+
+                item.start = new Date(`${date}T${startTime}`);
+                item.end = new Date(`${date}T${endTime}`);
+                item.id = `${schoolId}|${lessonId}|${classId}|${timeScheduleId}|${date}`;
+
+                const statuses = [event.testStatus, event.workStatus];
+                const status = ['REJECTED', 'PENDING_APPROVAL', 'APPROVED'].find(status => statuses.includes(status));
+
+                if (status === 'APPROVED') {
+                  if (event.testId) {
+                    item.className = `${item.className || ''} event-activity-test`;
+                  }
+                  if (event.testType) {
+                    item.className = `${item.className || ''} activity-type-${event.testType.toLowerCase()}`;
+                  }
+                  if (event.workId) {
+                    item.className = `${item.className || ''} event-activity-work`;
+                  }
+                }
+                else if (status) {
+                  item.className = `${item.className || ''} activity-status-${self.proofStatusClass[status]}`;
+                }
+
+                item.extendedProps = {
+                  ...event
+                }
+
+                data.push(item);
+                return;
+              }
+            );
+            setData(data, true);
+          },
+          error: (err: Error) => {
+            failureCallback(err);
+          }
+        })
       },
       loading: (isLoading) => {
         console.log('Loading state changed:', isLoading);
@@ -571,43 +578,19 @@ export class CalendarComponent implements OnInit, OnDestroy {
     });
   }
 
-  lastFilters = '';
   applyFilter() {
     const filters = this.filters.getRawValue();
-    const strParams = JSON.stringify(filters);
-    if (this.lastFilters === strParams) {
-      return;
-    }
-    this.lastFilters = strParams;
-
-
     const { test, work } = filters?.activities || {};
     const currentView = this.calendarComponent?.getApi()?.view.type;
 
-    if (filters?.schoolClass?.id) {
-      if ((test || work) && currentView === 'listMonth') {
-        this.setCalendarView('listYear');
-        return;
-      } else if (test === false && work === false && currentView === 'listYear') {
-        this.setCalendarView('listMonth');
-      }
-    } else if (currentView === 'listYear') {
+    if ((test || work) && currentView === 'listMonth') {
+      this.setCalendarView('listYear');
+      return;
+    } else if (test === false && work === false && currentView === 'listYear') {
       this.setCalendarView('listMonth');
     }
-    this.refresh();
-  }
 
-  setCalendarView(viewType: 'listMonth' | 'listYear') {
-    const api = this.calendarComponent?.getApi();
-    if (!api) return;
-    const now = new Date();
-    if (viewType === 'listYear') {
-      api.setOption('validRange', {start: startOfYear(now)});
-    } else {
-      api.setOption('validRange', {start: now});
-    }
-    api.changeView(viewType);
-    this.cdr.detectChanges();
+    this.refresh();
   }
 
   private _filter(val: Partial<EventInput & LiteEvent>): boolean {

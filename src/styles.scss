@@ -838,3 +838,10 @@ button.mdc-button[data-badgeColor="info"]::after {
     display: none;
   }
 }
+
+.mdc-checkbox {
+  & + .mdc-label {
+    margin-left: 0;
+    padding-left: 0;
+  }
+}
