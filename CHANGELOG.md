@@ -1,3 +1,10 @@
+## [1.1.45](https://github.com/pedrosilvafrontend/sige/compare/v1.1.44...v1.1.45) (2026-06-05)
+
+
+### Features
+
+* PWA ([fe40942](https://github.com/pedrosilvafrontend/sige/commit/fe40942209c1e04193f8f303bc9c344a43882767))
+
 ## [1.1.44](https://github.com/pedrosilvafrontend/sige/compare/v1.1.43...v1.1.44) (2026-06-05)
 
 
