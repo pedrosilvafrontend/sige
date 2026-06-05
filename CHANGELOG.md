@@ -1,3 +1,11 @@
+## [1.1.43](https://github.com/pedrosilvafrontend/sige/compare/v1.1.42...v1.1.43) (2026-06-05)
+
+
+### Features
+
+* calendar prev tests and works ([568936f](https://github.com/pedrosilvafrontend/sige/commit/568936f9d899517377ba7b8ba654621bdf3348a0))
+* proof modal for teachers ([e0fbfab](https://github.com/pedrosilvafrontend/sige/commit/e0fbfab50f546c4d29e1403eab3af6d16f4b0e10))
+
 ## [1.1.42](https://github.com/pedrosilvafrontend/sige/compare/v1.1.41...v1.1.42) (2026-05-27)
 
 
