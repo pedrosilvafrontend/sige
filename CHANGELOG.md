@@ -1,3 +1,11 @@
+## [1.1.44](https://github.com/pedrosilvafrontend/sige/compare/v1.1.43...v1.1.44) (2026-06-05)
+
+
+### Features
+
+* calendar prev tests and works ([ec15aba](https://github.com/pedrosilvafrontend/sige/commit/ec15aba8f6d5cfbf2af6a6d558945d6d164dc7d2))
+* PWA ([fb9d8f7](https://github.com/pedrosilvafrontend/sige/commit/fb9d8f706b39c0dbce76b39720c16f0b8bb587b7))
+
 ## [1.1.43](https://github.com/pedrosilvafrontend/sige/compare/v1.1.42...v1.1.43) (2026-06-05)
 
 
