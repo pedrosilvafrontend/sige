@@ -1,0 +1,21 @@
+{
+  "name": "SIGE - Sistema de Gestão Escolar",
+  "short_name": "SIGE",
+  "theme_color": "#1976d2",
+  "background_color": "#fafafa",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "sige.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

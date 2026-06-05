@@ -139,12 +139,49 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
   }
   activities: { [key: string]: ActivityConfig } = {};
 
+  protected deferredPrompt = signal<any>(null);
+  protected showInstallButton = signal<boolean>(false);
+
   constructor() {
     this.dialogTitle = 'Add New Event';
     const blankObject = {} as Calendar;
     this.calendar = new Calendar(blankObject);
     this.addCusForm = this.createCalendarForm(this.calendar);
     this.authUser = this.authService.user$.value;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Previne que o Chrome 67 e versões anteriores mostrem o prompt automaticamente
+      e.preventDefault();
+      // Guarda o evento para que possa ser disparado mais tarde.
+      this.deferredPrompt.set(e);
+      // Atualiza a UI para mostrar o botão de instalação
+      this.showInstallButton.set(true);
+    });
+
+    window.addEventListener('appinstalled', (evt) => {
+      console.log('App instalado com sucesso!');
+      this.showInstallButton.set(false);
+      this.deferredPrompt.set(null);
+    });
+  }
+
+  installApp() {
+    const promptEvent = this.deferredPrompt();
+    if (!promptEvent) return;
+
+    // Mostra o prompt de instalação
+    promptEvent.prompt();
+
+    // Aguarda a resposta do usuário
+    promptEvent.userChoice.then((choiceResult: any) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('Usuário aceitou a instalação');
+      } else {
+        console.log('Usuário recusou a instalação');
+      }
+      this.deferredPrompt.set(null);
+      this.showInstallButton.set(false);
+    });
   }
 
   isFormFilterComplete() {
