@@ -89,13 +89,16 @@ export class WorkFormComponent implements OnInit {
 
   async ngOnInit() {
     this.form$.emit(this.form);
-    this.criteria = await firstValueFrom(this.evaluationCriterionService.getAll({schoolId: this.schoolId()})) || [];
-    this.defaultCriteria = (this.criteria || '').map((c) => {
-      const items = (c.items || []).map((i) => {
-        return `${i.score} - ${i.description}`;
-      }).join('\n');
-      return `${c.code} - ${c.description}\n${items}`;
-    }).join('\n\n');
+
+    if (!this.data()?.evaluationCriteria && !this.disabled()) {
+      this.criteria = await firstValueFrom(this.evaluationCriterionService.getAll({schoolId: this.schoolId()})) || [];
+      this.defaultCriteria = (this.criteria || '').map((c) => {
+        const items = (c.items || []).map((i) => {
+          return `${i.score} - ${i.description}`;
+        }).join('\n');
+        return `${c.code} - ${c.description}\n${items}`;
+      }).join('\n\n');
+    }
 
 
     if (this.data()) {
