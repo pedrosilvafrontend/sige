@@ -1,3 +1,10 @@
+## [1.1.51](https://github.com/pedrosilvafrontend/sige/compare/v1.1.50...v1.1.51) (2026-06-08)
+
+
+### Features
+
+* calendar mobile adjusts ([baf7fc9](https://github.com/pedrosilvafrontend/sige/commit/baf7fc95777aa8135bf53c48d02d553ccae30094))
+
 ## [1.1.50](https://github.com/pedrosilvafrontend/sige/compare/v1.1.49...v1.1.50) (2026-06-08)
 
 
