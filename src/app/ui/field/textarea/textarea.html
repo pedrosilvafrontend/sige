@@ -4,6 +4,10 @@
   }
   <textarea
     matInput
+    cdkTextareaAutosize
+    #autosize="cdkTextareaAutosize"
+    cdkAutosizeMinRows="3"
+    cdkAutosizeMaxRows="200"
     [attr.rows]="rows()"
     [attr.cols]="cols()"
     [placeholder]="placeholder()"

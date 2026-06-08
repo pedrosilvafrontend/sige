@@ -2,13 +2,15 @@ import { ChangeDetectionStrategy, Component, forwardRef, inject, input, ViewEnca
 import { Field } from '../field';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 @Component({
   selector: 'ui-textarea',
   imports: [
     MatFormField,
     MatInput,
-    MatLabel
+    MatLabel,
+    TextFieldModule
   ],
   templateUrl: './textarea.html',
   styleUrl: './textarea.scss',
