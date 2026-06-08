@@ -1,5 +1,6 @@
 .calendar-block {
   .filter-container {
+    margin-bottom: 3rem;
     .filter-form {
       .col {
         min-width: 16em;
@@ -32,9 +33,110 @@
     display: inline;
   }
 
-.fc table.fc-scrollgrid-sync-table {
+  .fc table.fc-scrollgrid-sync-table {
     .fc-daygrid-day-frame {
       min-height: 200px;
     }
   }
+
+  tr.fc-event {
+    width: 100%;
+    display: inline-flex;
+    flex-flow: wrap;
+    margin: 5px 0;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    padding: 1.2em 0 0.5em 0;
+    position: relative;
+    td.fc-list-event-time {
+      width: fit-content;
+    }
+    td.fc-list-event-graphic {
+      width: fit-content;
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 0;
+      &::before {
+        bottom: 0.7rem;
+      }
+      &::after {
+        //border-radius: 0.3rem;
+        //padding: 0 0.3rem;
+        border-radius: 4px 0 4px 0;
+      }
+    }
+    td.fc-list-event-title {
+      width: 100%;
+    }
+  }
+  .fc-theme-standard .fc-list {
+    border: none;
+    td, th {
+      border: none;
+    }
+  }
+  .fc-dayGridMonth-button,
+  .fc-timeGridWeek-button,
+  .fc-timeGridDay-button,
+  .fc-listMonth-button {
+    display: none;
+  }
+  .fc .fc-list-day-cushion, .fc .fc-list-table td {
+    padding: 0.5em 0.9em;
+  }
+  tr.fc-list-day + tr.fc-event {
+    margin-top: 1.1em;
+  }
+  tr.fc-event:has(+ tr.fc-list-day) {
+    margin-bottom: 1em;
+  }
+
+  /* Medium devices (tablets, 768px and up) */
+  @media (min-width: 768px) {
+    font-size: 1rem;
+    tr.fc-event {
+      display: table-row;
+      margin: 0;
+      border: none;
+      padding: 0;
+      position: unset;
+      td.fc-list-event-time {
+        width: 1px;
+      }
+      td.fc-list-event-graphic {
+        width: 1px;
+        position: relative;
+        padding: 0.5em 0;
+        &::before {
+          bottom: 1.1rem;
+        }
+        &::after {
+          border-radius: 0.3rem;
+          padding: 0 0.3rem;
+        }
+      }
+    }
+    tr.fc-list-day + tr.fc-event td {
+      padding-top: 1.1em;
+      margin: 0;
+    }
+    tr.fc-event:has(+ tr.fc-list-day) td {
+      padding-bottom: 1em;
+      margin: 0;
+    }
+    .fc-theme-standard .fc-list {
+      border: 1px solid var(--fc-border-color);
+    }
+    .fc-dayGridMonth-button,
+    .fc-timeGridWeek-button,
+    .fc-timeGridDay-button,
+    .fc-listMonth-button {
+      display: inline-block;
+    }
+    .fc-theme-standard td, .fc-theme-standard th {
+      border: 1px solid var(--fc-border-color);
+    }
+  }
+
 }

@@ -52,6 +52,7 @@ import { LessonsFormDialogComponent } from '@modules/lessons';
 import { Skeleton } from '@ui/skeleton/skeleton';
 import { LoadingService } from '@services/loading.service';
 import { endOfYear, format, startOfYear } from 'date-fns';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-calendar',
@@ -78,6 +79,7 @@ import { endOfYear, format, startOfYear } from 'date-fns';
     Skeleton,
     Skeleton,
     Button,
+    MatMenuModule,
   ]
 })
 export class PublicCalendarComponent implements OnInit, OnDestroy {
@@ -130,7 +132,7 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
     teacher: this.fb.control(null)
   });
   calendarOptionsForm = this.fb.group({
-    weekends: [false]
+    weekends: [true]
   })
   authUser: User = {};
   public = true;
@@ -294,7 +296,6 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
       }
       this.filters.get('schoolClass')?.setValue(this.classHash);
     }
-    this.cdr.detectChanges();
 
     this.filterChanges();
 
@@ -316,6 +317,7 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
         })
       )
     );
+    this.cdr.detectChanges();
   }
 
   refresh() {
@@ -420,6 +422,33 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
     }
   }
 
+  setToday() {
+    const api = this.calendarComponent?.getApi();
+    if (!api) return;
+    api.today();
+    this.scrollToToday();
+  }
+
+  scrollToToday(): void {
+    // Obtém a data de hoje no fuso horário local
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0'); // Meses começam em 0
+    const dia = String(hoje.getDate()).padStart(2, '0');
+
+    // Monta a string no formato "2026-06-08"
+    const dataFormatada = `${ano}-${mes}-${dia}`;
+
+    // Busca e rola até o elemento
+    const element = document.querySelector(`[data-date="${dataFormatada}"]`);
+
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      console.warn(`Elemento com a data de hoje (${dataFormatada}) não foi encontrado.`);
+    }
+  }
+
   calendarOptions: CalendarOptions = (() => {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
@@ -433,7 +462,7 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
       },
       plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin],
       headerToolbar: {
-        left: 'prev,next today',
+        left: 'prev,next',
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth',
       },
@@ -445,7 +474,7 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
         listMonth: 'Lista',
       },
       initialView: 'listMonth',
-      weekends: false,
+      weekends: true,
       editable: true,
       selectable: true,
       selectMirror: true,
@@ -493,6 +522,7 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
           // }
           successCallback(data);
           self.isLoading.set(false);
+          self.cdr.markForCheck();
           self.cdr.detectChanges();
         }
         if (!schoolId && !classHash) {

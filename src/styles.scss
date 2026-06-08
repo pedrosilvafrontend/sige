@@ -11,6 +11,7 @@
 @use 'variables' as *;
 
 html {
+  font-size: 18px;
   height: 100%;
   @include mat.theme((
     color: (
@@ -20,6 +21,15 @@ html {
     typography: Roboto,
     density: 0,
   ));
+  body {
+    font-size: 1em;
+  }
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
 }
 
 body {
@@ -694,7 +704,7 @@ button.mdc-button[data-badgeColor="info"]::after {
         content: '';
         position: absolute;
         z-index: 2;
-        top: 0.1rem;
+        bottom: 1.1rem;
         right: -0.2rem;
         min-width: 1rem;
         height: 1rem;
@@ -844,7 +854,22 @@ button.mdc-button[data-badgeColor="info"]::after {
     margin-left: 0;
     padding-left: 0;
   }
+  .mdc-label {
+    font-size: 1rem;
+  }
 }
+.mat-mdc-checkbox {
+  border: 1px solid #ddd;
+  border-radius: 0.35em;
+  padding-right: 0.55em;
+}
+
+@media (min-width: 768px) {
+  .mat-mdc-checkbox {
+
+  }
+}
+
 .fc-event-past {
   opacity: 0.5;
 }

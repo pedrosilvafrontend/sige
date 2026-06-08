@@ -62,6 +62,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
   schoolId = input.required<number>();
   timeScheduleId = input.required<number>();
   dateInput = input.required<string>({ alias: 'date' });
+  showEventCards = input<boolean>(true);
   initialSelectedEvents = output<UniqueLessonEvent[]>();
   date!: string;
   proof!: Test;
@@ -77,7 +78,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
   //     return v;
   //   }
   // } as any);
-  eventInput = input.required<LessonEvent>({alias: 'event'});
+  eventInput = input<LessonEvent>(undefined, {alias: 'event'});
   disabled = input(false);
   readOnly = input(false);
   form$ = output<FormGroup<IProofForm>>();
@@ -169,7 +170,10 @@ export class TestFormComponent implements OnInit, OnDestroy {
       // this.setEvent(new LessonEvent({ start, end, lesson, date, weekday, school }));
     }
     else {
-      this.setEvent(this.eventInput());
+      const event = this.eventInput();
+      if (event) {
+        this.setEvent(event);
+      }
     }
   }
 
@@ -211,7 +215,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
       this.eventsLoading.set(true);
 
       let lessons: LessonEvent[] = [];
-      if (this.isManager) {
+      if (this.isManager && this.schoolId() && this.showEventCards() && !this.classHash()) {
         lessons = await firstValueFrom(this.lessonEventService.getAll(params));
       }
 
@@ -272,7 +276,10 @@ export class TestFormComponent implements OnInit, OnDestroy {
       if (this.events.length > 0) {
         this.events.length = 0;
         events.clear();
-        this.setEvent(this.eventInput());
+        const event = this.eventInput();
+        if (event) {
+          this.setEvent(event);
+        }
       }
 
       const hasRequiredValidator = (control: AbstractControl) => control.validator?.({ value: '' } as any)?.['required'];
@@ -323,7 +330,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
       }
     }
     else {
-      const cc = this.eventInput().curricularComponent;
+      const cc = this.eventInput()?.curricularComponent;
       if (cc) {
         this.ccControl.setValue(cc)
       }
