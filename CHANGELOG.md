@@ -1,3 +1,15 @@
+## [1.1.49](https://github.com/pedrosilvafrontend/sige/compare/v1.1.48...v1.1.49) (2026-06-08)
+
+
+### Bug Fixes
+
+* test list and test approve modal ([fc6b005](https://github.com/pedrosilvafrontend/sige/commit/fc6b005f5a3523393c343b763297d20695c7bb92))
+
+
+### Features
+
+* calendar mobile adjusts ([d2c2d52](https://github.com/pedrosilvafrontend/sige/commit/d2c2d52284ce721b300d5d6ce519ced9fb91303c))
+
 ## [1.1.48](https://github.com/pedrosilvafrontend/sige/compare/v1.1.47...v1.1.48) (2026-06-05)
 
 
