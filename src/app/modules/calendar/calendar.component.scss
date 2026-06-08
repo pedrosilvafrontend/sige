@@ -82,6 +82,10 @@
   .fc-listMonth-button {
     display: none;
   }
+  tr.fc-list-day {
+    position: relative;
+    z-index: 1;
+  }
   .fc .fc-list-day-cushion, .fc .fc-list-table td {
     padding: 0.5em 0.9em;
   }
