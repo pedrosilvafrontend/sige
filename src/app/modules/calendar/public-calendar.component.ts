@@ -429,24 +429,55 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
     this.scrollToToday();
   }
 
-  scrollToToday(): void {
-    // Obtém a data de hoje no fuso horário local
+  scrollToToday() {
     const hoje = new Date();
     const ano = hoje.getFullYear();
     const mes = String(hoje.getMonth() + 1).padStart(2, '0'); // Meses começam em 0
     const dia = String(hoje.getDate()).padStart(2, '0');
+    const date = `${ano}-${mes}-${dia}`;
+    this.scrollToDate(date);
+  }
 
-    // Monta a string no formato "2026-06-08"
-    const dataFormatada = `${ano}-${mes}-${dia}`;
-
-    // Busca e rola até o elemento
-    const element = document.querySelector(`[data-date="${dataFormatada}"]`);
+  scrollToDate(dateString: string): void {
+    const element = document.querySelector(`[data-date="${dateString}"]`) as HTMLElement;
 
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // 1. Encontra o container que realmente tem o scroll (seja o body ou uma div interna)
+      const scrollContainer = this.getScrollParent(element);
+
+      if (scrollContainer === document.body || scrollContainer === document.documentElement) {
+        // Cenário A: Rolagem na página inteira
+        const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+        const offsetPosition = elementPosition - (window.innerHeight / 2) + (element.clientHeight / 2);
+
+        window.scrollTo({ top: offsetPosition, behavior: 'auto' });
+      } else {
+        // Cenário B: Rolagem dentro de uma DIV interna (Causa mais provável do erro)
+        const containerTop = scrollContainer.getBoundingClientRect().top;
+        const elementTop = element.getBoundingClientRect().top;
+
+        // Calcula a nova posição relativa interna do container
+        const targetScroll = scrollContainer.scrollTop + (elementTop - containerTop) - (scrollContainer.clientHeight / 2) + (element.clientHeight / 2);
+
+        scrollContainer.scrollTo({ top: targetScroll, behavior: 'auto' });
+      }
     } else {
-      console.warn(`Elemento com a data de hoje (${dataFormatada}) não foi encontrado.`);
+      console.warn(`Elemento com a data ${dateString} não foi encontrado.`);
     }
+  }
+
+// Função auxiliar para detectar quem é o pai responsável pelo scroll
+  private getScrollParent(node: HTMLElement | null): HTMLElement {
+    if (node == null) {
+      return document.body;
+    }
+    if (node.scrollHeight > node.clientHeight) {
+      const overflowY = window.getComputedStyle(node).overflowY;
+      if (overflowY === 'auto' || overflowY === 'scroll') {
+        return node;
+      }
+    }
+    return this.getScrollParent(node.parentElement);
   }
 
   calendarOptions: CalendarOptions = (() => {
