@@ -29,6 +29,7 @@ import { IProofForm, ProofForm } from '@form/proof.form';
 import { AuthService } from '@services';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { TestFormComponent } from '@modules/common/form/test-form/test.form';
 
 export interface DialogData {
   id: number;
@@ -59,6 +60,7 @@ export interface DialogData {
     MatDialogActions,
     Button,
     MatCheckbox,
+    TestFormComponent,
   ],
 })
 export class ProofsFormDialogComponent {
@@ -67,7 +69,7 @@ export class ProofsFormDialogComponent {
   auth = this.authService.user$.value;
   action: string;
   dialogTitle: string;
-  form: FormGroup<IProofForm>;
+  form!: FormGroup<IProofForm>;
   proof: Test;
   disabled = input(false);
 
@@ -84,7 +86,7 @@ export class ProofsFormDialogComponent {
       this.dialogTitle = 'New record';
       this.proof = new Test();
     }
-    this.form = ProofForm.form(this.proof);
+    // this.form = ProofForm.form(this.proof);
   }
 
   onNoClick(): void {

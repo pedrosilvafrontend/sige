@@ -115,7 +115,7 @@
               <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)" [ngClass]="column.styleClass">
                 <span class="mobile-label">{{ column.label }}:</span>
                 <span class="truncate-text">
-                  @if (row.lesson?.schoolClass; as sc) {
+                  @if (row.schoolClass; as sc) {
                     {{ sc.code }}
                   }
                 </span>
@@ -130,7 +130,7 @@
               <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)" [ngClass]="column.styleClass">
                 <span class="mobile-label">{{ column.label }}:</span>
                 <span class="truncate-text">
-                  @if (row.lesson?.teacher; as teacher) {
+                  @if (row.teacher; as teacher) {
                     {{ teacher.id }} - {{ teacher.fullName }}
                   }
                 </span>
