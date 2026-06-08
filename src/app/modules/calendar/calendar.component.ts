@@ -56,6 +56,7 @@ import { LessonsFormDialogComponent } from '@modules/lessons';
 import { Skeleton } from '@ui/skeleton/skeleton';
 import { LoadingService } from '@services/loading.service';
 import { startOfYear } from 'date-fns';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-calendar',
@@ -85,6 +86,7 @@ import { startOfYear } from 'date-fns';
     NgClass,
     Skeleton,
     Skeleton,
+    MatMenuModule
   ]
 })
 export class CalendarComponent implements OnInit, OnDestroy {
@@ -427,7 +429,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
           // }
           successCallback(data);
           self.isLoading.set(false);
-          self.cdr.detectChanges();
+          self.cdr.markForCheck();
         }
         if (!schoolId && !classHash && !classId) {
           return setData([] as any[]);
