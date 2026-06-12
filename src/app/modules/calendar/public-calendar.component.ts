@@ -38,20 +38,19 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormGroupEntriesPipe } from '@core/util/form-group-entries.pipe';
 import { NgClass, TitleCasePipe, UpperCasePipe } from '@angular/common';
 import { Util } from '@core/util/util';
-import { TeacherSelectComponent } from '@modules/teachers/teacher-select/teacher-select.component';
 import { User } from '@core/models/interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActivityConfig, Degree, Test, School, SchoolClass, LiteEvent } from '@models';
 import { AuthService, EventService, SchoolsService } from '@services';
 import { Button } from '@ui/button/button';
-import { debounceTime, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { DegreesService } from '@services/degrees.service';
 import { LessonEventService } from '@services/lesson-event.service';
 import { ActivityService } from '@modules/config/activity/activity.service';
 import { LessonsFormDialogComponent } from '@modules/lessons';
 import { Skeleton } from '@ui/skeleton/skeleton';
 import { LoadingService } from '@services/loading.service';
-import { endOfYear, format, startOfYear } from 'date-fns';
+import { startOfYear } from 'date-fns';
 import { MatMenuModule } from '@angular/material/menu';
 import {TeacherCcSelectComponent} from '@modules/teachers/teacher-cc-select/teacher-cc-select.component';
 
@@ -74,14 +73,13 @@ import {TeacherCcSelectComponent} from '@modules/teachers/teacher-cc-select/teac
     FormGroupEntriesPipe,
     TranslateModule,
     TitleCasePipe,
-    TeacherSelectComponent,
+    TeacherCcSelectComponent,
     UpperCasePipe,
     NgClass,
     Skeleton,
     Skeleton,
     Button,
     MatMenuModule,
-    TeacherCcSelectComponent,
   ]
 })
 export class PublicCalendarComponent implements OnInit, OnDestroy {
@@ -731,14 +729,14 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
       activities: { test: boolean, work: boolean },
       group: Record<string, boolean>,
       school: { id: number, name: string, acronym: string },
-      teacher: { id: number, fullName: string, email: string },
+      teacher: { id: number, fullName: string, email: string, cc: { id: number, name: string } },
       schoolClass: {
         id: null, year: null, suffix: null, dayShift: null,
         school: { id: number, name: string, acronym: string },
       }
     };
 
-    const { schoolId, classId, teacherId, testId, workId, testStatus, workStatus } = item || {} as LiteEvent;
+    const { schoolId, classId, teacherId, testId, workId, testStatus, workStatus, curricularComponentId } = item || {} as LiteEvent;
 
     /** exclusive **/
 
@@ -753,6 +751,10 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
     }
 
     if (filters.teacher?.id && teacherId !== filters.teacher?.id) {
+      return false;
+    }
+
+    if (filters.teacher?.cc?.id && curricularComponentId !== filters.teacher?.cc?.id) {
       return false;
     }
 

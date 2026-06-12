@@ -155,7 +155,7 @@ export class TeacherCcSelectComponent implements OnInit, OnDestroy, ControlValue
     }
     const searchValue = typeof value === 'string'
       ? value.toLowerCase()
-      : value.fullName?.toLowerCase() ?? '';
+      : [value.cc?.name || '', value.fullName || ''].join(' ').toLowerCase()?? '';
 
     return this.teachers.filter(item =>
       [item.cc?.name || '', item.fullName || ''].join(' ').toLowerCase().includes(searchValue) ||
