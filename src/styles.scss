@@ -865,11 +865,16 @@ button.mdc-button[data-badgeColor="info"]::after {
 }
 
 @media (min-width: 768px) {
-  .mat-mdc-checkbox {
-
-  }
 }
 
 .fc-event-past {
   opacity: 0.5;
+}
+
+.option-line1 {
+  padding-top: 0.5rem;
+}
+.option-line2 {
+  font-size: 0.8rem;
+  padding-bottom: 0.5rem;
 }

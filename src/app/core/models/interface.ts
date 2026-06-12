@@ -1,6 +1,7 @@
 import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
 import { UserType } from '@models/users.model';
 import { School } from '@models/school.model';
+import {CurricularComponent} from '@models/curricular-component.model';
 
 export interface User {
   [prop: string]: any;
@@ -17,6 +18,11 @@ export interface User {
   permissions?: string[];
   schools?: School[];
   multiSchools?: boolean
+}
+
+export interface Teacher extends User {
+  cc?: CurricularComponent,
+  curricularComponents?: CurricularComponent[]
 }
 
 export interface Token {

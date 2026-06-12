@@ -4,7 +4,7 @@ import { Observable, take, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { UserTable, UserType } from './users.model';
 import { environment } from '@env/environment';
-import { User, CRUD, UserSchoolAssociation } from '@models';
+import {User, CRUD, UserSchoolAssociation, Teacher} from '@models';
 import { AuthService } from '@services';
 
 @Injectable({
@@ -53,6 +53,19 @@ export class UserService {
     const url = schoolId ? `${this.API_URL}/school/${schoolId}/role/teacher` : `${this.API_URL}/role/teacher`;
     return this.httpClient
       .get<User[]>(url)
+      .pipe(take(1));
+  }
+
+  getTeachersCCByClassHash(classHash: string): Observable<Teacher[]> {
+    return this.httpClient
+      .get<Teacher[]>( `${this.PUBLIC_API_URL}/${classHash}/teachers-cc`)
+      .pipe(take(1), catchError(this.handleError));
+  }
+
+  getTeachersCCBySchool(schoolId: number): Observable<Teacher[]> {
+    const url = `${this.API_URL}/school/${schoolId || 0}/teachers-cc`;
+    return this.httpClient
+      .get<Teacher[]>(url)
       .pipe(take(1));
   }
 

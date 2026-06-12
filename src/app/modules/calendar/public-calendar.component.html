@@ -17,12 +17,12 @@
               <form [formGroup]="filters" (ngSubmit)="applyFilter()" class="filter-form" novalidate>
                 <div class="row">
                   <div class="col">
-                    <app-teacher-select
+                    <app-teacher-cc-select
                       formControlName="teacher"
                       [schoolId]="filters.get('school')?.value?.id"
                       [classHash]="classHash"
                     >
-                    </app-teacher-select>
+                    </app-teacher-cc-select>
                   </div>
                 </div>
 

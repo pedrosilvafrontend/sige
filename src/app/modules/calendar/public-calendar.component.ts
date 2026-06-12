@@ -53,6 +53,7 @@ import { Skeleton } from '@ui/skeleton/skeleton';
 import { LoadingService } from '@services/loading.service';
 import { endOfYear, format, startOfYear } from 'date-fns';
 import { MatMenuModule } from '@angular/material/menu';
+import {TeacherCcSelectComponent} from '@modules/teachers/teacher-cc-select/teacher-cc-select.component';
 
 @Component({
   selector: 'app-calendar',
@@ -80,6 +81,7 @@ import { MatMenuModule } from '@angular/material/menu';
     Skeleton,
     Button,
     MatMenuModule,
+    TeacherCcSelectComponent,
   ]
 })
 export class PublicCalendarComponent implements OnInit, OnDestroy {

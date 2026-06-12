@@ -97,7 +97,7 @@
   }
 
   /* Medium devices (tablets, 768px and up) */
-  @media (min-width: 768px) {
+  @media (pointer: fine) and (min-width: 768px) {
     font-size: 1rem;
     tr.fc-event {
       display: table-row;
