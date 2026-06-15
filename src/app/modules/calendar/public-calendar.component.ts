@@ -640,7 +640,6 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
     }
   })();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleDateSelect(selectInfo: DateSelectArg) {
     if (this.public) {
       return;
@@ -648,55 +647,6 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
     // this.addNewEvent();
   }
 
-  addLesson() {
-    const lesson = this.calendar?.lesson;
-    const dialogRef = this.dialog.open(LessonsFormDialogComponent, {
-      width: '99vw',
-      maxWidth: '1024px',
-      data: { lesson: this.calendar?.lesson, origin: 'calendar' },
-      autoFocus: false,
-      disableClose: true
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        const action = lesson?.id ? 'edit' : 'add';
-        this.showNotification(
-          action === 'add' ? 'snackbar-success' : 'black',
-          `${action === 'add' ? 'Salvo' : 'Alterado'} com sucesso!`,
-        );
-        this.refresh();
-      }
-    });
-  }
-
-  addNewEvent() {
-    if (this.public) {
-      return;
-    }
-    const dialogRef = this.dialog.open(EventDialogComponent, {
-      data: {
-        calendar: this.calendar,
-        action: 'add',
-        categories: this.eventCategories || []
-      },
-      autoFocus: false,
-      disableClose: true,
-      width: '800px',
-      maxWidth: '100vw',
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'submit') {
-        this.addCusForm.reset();
-        this.showNotification(
-          'snackbar-success',
-          'Salvo com sucesso!',
-        );
-        this.refresh();
-      }
-    });
-  }
 
   applyFilter() {
     const filters = this.filters.getRawValue();
@@ -850,7 +800,6 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'submit') {
-        // this.calendarData = this.eventService.getDialogData();
         this.calendarEvents?.forEach((element, index) => {
           if (calendarData.id === element.id) {
             this.editEvent(index, this.calendarData);
@@ -892,9 +841,6 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
     calendarEvents[eventIndex] = singleEvent;
     this.calendarEvents.length = 0;
     Object.assign(this.calendarEvents, calendarEvents);
-    // this.calendarEvents = calendarEvents; // reassign the array
-
-    // this.calendarOptions.events = Object.assign([], calendarEvents);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
