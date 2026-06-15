@@ -1,3 +1,12 @@
+## [1.1.52](https://github.com/pedrosilvafrontend/sige/compare/v1.1.51...v1.1.52) (2026-06-15)
+
+
+### Features
+
+* teacher cc select component ([8171923](https://github.com/pedrosilvafrontend/sige/commit/8171923935328cab518beda8608c5ea45db5612a))
+* teacher cc select component ([c878b21](https://github.com/pedrosilvafrontend/sige/commit/c878b21ec4dabdef1a4c1ed4f14b9b320dc5ccd5))
+* teacher cc select component ([2b58cf8](https://github.com/pedrosilvafrontend/sige/commit/2b58cf8a6c1868305be80a6c28d77aefdb122944))
+
 ## [1.1.51](https://github.com/pedrosilvafrontend/sige/compare/v1.1.50...v1.1.51) (2026-06-08)
 
 
