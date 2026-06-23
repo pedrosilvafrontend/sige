@@ -83,7 +83,7 @@ ul {
   height: 3rem;
 }
 .root-container {
-  padding: 1rem;
+  padding: 1rem 0;
   //margin: 0 10px;
   background-color: $white;
   height: calc(100svh - 3rem - 15px);
@@ -864,7 +864,10 @@ button.mdc-button[data-badgeColor="info"]::after {
   padding-right: 0.55em;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1920px) {
+  .root-container {
+    padding: 1rem;
+  }
 }
 
 .fc-event-past {
@@ -877,4 +880,16 @@ button.mdc-button[data-badgeColor="info"]::after {
 .option-line2 {
   font-size: 0.8rem;
   padding-bottom: 0.5rem;
+}
+
+.fc .fc-list-sticky .fc-list-day > * {
+  background: var(--fc-page-bg-color);
+  position: sticky;
+  top: -1rem;
+}
+
+.main-menu button.cdk-menu-item.menu-bar-item:nth-child(1) {
+  padding: 0;
+  min-width: 100px;
+  margin-left: 0;
 }

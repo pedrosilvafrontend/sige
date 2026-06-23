@@ -20,8 +20,7 @@
 <div [ngClass]="{'public-container': public}">
   <div class="row">
     <div class="col-sm-12">
-      <div class="calendar-block">
-        <div class="row">
+      <div class="calendar-block row">
           <div class="col-md-12 col-lg-12">
             <div class="filter-container mt-2">
               <form [formGroup]="filters" (ngSubmit)="applyFilter()" class="filter-form" novalidate>
@@ -134,7 +133,6 @@
               </ui-skeleton>
             </div>
           </div>
-        </div>
       </div>
     </div>
   </div>
