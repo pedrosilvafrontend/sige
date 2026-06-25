@@ -1,43 +1,46 @@
 <!--<ui-loading-bar [isLoading]="isLoading()"></ui-loading-bar>-->
 <div>
-  <div class="d-flex justify-content-between align-items-center inline-fields">
-    <h2>Próximas atividades</h2>
-    <div class="row" [formGroup]="filters">
-      <div class="col">
-        <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
-          <mat-label>{{ 'Date' | translate }}</mat-label>
-          <input matInput
-                 [matDatepicker]="picker"
-                 formControlName="date"
-                 [datePickerFormat]="isManager ? 'dd/MM/yyyy' : 'MM/yyyy'"
-                 [min]="minDate"
-                 [max]="maxDate">
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker
-                          [startView]="isManager ? 'month' : 'year'"
-                          (monthSelected)="monthSelected($event, picker)"
-                          panelClass="example-month-picker">
-          </mat-datepicker>
-        </mat-form-field>
-      </div>
-      <div class="col">
-        <mat-label class="msr-3">{{ 'Coloring by' | translate }}:</mat-label>
-        <mat-radio-group formControlName="colorBy" aria-label="Select" required>
-          @if (auth().multiSchools) {
-            <mat-radio-button value="school" color="primary">
-              {{ 'School' | translate }}
-            </mat-radio-button>
-          }
-          <mat-radio-button value="class" color="primary">
-            {{ 'Class' | translate }}
-          </mat-radio-button>
-          <mat-radio-button value="curricularComponent" color="primary">
-            {{ 'Curricular component' | translate }}
-          </mat-radio-button>
-        </mat-radio-group>
-      </div>
+<!--  <div class="d-flex justify-content-between align-items-center inline-fields">-->
+  <h2>Próximas atividades</h2>
+  <div class="row" [formGroup]="filters">
+    <div class="col-sm-12 col-md-6 col-lg-3">
+      <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'Date' | translate }}</mat-label>
+        <input matInput
+               [matDatepicker]="picker"
+               formControlName="date"
+               [datePickerFormat]="isManager ? 'dd/MM/yyyy' : 'MM/yyyy'"
+               [min]="minDate"
+               [max]="maxDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker
+                        [startView]="isManager ? 'month' : 'year'"
+                        (monthSelected)="monthSelected($event, picker)"
+                        panelClass="example-month-picker">
+        </mat-datepicker>
+      </mat-form-field>
     </div>
+    <div class="col-sm-12 col-md-6 col-lg">
+      <mat-label class="msr-3">{{ 'Coloring by' | translate }}:</mat-label>
+      <mat-radio-group formControlName="colorBy" aria-label="Select" required>
+        @if (auth().multiSchools) {
+          <mat-radio-button value="school" color="primary">
+            {{ 'School' | translate }}
+          </mat-radio-button>
+        }
+        <mat-radio-button value="class" color="primary">
+          {{ 'Class' | translate }}
+        </mat-radio-button>
+        <mat-radio-button value="curricularComponent" color="primary">
+          {{ 'Curricular component' | translate }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <!--<div class="col-sm-12 col-md-6 col-lg-3">
+      <app-activities-filter-form (formChange)="formChange($event)"></app-activities-filter-form>
+    </div>-->
   </div>
+
   <div class="">
     <div class="text-center">
       @let date = filters.controls.date.value;

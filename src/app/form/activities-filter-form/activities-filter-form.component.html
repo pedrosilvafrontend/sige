@@ -1,0 +1,21 @@
+<ul class="filterCheck d-flex gap-2">
+  <mat-checkbox color="primary"
+                [disabled]="filtersModel().lesson"
+                [checked]="filtersModel().lesson"
+                (change)="updateFilter('lesson', $event.checked)">
+    {{ 'LESSON' | translate | titlecase }}
+  </mat-checkbox>
+
+  <mat-checkbox color="primary"
+                [checked]="filtersModel().test"
+                (change)="updateFilter('test', $event.checked)">
+    {{ 'TEST' | translate | titlecase }}
+  </mat-checkbox>
+
+  <mat-checkbox color="primary"
+                [checked]="filtersModel().work"
+                (change)="updateFilter('work', $event.checked)">
+    {{ 'WORK' | translate | titlecase }}
+  </mat-checkbox>
+</ul>
+

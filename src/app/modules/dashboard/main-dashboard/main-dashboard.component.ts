@@ -31,6 +31,7 @@ import { debounceTime } from 'rxjs/operators';
 import { Debounce } from '@util/debounce';
 import { DateUtil } from '@util';
 import { FnsPipe } from '@util/fns-pipe';
+import { ActivitiesFilterFormComponent } from '@form/activities-filter-form/activities-filter-form.component';
 
 interface DashFilters {
   date: FormControl<Date | null>;
@@ -56,7 +57,8 @@ interface DashFilters {
     DatePickerFormatDirective,
     LoadingBar,
     DatePipe,
-    FnsPipe
+    FnsPipe,
+    ActivitiesFilterFormComponent
   ],
   providers: [
     TranslatePipe,
@@ -233,4 +235,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  protected formChange($event: any) {
+    console.log('>>>', $event);
+  }
 }
