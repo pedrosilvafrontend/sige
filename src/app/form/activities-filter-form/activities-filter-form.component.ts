@@ -1,4 +1,4 @@
-import { Component, effect, output, signal, untracked } from '@angular/core';
+import { Component, effect, output, signal, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { MatCheckbox } from "@angular/material/checkbox";
 import { TitleCasePipe } from "@angular/common";
 import { TranslatePipe } from "@ngx-translate/core";
@@ -13,6 +13,7 @@ import { ActivitiesFilter } from '@form/lesson-event-filter.form';
     TranslatePipe,
   ],
   templateUrl: './activities-filter-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './activities-filter-form.component.scss',
 })
 export class ActivitiesFilterFormComponent {

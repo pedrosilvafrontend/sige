@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, effect, inject, input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, inject, input, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { LoadingService } from '@services/loading.service';
 
@@ -8,6 +8,7 @@ import { LoadingService } from '@services/loading.service';
     NgClass
   ],
   templateUrl: './loader.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './loader.scss',
 })
 export class Loader implements OnInit, OnDestroy {

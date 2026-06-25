@@ -2,7 +2,8 @@ import {
   Component,
   Inject,
   inject, input, OnInit,
-  output, TemplateRef, ViewEncapsulation
+  output, TemplateRef, ViewEncapsulation,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButton } from '@angular/material/button';
@@ -43,6 +44,7 @@ export interface ModalOutput<T = any> {
     </div>
   `,
   styleUrl: './modal.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None
 })
 export class ModalDialogComponent {
@@ -56,6 +58,7 @@ export class ModalDialogComponent {
 @Component({
   selector: 'ui-modal',
   imports: [],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: ``,
 })
 export class ModalComponent implements OnInit {

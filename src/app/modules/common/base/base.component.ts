@@ -1,7 +1,8 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Subject } from 'rxjs';
 
-@Component({ standalone: true, template: ''})
+@Component({ standalone: true, changeDetection: ChangeDetectionStrategy.Eager,
+ template: ''})
 export class BaseComponent implements OnDestroy {
   protected sub = new Subject<void>();
 

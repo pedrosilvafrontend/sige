@@ -8,6 +8,7 @@ import {
   Input,
   OnDestroy,
   OnInit,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption } from '@angular/material/core';
@@ -46,6 +47,7 @@ import { map } from 'rxjs/operators';
     },
   ],
   templateUrl: './school-select.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './school-select.component.scss'
 })
 export class SchoolSelectComponent implements OnInit, OnDestroy, ControlValueAccessor {

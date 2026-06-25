@@ -4,7 +4,7 @@ import {
   MatDialogContent,
   MatDialogClose, MatDialogActions,
 } from '@angular/material/dialog';
-import { Component, inject, Inject, input } from '@angular/core';
+import { Component, inject, Inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { ProofService } from '@core/services/proof.service';
 import {
   ReactiveFormsModule,
@@ -43,6 +43,7 @@ export interface DialogData {
   // styleUrls: ['./proofs-form-dialog.component.scss'],
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'pt-BR' }],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatButtonModule,
     MatIconModule,

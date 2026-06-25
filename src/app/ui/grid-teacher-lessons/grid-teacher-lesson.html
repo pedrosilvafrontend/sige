@@ -37,7 +37,7 @@
           <div class="wrap-grid">
             <gridster [options]="options">
               @for (item of dashboard; track item) {
-                @let lesson = item['data']?.lesson;
+                @let lesson = $safeNavigationMigration(item['data']?.lesson);
                 @let empty = !lesson?.curricularComponent?.name;
                 <gridster-item #gridsterItem
                                [item]="item"

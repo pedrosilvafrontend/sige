@@ -1,4 +1,4 @@
-import { Component, effect, input, signal } from '@angular/core';
+import { Component, effect, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
@@ -7,6 +7,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatProgressBarModule
   ],
   templateUrl: './loading-bar.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './loading-bar.scss',
 })
 export class LoadingBar {

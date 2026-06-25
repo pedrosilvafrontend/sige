@@ -4,7 +4,7 @@ import {
   MatDialogContent,
   MatDialogClose, MatDialog, MatDialogActions,
 } from '@angular/material/dialog';
-import { Component, inject, Inject, OnDestroy } from '@angular/core';
+import { Component, inject, Inject, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { UserService } from '../../../users/user.service';
 import {
   UntypedFormControl,
@@ -49,6 +49,7 @@ export interface DialogData {
   styleUrls: ['./teacher-form-dialog.component.scss'],
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatButtonModule,
     MatIconModule,

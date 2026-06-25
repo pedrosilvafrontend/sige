@@ -1,4 +1,4 @@
-import { Component, effect, forwardRef, input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, effect, forwardRef, input, OnDestroy, OnInit, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { Editor, NgxEditorComponent, NgxEditorMenuComponent, Toolbar } from 'ngx-editor';
 import { ControlValueAccessor, FormControl, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -20,6 +20,7 @@ import { Subscription } from 'rxjs';
       multi: true
     }
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None
 })
 export class TextEditor implements OnInit, OnDestroy, ControlValueAccessor {

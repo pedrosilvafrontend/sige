@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, input, Input, OnDestroy, OnInit, output, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, input, Input, OnDestroy, OnInit, output, Output, ChangeDetectionStrategy } from '@angular/core';
 import {
   FormBuilder, FormControl,
   FormGroup,
@@ -71,6 +71,7 @@ import { LessonForm } from '@form/lesson.form';
     provideNgxMask({})
   ],
   templateUrl: './lesson.form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './lesson.form.component.scss'
 })
 export class LessonFormComponent implements OnInit, OnDestroy {

@@ -6,7 +6,8 @@ import {
   OnDestroy,
   OnInit,
   signal,
-  ViewEncapsulation
+  ViewEncapsulation,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import {
   CompactType,
@@ -44,6 +45,7 @@ export type GridLessonItem = {
   imports: [Gridster, GridsterItem, ReactiveFormsModule, TranslatePipe, Button, ModalComponent, MatDialogActions, MatDialogContent, MatDialogTitle, NgClass],
   templateUrl: './grid-teacher-lesson.html',
   styleUrl: './grid-teacher-lesson.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None,
 })
 export class GridTeacherLesson implements OnInit, OnDestroy {

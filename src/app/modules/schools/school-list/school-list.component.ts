@@ -7,7 +7,8 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
-  ViewEncapsulation
+  ViewEncapsulation,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { School } from '@models';
@@ -76,6 +77,7 @@ import { Skeleton } from '@ui/skeleton/skeleton';
   styleUrl: './school-list.component.scss',
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'pt-BR' }],
   animations: [rowsAnimation],
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None
 })
 export class SchoolListComponent implements OnInit, OnDestroy {

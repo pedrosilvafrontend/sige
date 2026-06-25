@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, OnInit, output } from '@angular/core';
+import { Component, effect, inject, input, OnInit, output, ChangeDetectionStrategy } from '@angular/core';
 import { EvaluationCriterionService } from '@services/evaluation.service';
 import { FormGroup } from '@angular/forms';
 import { Work } from '@models';
@@ -8,6 +8,7 @@ import { EvaluationForm } from '@form/evaluation.form';
   selector: 'app-evaluation-criterion-form',
   imports: [],
   templateUrl: './evaluation-criterion-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './evaluation-criterion-form.component.scss'
 })
 export class EvaluationCriterionFormComponent implements OnInit {

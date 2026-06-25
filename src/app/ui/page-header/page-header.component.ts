@@ -4,6 +4,7 @@ import {
   ViewEncapsulation,
   Input,
   HostBinding,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
@@ -16,6 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
     styleUrls: ['./page-header.component.scss'],
     encapsulation: ViewEncapsulation.None,
     standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TranslateModule],
 })
 export class PageHeaderComponent implements OnInit {

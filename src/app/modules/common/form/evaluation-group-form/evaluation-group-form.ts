@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, OnInit, output, Signal, ViewEncapsulation } from '@angular/core';
+import { Component, effect, inject, input, OnInit, output, Signal, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { Button } from '@ui/button/button';
 import { EvaluationFormComponent } from '@modules/common/form/evaluation-form/evaluation-form.component';
 import { EvaluationCriterionService } from '@services/evaluation.service';
@@ -20,6 +20,7 @@ import { CriterionSelect } from '@modules/common/form/criterion-select/criterion
   ],
   templateUrl: './evaluation-group-form.html',
   styleUrl: './evaluation-group-form.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None
 })
 export class EvaluationGroupForm implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { Button } from '@ui/button/button';
 import { MatDialogActions, MatDialogContent, MatDialogTitle } from '@angular/material/dialog';
 import { ModalComponent } from '@ui/modal/modal.component';
@@ -16,6 +16,7 @@ import { WorkService } from '@services/work.service';
     ModalComponent,
   ],
   templateUrl: './delete-work-modal.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './delete-work-modal.scss',
 })
 export class DeleteWorkModal {

@@ -8,7 +8,8 @@ import {
   OnDestroy,
   OnInit,
   output,
-  signal
+  signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IProofForm, ProofForm } from '@form/proof.form';
@@ -43,6 +44,7 @@ import { Util } from '@util/util';
     CurricularComponentSelectComponent
   ],
   templateUrl: './test.form.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './test.form.scss'
 })
 export class TestFormComponent implements OnInit, OnDestroy {

@@ -1,4 +1,4 @@
-import { Component, computed, effect, forwardRef, input } from '@angular/core';
+import { Component, computed, effect, forwardRef, input, ChangeDetectionStrategy } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { LessonEvent, UniqueLessonEvent } from '@models';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -10,6 +10,7 @@ import { Util } from '@util/util';
   imports: [
     MatCheckbox
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

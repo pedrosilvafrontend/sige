@@ -4,6 +4,7 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -50,6 +51,7 @@ import { format } from 'date-fns';
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }, AddressPipe],
   standalone: true,
   animations: [rowsAnimation],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     PageHeaderComponent,
     CommonModule,

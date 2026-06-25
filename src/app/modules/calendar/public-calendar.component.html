@@ -18,7 +18,7 @@
                   <div class="col">
                     <app-teacher-cc-select
                       formControlName="teacher"
-                      [schoolId]="filters.get('school')?.value?.id"
+                      [schoolId]="$safeNavigationMigration(filters.get('school')?.value?.id)"
                       [classHash]="classHash"
                     >
                     </app-teacher-cc-select>

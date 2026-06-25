@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, effect, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, inject, input, OnDestroy, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { debounce, distinctUntilChanged, firstValueFrom, startWith, Subject, takeUntil } from 'rxjs';
 import { ActivityConfig, LessonEvent, Test } from '@models';
@@ -64,6 +64,7 @@ interface DashFilters {
     TranslatePipe,
   ],
   templateUrl: './main-dashboard.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './main-dashboard.component.scss'
 })
 export class MainDashboardComponent implements OnInit, OnDestroy {

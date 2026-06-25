@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { BaseModal } from '@modules/modals/base-modal/base-modal';
 import { GeneralEvent } from '@models';
 import { Button } from '@ui/button/button';
@@ -35,6 +35,7 @@ import { JsonPipe, TitleCasePipe } from '@angular/common';
     JsonPipe
   ],
   templateUrl: './general-event-modal.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './general-event-modal.scss',
 })
 export class GeneralEventModal extends BaseModal<GeneralEvent> {

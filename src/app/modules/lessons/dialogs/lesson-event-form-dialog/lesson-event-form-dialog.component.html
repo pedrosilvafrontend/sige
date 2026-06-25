@@ -79,7 +79,7 @@
           <ng-template #proofTemplate>
             <div class="modalHeader">
               @let fullProof = testFormComponent.proof;
-              @let classCode = fullProof?.schoolClass?.code;
+              @let classCode = $safeNavigationMigration(fullProof?.schoolClass?.code);
               <div mat-dialog-title>
                 <div class="modalTitle">
                   {{ (proof?.type || "Test") | translate }}
@@ -87,7 +87,7 @@
                 @if (classCode) {
                   <div class="modalSubtitle">
                     <span>Turma: <strong>{{ classCode }}</strong></span>
-                    <span>Data: <strong>{{ proof?.date | date:'dd/MM/yyyy' }}</strong></span>
+                    <span>Data: <strong>{{ $safeNavigationMigration(proof?.date) | date:'dd/MM/yyyy' }}</strong></span>
                     <span>Hora: <strong>{{ fullProof?.timeSchedule?.startTime }}</strong></span>
                   </div>
                 }

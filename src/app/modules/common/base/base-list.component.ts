@@ -1,10 +1,11 @@
-import { Component, inject, OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { TranslateService } from '@ngx-translate/core';
 
-@Component({ standalone: true, template: ''})
+@Component({ standalone: true, changeDetection: ChangeDetectionStrategy.Eager,
+ template: ''})
 export class BaseListComponent<T> implements OnDestroy {
   protected translate = inject(TranslateService);
   protected _columnsLabels: string[] = [];

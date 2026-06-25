@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, effect, inject, input, signal, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, inject, input, signal, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { ActivityConfig, LessonEvent as LessonEvt, LessonEventForm, UniqueLessonEvent, User } from '@models';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -18,6 +18,7 @@ type LessonEvent = LessonEvt & { selected?: boolean, disabled?: boolean };
   ],
   templateUrl: './event-checkbox-group.html',
   styleUrl: './event-checkbox-group.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   encapsulation: ViewEncapsulation.None
 })
 export class EventCheckboxGroup {

@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, HostListener, inject, OnInit, OnDestroy, signal, ChangeDetectionStrategy } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import defaultLanguage from '@assets/i18n/pt.json';
@@ -15,6 +15,7 @@ import { firstValueFrom, Subject, takeUntil } from 'rxjs';
   selector: 'app-root',
   imports: [RouterOutlet, Loader],
   templateUrl: './app.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app.scss'
 })
 export class App implements OnInit, OnDestroy {

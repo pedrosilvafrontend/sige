@@ -1,4 +1,4 @@
- import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+ import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DATE_LOCALE, MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { rowsAnimation } from '@util';
 import { CommonModule, NgClass } from '@angular/common';
@@ -36,6 +36,7 @@ import { Util } from '@util/util';
   styleUrl: './classes.component.scss',
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }],
   animations: [rowsAnimation],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     CommonModule,
     MatCardModule,

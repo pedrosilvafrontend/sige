@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, output } from '@angular/core';
+import { Component, computed, effect, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe, NgClass, NgStyle } from '@angular/common';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -21,6 +21,7 @@ import { activityStatusClassPipe, ColorPipe, ColorStylePipe } from '@util/color-
     activityStatusClassPipe
   ],
   templateUrl: './event-card.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './event-card.scss',
 })
 export class EventCard {

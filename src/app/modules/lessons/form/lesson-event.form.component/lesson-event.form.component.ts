@@ -9,7 +9,8 @@ import {
   OnInit,
   Output,
   signal,
-  viewChild
+  viewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -59,6 +60,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     provideNgxMask({})
   ],
   templateUrl: './lesson-event.form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './lesson-event.form.component.scss'
 })
 export class LessonEventFormComponent implements OnInit, OnDestroy {

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { AuthService, EventService, LessonStateService } from '@services';
@@ -91,6 +91,7 @@ import { MatBadge } from '@angular/material/badge';
     TranslatePipe
   ],
   templateUrl: './lesson-events.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './lesson-events.component.scss'
 })
 export class LessonEventsComponent extends BaseListComponent<LessonEvent> implements OnInit, OnDestroy {

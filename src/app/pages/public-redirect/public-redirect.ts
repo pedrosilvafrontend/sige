@@ -1,10 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-public-redirect',
   imports: [],
   templateUrl: './public-redirect.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './public-redirect.scss',
 })
 export class PublicRedirect {
