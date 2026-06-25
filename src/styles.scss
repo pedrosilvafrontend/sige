@@ -893,3 +893,8 @@ button.mdc-button[data-badgeColor="info"]::after {
   min-width: 100px;
   margin-left: 0;
 }
+
+
+mat-form-field[size=small] {
+  @include mat.form-field-density(-3);
+}

@@ -1,4 +1,7 @@
-import { ChangeDetectorRef, Component, effect, inject, input, OnDestroy, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+import {
+  ChangeDetectorRef, Component, effect, inject, input, OnDestroy, OnInit, signal, ChangeDetectionStrategy,
+  ViewEncapsulation
+} from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { debounce, distinctUntilChanged, firstValueFrom, startWith, Subject, takeUntil } from 'rxjs';
 import { ActivityConfig, LessonEvent, Test } from '@models';
@@ -32,6 +35,7 @@ import { Debounce } from '@util/debounce';
 import { DateUtil } from '@util';
 import { FnsPipe } from '@util/fns-pipe';
 import { ActivitiesFilterFormComponent } from '@form/activities-filter-form/activities-filter-form.component';
+import { ActivitiesFilter } from '@form/lesson-event-filter.form';
 
 interface DashFilters {
   date: FormControl<Date | null>;
@@ -52,10 +56,8 @@ interface DashFilters {
     MatRadioButton,
     MatRadioGroup,
     MatDatepickerModule,
-    ColoringByPipe,
     MatInput,
     DatePickerFormatDirective,
-    LoadingBar,
     DatePipe,
     FnsPipe,
     ActivitiesFilterFormComponent
@@ -65,10 +67,11 @@ interface DashFilters {
   ],
   templateUrl: './main-dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrl: './main-dashboard.component.scss'
+  styleUrl: './main-dashboard.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class MainDashboardComponent implements OnInit, OnDestroy {
-  private lessonEventService = inject(LessonEventService);
+  protected lessonEventService = inject(LessonEventService);
   private userColorsService = inject(UserColorsService);
   private cdr = inject(ChangeDetectorRef);
   private dialog = inject(MatDialog);
@@ -94,6 +97,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     colorBy: this.fb.control<ColoringBy>(null),
   });
   loadedEvents = false;
+  activitiesFilter!: ActivitiesFilter;
 
   get colorByControl(): FormControl<ColoringBy> {
     return this.filters.controls.colorBy;
@@ -124,6 +128,11 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
         this.colorByControl.setValue(coloringBy, { emitEvent: false });
       }
       this.isManager = ['admin', 'association', 'principal', 'coordinator'].includes(role)
+    });
+
+    effect(() => {
+      this.events = this.lessonEventService.lessonEvents() || [];
+      this.cdr.detectChanges();
     });
   }
 
@@ -174,13 +183,16 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
       limit: 150,
       prevDate: false,
       ...filters,
+      ...this.activitiesFilter
     }
     if (this.auth()?.role === 'teacher') {
       params.month = formattedDate;
     } else {
       params.date = formattedDate;
     }
-    this.events = await firstValueFrom(this.lessonEventService.getAll(params).pipe(debounceTime(500),distinctUntilChanged()));
+    this.lessonEventService.getBy(params);
+
+    // this.events = await firstValueFrom(this.lessonEventService.getAll(params).pipe(debounceTime(500),distinctUntilChanged()));
     this.loadedEvents = true;
     this.cdr.detectChanges();
   }
@@ -236,7 +248,8 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  protected formChange($event: any) {
-    console.log('>>>', $event);
+  protected activitiesFilterChange($event: ActivitiesFilter) {
+    this.activitiesFilter = $event;
+    this.refresh().then();
   }
 }

@@ -1,10 +1,10 @@
 <!--<ui-loading-bar [isLoading]="isLoading()"></ui-loading-bar>-->
-<div>
+<div class="main-dashboard">
 <!--  <div class="d-flex justify-content-between align-items-center inline-fields">-->
   <h2>Próximas atividades</h2>
-  <div class="row" [formGroup]="filters">
+  <div class="filters row align-items-center" [formGroup]="filters">
     <div class="col-sm-12 col-md-6 col-lg-3">
-      <mat-form-field class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+      <mat-form-field size="small" class="example-full-width" appearance="outline" subscriptSizing="dynamic">
         <mat-label>{{ 'Date' | translate }}</mat-label>
         <input matInput
                [matDatepicker]="picker"
@@ -19,6 +19,9 @@
                         panelClass="example-month-picker">
         </mat-datepicker>
       </mat-form-field>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3">
+      <app-activities-filter-form (change)="activitiesFilterChange($event)"></app-activities-filter-form>
     </div>
     <div class="col-sm-12 col-md-6 col-lg">
       <mat-label class="msr-3">{{ 'Coloring by' | translate }}:</mat-label>
@@ -36,14 +39,17 @@
         </mat-radio-button>
       </mat-radio-group>
     </div>
-    <!--<div class="col-sm-12 col-md-6 col-lg-3">
-      <app-activities-filter-form (formChange)="formChange($event)"></app-activities-filter-form>
-    </div>-->
   </div>
 
   <div class="">
     <div class="text-center">
       @let date = filters.controls.date.value;
+      @if (lessonEventService.lessonEventsStatus() === 'resolved' && !events.length) {
+        <h2 class="my-5 text-muted fw-light">
+          Não há eventos para o filtro selecionado
+        </h2>
+      }
+
       @if (loadedEvents && !events.length) {
         @if (date) {
           <h2 class="my-5 text-muted fw-light">
