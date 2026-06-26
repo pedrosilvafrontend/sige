@@ -1,15 +1,14 @@
 import { Component, HostListener, inject, OnInit, OnDestroy, signal, ChangeDetectionStrategy } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import defaultLanguage from '@assets/i18n/pt.json';
+import defaultLanguage from '../../public/i18n/pt.json';
 import { LoadingService } from '@services/loading.service';
 import { Loader } from '@ui/loader/loader';
 import { AuthService, LocalStorageService } from '@services';
 import Swal from 'sweetalert2'
 import { AppService } from '@services/app.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError } from 'rxjs/operators';
-import { firstValueFrom, Subject, takeUntil } from 'rxjs';
+import { firstValueFrom, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -31,6 +30,7 @@ export class App implements OnInit, OnDestroy {
   healthError = signal(false);
 
   constructor() {
+    this.translate.addLangs(['en', 'pt']);
     this.translate.use('pt');
     this.translate.setTranslation('pt', defaultLanguage, true);
     this.onRouteNavigate();

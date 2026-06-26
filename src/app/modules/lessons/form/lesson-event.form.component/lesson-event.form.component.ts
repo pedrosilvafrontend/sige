@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Util } from '@core/util/util';
 import { DatePipe, NgClass, SlicePipe } from '@angular/common';
@@ -47,7 +47,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatFormField,
     MatLabel,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     MatInput,
     NgClass,
     MatSelectModule,

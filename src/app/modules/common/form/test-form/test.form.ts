@@ -4,12 +4,11 @@ import {
   effect,
   inject,
   input,
-  model,
   OnDestroy,
   OnInit,
   output,
   signal,
-  ChangeDetectionStrategy, computed
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IProofForm, ProofForm } from '@form/proof.form';
@@ -30,7 +29,6 @@ import { FormUtil } from '@util/form-util';
 import { AuthService } from '@services';
 import { ProofService } from '@core/services/proof.service';
 import { Util } from '@util/util';
-import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-test-form',
@@ -43,7 +41,6 @@ import { JsonPipe } from '@angular/common';
     MatFormFieldModule,
     MatSelectModule,
     CurricularComponentSelectComponent,
-    JsonPipe
   ],
   templateUrl: './test.form.html',
   changeDetection: ChangeDetectionStrategy.Eager,

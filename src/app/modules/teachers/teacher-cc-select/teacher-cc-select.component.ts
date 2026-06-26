@@ -7,7 +7,7 @@ import { firstValueFrom, Observable, startWith, Subject, takeUntil } from 'rxjs'
 import { UserService } from '@modules/users/user.service';
 import { ControlValueAccessor, FormControl, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { Util } from '@core/util/util';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption } from '@angular/material/core';
 import { AsyncPipe, TitleCasePipe } from '@angular/common';
@@ -24,7 +24,7 @@ import {Button} from '@ui/button/button';
     MatFormField,
     MatLabel,
     MatOption,
-    TranslateModule,
+    TranslatePipe,
     TitleCasePipe,
     FormsModule,
     MatAutocomplete,

@@ -9,7 +9,7 @@ import {
 import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { UserService } from '../../../users/user.service';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 export interface DialogData {
   id: number;
@@ -30,7 +30,7 @@ export interface DialogData {
     MatDialogActions,
     MatButtonModule,
     MatDialogClose,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class TeacherDeleteDialogComponent {

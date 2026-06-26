@@ -8,7 +8,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateDirective, TranslatePipe } from '@ngx-translate/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -31,10 +31,11 @@ import { AuthService } from '@services';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
-    TranslateModule,
+    TranslatePipe,
     MatCheckboxModule,
     MatButtonModule,
     RouterLink,
+    TranslateDirective,
   ],
 })
 export class RegisterComponent implements OnDestroy {

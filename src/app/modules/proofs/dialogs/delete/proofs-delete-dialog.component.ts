@@ -9,7 +9,7 @@ import {
 import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { ProofService } from '@core/services/proof.service';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Test } from '@models';
 
 @Component({
@@ -24,7 +24,7 @@ import { Test } from '@models';
     MatDialogActions,
     MatButtonModule,
     MatDialogClose,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class ProofsDeleteDialogComponent {

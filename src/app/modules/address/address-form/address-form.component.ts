@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatError, MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
 import { MatOption } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Address } from '@modules/address/address';
 import { BehaviorSubject } from 'rxjs';
 import { MatIcon } from '@angular/material/icon';
@@ -21,7 +21,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatOption,
     MatSelect,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     MatIcon,
     MatInput,
     MatSuffix,

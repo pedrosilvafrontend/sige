@@ -8,7 +8,7 @@ import {
 } from '@angular/material/dialog';
 import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { LessonsService } from '@services';
 import { LessonBatch } from '@models';
 
@@ -31,7 +31,7 @@ export interface ClassDialogData {
     MatDialogActions,
     MatButtonModule,
     MatDialogClose,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class LessonsDialogComponent {

@@ -3,10 +3,10 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { debounce, distinctUntilChanged, firstValueFrom, startWith, Subject, takeUntil } from 'rxjs';
+import { firstValueFrom, startWith, Subject, takeUntil } from 'rxjs';
 import { ActivityConfig, LessonEvent, Test } from '@models';
 import { DatePipe } from '@angular/common';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { User } from '@core/models/interface';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -47,7 +47,7 @@ interface DashFilters {
   standalone: true,
   imports: [
     MatCardModule,
-    TranslateModule,
+    TranslatePipe,
     MatFormFieldModule,
     FormsModule,
     ReactiveFormsModule,

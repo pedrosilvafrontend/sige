@@ -8,7 +8,7 @@ import { UserService } from '@modules/users/user.service';
 import { ControlValueAccessor, FormControl, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Form } from '@form';
 import { Util } from '@core/util/util';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption } from '@angular/material/core';
 import { AsyncPipe, JsonPipe, TitleCasePipe } from '@angular/common';
@@ -24,7 +24,7 @@ import { map } from 'rxjs/operators';
     MatFormField,
     MatLabel,
     MatOption,
-    TranslateModule,
+    TranslatePipe,
     TitleCasePipe,
     FormsModule,
     MatAutocomplete,

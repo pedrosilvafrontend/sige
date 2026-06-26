@@ -27,7 +27,7 @@ import { MatCheckboxModule, } from '@angular/material/checkbox';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, lastValueFrom, Observable, of, Subject, switchMap, take, takeUntil } from 'rxjs';
 import {
   LessonEventFormDialogComponent
@@ -71,7 +71,7 @@ import {TeacherCcSelectComponent} from '@modules/teachers/teacher-cc-select/teac
     MatFormFieldModule,
     MatSelectModule,
     FormGroupEntriesPipe,
-    TranslateModule,
+    TranslatePipe,
     TitleCasePipe,
     TeacherCcSelectComponent,
     UpperCasePipe,
@@ -518,7 +518,7 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
         start: startRange
       },
       eventColor: '#a8a8a8',
-      events: function(info, successCallback, failureCallback) {
+      events: function(info: any, successCallback: any, failureCallback: any) {
         // let viewType: any = 'listMonth';
         const params: any = self.getParams({
           start: info.startStr,
@@ -628,7 +628,7 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
           }
         })
       },
-      loading: (isLoading) => {
+      loading: (isLoading: any) => {
         console.log('Loading state changed:', isLoading);
         if (!isLoading) {
           // isLoading passa para 'false' quando todos os eventos são renderizados

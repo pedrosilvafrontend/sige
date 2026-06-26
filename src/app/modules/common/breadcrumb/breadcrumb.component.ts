@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MenuService } from '@services';
 
@@ -13,7 +13,7 @@ import { MenuService } from '@services';
     changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
         MatIconModule,
-        TranslateModule,
+        TranslatePipe,
     ],
 })
 export class BreadcrumbComponent implements OnInit {

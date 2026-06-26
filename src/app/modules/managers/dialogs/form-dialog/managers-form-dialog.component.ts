@@ -28,7 +28,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { UserForm } from '@core/models/interface';
 import { School } from '@models';
 import { Subject, takeUntil } from 'rxjs';
@@ -63,7 +63,7 @@ export interface DialogData {
     MatOptionModule,
     MatDialogClose,
     MatNativeDateModule,
-    TranslateModule,
+    TranslatePipe,
     MatDialogActions,
     Button,
   ],

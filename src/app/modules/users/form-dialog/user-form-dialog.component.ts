@@ -26,7 +26,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AddressFormComponent } from '@modules/address/address-form/address-form.component';
 import { FValidators as V } from '@core/util/validators';
 import { School, User, UserForm  } from '@models';
@@ -66,7 +66,7 @@ export interface UserDialogData {
     MatOptionModule,
     MatDialogClose,
     MatNativeDateModule,
-    TranslateModule,
+    TranslatePipe,
     AddressFormComponent,
     MatTooltip,
     Button,
