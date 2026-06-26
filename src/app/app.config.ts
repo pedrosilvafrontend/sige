@@ -13,7 +13,7 @@ import { provideTranslateService, TranslateLoader, TranslateProviders } from '@n
 import { provideTranslateHttpLoader, TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { pt } from 'date-fns/locale';
+import { ptBR } from 'date-fns/locale';
 import { ToastrModule } from 'ngx-toastr';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
@@ -57,7 +57,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideDateFnsAdapter(),
-    { provide: MAT_DATE_LOCALE, useValue: pt },
+    { provide: MAT_DATE_LOCALE, useValue: ptBR },
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
     importProvidersFrom(
       ToastrModule.forRoot({
