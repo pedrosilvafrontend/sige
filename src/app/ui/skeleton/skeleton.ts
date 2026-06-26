@@ -1,4 +1,4 @@
-import { Component, effect, input, signal } from '@angular/core';
+import { Component, effect, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 
 @Component({
@@ -7,6 +7,7 @@ import { NgTemplateOutlet } from '@angular/common';
     NgTemplateOutlet
   ],
   templateUrl: './skeleton.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './skeleton.scss',
 })
 export class Skeleton {

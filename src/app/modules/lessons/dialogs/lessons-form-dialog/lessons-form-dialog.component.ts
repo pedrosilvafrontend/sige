@@ -4,7 +4,7 @@ import {
   MatDialogContent,
   MatDialogClose, MatDialogActions,
 } from '@angular/material/dialog';
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, output } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, output, ChangeDetectionStrategy } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormsModule,
@@ -34,6 +34,7 @@ import { LessonForm } from '@form/lesson.form';
   templateUrl: './lessons-form-dialog.component.html',
   styleUrls: ['./lessons-form-dialog.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatButtonModule,
     MatIconModule,

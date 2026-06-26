@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { SchoolClass, ApiResponse } from '@models';
 import { BaseApiService } from '@services/base-api-service';
@@ -8,6 +8,7 @@ export type ClassesGetAllParams = {
   schoolId?: number;
   degreeId?: string;
   dayShiftId?: string;
+  codePrefix?: string;
 };
 
 @Injectable({
@@ -24,7 +25,6 @@ export class ClassesService extends BaseApiService<SchoolClass> {
     return (!!params?.schoolId && data[0]?.school?.id === params?.schoolId);
   }
 
-  /** GET: Fetch all advance tables */
   override getAll(params?: ClassesGetAllParams, force?: boolean): Observable<ApiResponse<SchoolClass[]>> {
     if (!force && this.returnCachedData(params)) {
       return this.lastData.pipe(
@@ -49,6 +49,10 @@ export class ClassesService extends BaseApiService<SchoolClass> {
       urlParams.append("dayShiftId", String(params.dayShiftId));
     }
 
+    if (params?.codePrefix) {
+      urlParams.append("codePrefix", String(params.codePrefix));
+    }
+
     url = [this.API_URL, urlParams].join('?');
 
     return this.http
@@ -62,36 +66,33 @@ export class ClassesService extends BaseApiService<SchoolClass> {
       );
   }
 
-  /** POST: Add a new advance table */
   addItem(schoolClass: SchoolClass): Observable<SchoolClass> {
     return this.http.post<SchoolClass>(this.API_URL, schoolClass).pipe(
       map((response) => {
         this.lastData.next([]);
-        return response; // return response from API
+        return response;
       }),
       catchError(this.handleError)
     );
   }
 
-  /** PUT: Update an existing advance table */
   updateItem(schoolClass: SchoolClass): Observable<SchoolClass> {
     return this.http
       .put<SchoolClass>(`${this.API_URL}/${schoolClass.id}`, schoolClass)
       .pipe(
         map((response) => {
           this.lastData.next([]);
-          return response; // return response from API
+          return response;
         }),
         catchError(this.handleError)
       );
   }
 
-  /** DELETE: Remove an advance table by ID */
   override deleteItem(id: number): Observable<number> {
     return this.http.delete<void>(`${this.API_URL}/${id}`).pipe(
       map(() => {
         this.lastData.next([]);
-        return id; // return response from API
+        return id;
       }),
       catchError(this.handleError)
     );

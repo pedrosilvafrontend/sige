@@ -76,19 +76,28 @@
             </mat-dialog-actions>
           </ng-template>
 
-          <ng-template #proofTemplate>
+          <ng-template #proofTemplate let-hasNext="hasNext" let-classHash="classHash">
             <div class="modalHeader">
-              @let fullProof = testFormComponent.proof;
-              @let classCode = fullProof?.schoolClass?.code;
+              @let fullTest = testFormComponent.proof;
+              @let classCode = fullTest?.schoolClass?.code || dialogData.item.schoolClass?.code || '';
               <div mat-dialog-title>
                 <div class="modalTitle">
-                  {{ (proof?.type || "Test") | translate }}
+                  @if (proof.id) {
+                    {{ "Edit "+(proof?.type || "test") | translate }} <span class="text-secondary text-opacity-50">#{{ proof.id }}</span>
+                  }
+                  @if (!proof.id) {
+                    {{ "New "+(proof?.type || "test") | translate }}
+                  }
                 </div>
                 @if (classCode) {
                   <div class="modalSubtitle">
                     <span>Turma: <strong>{{ classCode }}</strong></span>
-                    <span>Data: <strong>{{ proof?.date | date:'dd/MM/yyyy' }}</strong></span>
-                    <span>Hora: <strong>{{ fullProof?.timeSchedule?.startTime }}</strong></span>
+                    @if (proof?.date) {
+                      <span>Data: <strong>{{ proof?.date | date:'dd/MM/yyyy' }}</strong></span>
+                    }
+                    @if (fullTest?.timeSchedule?.startTime) {
+                      <span>Hora: <strong>{{ fullTest?.timeSchedule?.startTime }}</strong></span>
+                    }
                   </div>
                 }
               </div>
@@ -98,9 +107,9 @@
             </div>
             <mat-dialog-content>
 <!--              TODO: comparar o componente curricular com o do usuario logado e não teacherId-->
-<!--              @let notAllowedTeacher = !!(auth.role == 'teacher' && proof?.id && (fullProof?.teacher?.id !== auth.id || proof.status == 'APPROVED'));-->
+<!--              @let notAllowedTeacher = !!(auth.role == 'teacher' && proof?.id && (fullTest?.teacher?.id !== auth.id || proof.status == 'APPROVED'));-->
               @let notAllowedTeacher = false;
-              @let disableProof = disabled || readonly || notAllowedTeacher;
+              @let disableTest = disabled || readonly || notAllowedTeacher;
               @if (proof && proof.status) {
                 <div class="my-3">
                   <span class="badge" [ngClass]="'text-bg-'+activityStatusClass[proof.status]">
@@ -118,7 +127,7 @@
                 [timeScheduleId]="timeScheduleId"
                 [date]="event.date"
                 [event]="event"
-                [disabled]="disableProof"
+                [disabled]="disableTest"
                 (form$)="(proofForm = $event)"
                 (initialSelectedEvents)="(initialSelectedProofEvents = $event)"
               >
@@ -128,11 +137,11 @@
             <mat-dialog-actions>
               <div class="dialog-buttons">
                 @let isManager = auth.role && ['admin', 'principal', 'coordinator'].includes(auth.role);
-                @if (proof?.id && !disableProof && (proof.type != 'MULTICLASS_TEST' || isManager)) {
+                @if (proof?.id && !disableTest && (proof.type != 'MULTICLASS_TEST' || isManager)) {
                   <ui-button color="danger" (onClick)="deleteProofModal.open()">Excluír prova</ui-button>
                 }
                 <ui-button color="neutral" (onClick)="proofModal.close()" cdkFocusInitial>
-                  @if (disableProof) {
+                  @if (disableTest) {
                     Fechar
                   } @else {
                     Cancelar
@@ -143,7 +152,7 @@
 <!--                    {{ 'Approve' | translate }}-->
 <!--                  </ui-button>-->
 <!--                }-->
-                @if (!disableProof) {
+                @if (!disableTest) {
 <!--                  deleteProofOnUpdateModal-->
                   @if (proof.type == 'MULTICLASS_TEST') {
                     <ui-button [disabled]="proofForm.invalid" (onClick)="saveProof(proofModal.close, deleteProofOnUpdateModal)">
@@ -160,10 +169,21 @@
                       }
                     </ui-button>
                   }
+
+                  @if (hasNext && proof.type !== 'MULTICLASS_TEST') {
+                    <ui-button
+                      [disabled]="proofForm.invalid"
+                      (onClick)="setEventSelect(eventSelectModal); saveTestNext(proofModal)">
+                      Salvar e próximo
+                    </ui-button>
+                  }
                 }
               </div>
             </mat-dialog-actions>
           </ng-template>
+
+          @let codePrefix = dialogData.item.schoolClass?.code | codePrefix;
+          <ui-event-select-modal #eventSelectModal [params]="{ codePrefix }" (onSelect)="selectEvent($event, proofModal)"></ui-event-select-modal>
 
           <ui-modal #deleteProofModal [template]="deleteProofTemplate"></ui-modal>
           <ng-template #deleteProofTemplate>
@@ -269,7 +289,7 @@
           }
         </app-work-form-modal>
         @if (!readonly || proof.id) {
-          <ui-button color="default" (onClick)="proofModal.open()" badge=""
+          <ui-button color="default" (onClick)="openTestModal(proofModal)" badge=""
                      [badgeColor]="activityStatusClass[proof.status]" [disabled]="!proof.id && (isMaxTotal || isMaxProofs)">
             {{ 'Proof' | translate }}
           </ui-button>

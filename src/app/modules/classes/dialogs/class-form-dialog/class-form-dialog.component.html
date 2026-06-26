@@ -132,7 +132,7 @@
           <mat-form-field class="example-full-width " appearance="outline" subscriptSizing="dynamic">
             <mat-label>{{ 'school' | translate }}</mat-label>
             <mat-select
-              [value]="form.get('school')?.value"
+              [value]="$safeNavigationMigration(form.get('school')?.value)"
               (valueChange)="form.patchValue({school: $event})"
               [disabled]="user.role === 'teacher'"
               [compareWith]="objectCompare">

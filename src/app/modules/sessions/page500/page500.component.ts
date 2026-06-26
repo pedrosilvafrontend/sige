@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ErrorCodeComponent } from '@modules/common/error-code/error-code.component';
 
 @Component({
@@ -6,6 +6,7 @@ import { ErrorCodeComponent } from '@modules/common/error-code/error-code.compon
     templateUrl: './page500.component.html',
     styleUrls: ['./page500.component.scss'],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [ErrorCodeComponent]
 })
 export class Page500Component {

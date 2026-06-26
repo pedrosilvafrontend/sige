@@ -4,6 +4,7 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -45,6 +46,7 @@ import { AuthService } from '@services';
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'pt-BR' }],
   standalone: true,
   animations: [rowsAnimation],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     PageHeaderComponent,
     CommonModule,

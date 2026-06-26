@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { Button } from '@ui/button/button';
 import {
   MatDialogActions,
@@ -32,6 +32,7 @@ import { BaseModal } from '@modules/modals/base-modal/base-modal';
     DeleteWorkModal
   ],
   templateUrl: './work-form-modal.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './work-form-modal.scss',
 })
 export class WorkFormModal extends BaseModal<Work> {

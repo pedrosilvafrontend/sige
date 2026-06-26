@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild, } from '@angular/core';
+import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -36,6 +36,7 @@ import { ModalDialogComponent, ModalOutput } from '@ui/modal/modal.component';
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'pt-BR' }],
   standalone: true,
   animations: [rowsAnimation],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     PageHeaderComponent,
     CommonModule,

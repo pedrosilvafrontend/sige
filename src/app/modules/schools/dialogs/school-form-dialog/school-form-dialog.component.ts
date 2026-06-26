@@ -4,7 +4,7 @@ import {
   MatDialogContent,
   MatDialogClose, MatDialogActions,
 } from '@angular/material/dialog';
-import { Component, Inject, LOCALE_ID } from '@angular/core';
+import { Component, Inject, LOCALE_ID, ChangeDetectionStrategy } from '@angular/core';
 import { SchoolsService } from '@services/schools.service';
 import {
   UntypedFormControl,
@@ -52,6 +52,7 @@ export interface DialogData {
     provideNgxMask({})
   ],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatButtonModule,
     MatIconModule,

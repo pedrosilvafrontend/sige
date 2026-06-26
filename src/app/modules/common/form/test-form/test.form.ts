@@ -8,7 +8,8 @@ import {
   OnDestroy,
   OnInit,
   output,
-  signal
+  signal,
+  ChangeDetectionStrategy, computed
 } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IProofForm, ProofForm } from '@form/proof.form';
@@ -29,6 +30,7 @@ import { FormUtil } from '@util/form-util';
 import { AuthService } from '@services';
 import { ProofService } from '@core/services/proof.service';
 import { Util } from '@util/util';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-test-form',
@@ -40,9 +42,11 @@ import { Util } from '@util/util';
     EventCheckboxGroup,
     MatFormFieldModule,
     MatSelectModule,
-    CurricularComponentSelectComponent
+    CurricularComponentSelectComponent,
+    JsonPipe
   ],
   templateUrl: './test.form.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './test.form.scss'
 })
 export class TestFormComponent implements OnInit, OnDestroy {
@@ -57,7 +61,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
   classControl: FormControl<SchoolClass | null> = new FormControl<SchoolClass | null>(null);
   ccControl = this.form.controls.curricularComponent;
   data = input<Partial<Test>>({});
-  testId = input<number>();
+  testIdInput = input<number>(0, { alias: 'testId' });
   classHash = input<string>();
   schoolId = input.required<number>();
   timeScheduleId = input.required<number>();
@@ -66,18 +70,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
   initialSelectedEvents = output<UniqueLessonEvent[]>();
   date!: string;
   proof!: Test;
-  // date = input.required<string>({
-  //   transform: v => {
-  //     const type = typeof v;
-  //     if (type === 'object' && v.toISOString) {
-  //       return v.toISOString();
-  //     }
-  //     if (type !== 'string') {
-  //       return '';
-  //     }
-  //     return v;
-  //   }
-  // } as any);
+  testId = 0;
   eventInput = input<LessonEvent>(undefined, {alias: 'event'});
   disabled = input(false);
   readOnly = input(false);
@@ -122,16 +115,16 @@ export class TestFormComponent implements OnInit, OnDestroy {
       }
       this.date = date;
 
-      // if (this.data()) {
-      //   const data = this.data();
-      //   this.form.patchValue(data);
-      //   if (data.type === 'MULTICLASS_TEST') {
-      //     this.changeType();
-      //   }
-      //   // const eventInput = this.eventInput();
-      //   // const { start, end, lesson, date, weekday, school } = eventInput || {};
-      //   // this.setEvent(new LessonEvent({ start, end, lesson, date, weekday, school }));
-      // }
+      if (this.data() && !this.testIdInput()) {
+        const data = this.data();
+        this.form.patchValue(data);
+        if (data.type === 'MULTICLASS_TEST') {
+          this.changeType();
+        }
+        // const eventInput = this.eventInput();
+        // const { start, end, lesson, date, weekday, school } = eventInput || {};
+        // this.setEvent(new LessonEvent({ start, end, lesson, date, weekday, school }));
+      }
       // else {
       //   this.setEvent(this.eventInput());
       // }
@@ -141,6 +134,13 @@ export class TestFormComponent implements OnInit, OnDestroy {
       this.form.controls.schoolId?.setValue(this.schoolId());
 
     })
+
+    effect(() => {
+      if (this.testId !== this.testIdInput()) {
+        this.testId = this.testIdInput() || 0;
+        this.getProof(this.testId, this.classHash() || '').then();
+      }
+    });
   }
 
   async getProof(proofId: number, classHash?: string) {
@@ -322,8 +322,8 @@ export class TestFormComponent implements OnInit, OnDestroy {
       }
     })
 
-    if (this.testId()) {
-      await this.getProof(this.testId() || 0, this.classHash() || '');
+    if (this.testId) {
+      await this.getProof(this.testId || 0, this.classHash() || '');
 
       if (this.proof?.type === 'MULTICLASS_TEST') {
         this.changeType();

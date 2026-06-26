@@ -1,4 +1,4 @@
-import { Component, effect, inject, input } from '@angular/core';
+import { Component, effect, inject, input, ChangeDetectionStrategy } from '@angular/core';
 import { Button } from '@ui/button/button';
 import { EventCard } from '@ui/event-card/event-card';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -38,6 +38,7 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
     MatRadioGroup,
   ],
   templateUrl: './event-colors.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './event-colors.scss',
 })
 export class EventColors {

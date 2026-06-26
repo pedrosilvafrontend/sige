@@ -1,4 +1,4 @@
-@let proofType = event().evalTools.proof?.type;
+@let proofType = $safeNavigationMigration(event().evalTools.proof?.type);
 <mat-card class="cursor-pointer"
           [ngStyle]="{'background-color': color, 'color': color | textColor }"
           [ngClass]="{
@@ -15,9 +15,9 @@
             @let pStatus = evt.evalTools.proof?.status || '';
             @let wStatus = evt.evalTools.work?.status || '';
             @if (pStatus === 'APPROVED') {
-              <span [className]="'badge m-x-2 activity-test'" [ngStyle]="activities().get('TEST')?.color | colorStyle">{{ proofType | translate }}</span>
+              <span [className]="'badge m-x-2 activity-test'" [ngStyle]="$safeNavigationMigration(activities().get('TEST')?.color) | colorStyle">{{ proofType | translate }}</span>
             } @else if (wStatus === 'APPROVED') {
-              <span [className]="'badge m-x-2 activity-work'" [ngStyle]="activities().get('WORK')?.color | colorStyle">{{ 'Work' | translate }}</span>
+              <span [className]="'badge m-x-2 activity-work'" [ngStyle]="$safeNavigationMigration(activities().get('WORK')?.color) | colorStyle">{{ 'Work' | translate }}</span>
             } @else {
               <span class="badge badge-solid-gray dot-badge" [ngClass]="'dot-badge-'+(evt.evalTools | activityStatusClass)">
                 {{ 'Lesson' | translate }}

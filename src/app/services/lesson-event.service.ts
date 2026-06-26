@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { LessonEvent, LiteEvent } from '@models';
 import { Observable, take } from 'rxjs';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, httpResource } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '@env/environment';
@@ -10,7 +10,23 @@ import { environment } from '@env/environment';
   providedIn: 'root',
 })
 export class LessonEventService {
-  private readonly API_URL = `${environment.baseUrl}/lesson-events`;
+  readonly API_URL = `${environment.baseUrl}/lesson-events`;
+
+  private getAllParams = signal<any>({});
+  private lessonEventsResource = httpResource<LessonEvent[]>(() => {
+    return {
+      url: `${this.API_URL}`,
+      params: this.getAllParams()
+    }
+  });
+  readonly lessonEvents = computed(() => this.lessonEventsResource.value());
+  readonly lessonEventsLoading = computed(() => this.lessonEventsResource.isLoading());
+  readonly lessonEventsErro = computed(() => this.lessonEventsResource.error());
+  readonly lessonEventsStatus = computed(() => this.lessonEventsResource.status());
+
+  getBy(params: any) {
+    this.getAllParams.set(params || {});
+  }
 
   constructor(private http: HttpClient) { }
 

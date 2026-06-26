@@ -10,8 +10,7 @@
   }
   <div class="row">
     <div class="col-sm-12">
-      <div class="calendar-block">
-        <div class="row">
+      <div class="calendar-block row">
           <div class="col-md-12 col-lg-12">
             <div class="filter-container mt-2">
               <form [formGroup]="filters" (ngSubmit)="applyFilter()" class="filter-form" novalidate>
@@ -19,7 +18,7 @@
                   <div class="col">
                     <app-teacher-cc-select
                       formControlName="teacher"
-                      [schoolId]="filters.get('school')?.value?.id"
+                      [schoolId]="$safeNavigationMigration(filters.get('school')?.value?.id)"
                       [classHash]="classHash"
                     >
                     </app-teacher-cc-select>
@@ -88,7 +87,6 @@
               </ui-skeleton>
             </div>
           </div>
-        </div>
       </div>
     </div>
   </div>

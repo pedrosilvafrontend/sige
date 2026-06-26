@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit, Output, ChangeDetectionStrategy } from '@angular/core';
 import { FormUtil } from '@core/util/form-util';
 import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatError, MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
@@ -29,6 +29,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
   ],
   providers: [provideNgxMask({})],
   templateUrl: './address-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './address-form.component.scss'
 })
 export class AddressFormComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ConfigService } from '@modules/config/config/config.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AppData } from '@models/app-data';
@@ -12,6 +12,7 @@ import { AsyncPipe, DatePipe, JsonPipe } from '@angular/common';
     DatePipe
   ],
   templateUrl: './footer.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './footer.scss',
 })
 export class Footer {

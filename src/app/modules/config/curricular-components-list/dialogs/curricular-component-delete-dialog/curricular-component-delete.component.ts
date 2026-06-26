@@ -6,7 +6,7 @@ import {
   MatDialogActions,
   MatDialogClose,
 } from '@angular/material/dialog';
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { CurricularComponentsService } from '@services/curricular-components.service';
@@ -23,6 +23,7 @@ export interface ClassDialogData {
   templateUrl: './curricular-component-delete.component.html',
   styleUrls: ['./curricular-component-delete.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatDialogTitle,
     MatDialogContent,

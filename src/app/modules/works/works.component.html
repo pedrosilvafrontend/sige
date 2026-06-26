@@ -50,7 +50,7 @@
               <mat-header-cell class="pr-0" *matHeaderCellDef [ngStyle]="{'width': '160px'}">{{ column.label }}</mat-header-cell>
               <mat-cell *matCellDef="let row; let i=index;" class="pr-0">
                 @let isManager = auth.role === 'admin' || auth.role === 'principal' || auth.role === 'coordinator';
-                <app-work-form-modal #workModal [work]="row" [schoolId]="row.lesson?.school?.id">
+                <app-work-form-modal #workModal [work]="row" [schoolId]="$safeNavigationMigration(row.lesson?.school?.id)">
                   <button
                     type="button"
                     [matTooltip]="(isManager && row.status === 'PENDING_APPROVAL' ? 'Approve or reject': 'Edit') | translate"

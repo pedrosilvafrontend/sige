@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SchoolListComponent } from '@modules/schools/school-list/school-list.component';
 import { PageHeaderComponent } from '@ui/page-header/page-header.component';
@@ -9,6 +9,7 @@ import { PageHeaderComponent } from '@ui/page-header/page-header.component';
   standalone: true,
   templateUrl: './schools.component.html',
   styleUrl: './schools.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     CommonModule,
     SchoolListComponent,

@@ -23,9 +23,9 @@
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label class="msr-3">{{ 'role' | translate }}:</mat-label>
             <mat-select
-              [value]="form.get('role')?.value"
+              [value]="$safeNavigationMigration(form.get('role')?.value)"
               (valueChange)="form.controls.role.setValue($event)"
-              [disabled]="form.get('role')?.disabled">
+              [disabled]="$safeNavigationMigration(form.get('role')?.disabled)">
               @for (item of userTypes; track item) {
                 <mat-option [value]="item">
                   {{ item | translate }}

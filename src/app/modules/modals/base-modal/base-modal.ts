@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, output } from '@angular/core';
+import { Component, effect, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { AuthService } from '@services';
 import { ModalComponent, ModalDialogComponent, ModalOutput } from '@ui/modal/modal.component';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   selector: 'app-base-modal',
   imports: [],
   template: ``,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class BaseModal<T> {

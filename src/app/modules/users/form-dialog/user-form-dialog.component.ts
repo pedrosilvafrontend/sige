@@ -4,7 +4,7 @@ import {
   MatDialogContent,
   MatDialogClose, MatDialog, MatDialogActions,
 } from '@angular/material/dialog';
-import { Component, Inject, OnDestroy } from '@angular/core';
+import { Component, Inject, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import {
   UntypedFormControl,
   Validators,
@@ -51,6 +51,7 @@ export interface UserDialogData {
   styleUrls: ['./user-form-dialog.component.scss'],
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'pt-BR' }],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatButtonModule,
     MatIconModule,

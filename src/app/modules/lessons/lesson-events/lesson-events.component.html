@@ -170,13 +170,13 @@
                       <mat-cell *matCellDef="let row" (contextmenu)="onContextMenu($event, row)">
                         <span class="mobile-label">{{'evalTools' | translate}}</span>
                         <span class="truncate-text">
-                          @let proof = row.evalTools?.proof;
-                          @let work = row.evalTools?.work;
+                          @let proof = $safeNavigationMigration(row.evalTools?.proof);
+                          @let work = $safeNavigationMigration(row.evalTools?.work);
                           @if (proof?.id) {
-                            <span class="badge badge-solid badge-activity-proof" [ngStyle]="{ 'background-color': activities.get('TEST')?.color }">{{'Proof' | translate}}</span>
+                            <span class="badge badge-solid badge-activity-proof" [ngStyle]="{ 'background-color': $safeNavigationMigration(activities.get('TEST')?.color) }">{{'Proof' | translate}}</span>
                           }
                           @if (work?.id) {
-                            <span class="badge badge-solid badge-activity-work" [ngStyle]="{ 'background-color': activities.get('WORK')?.color }">{{'Work' | translate}}</span>
+                            <span class="badge badge-solid badge-activity-work" [ngStyle]="{ 'background-color': $safeNavigationMigration(activities.get('WORK')?.color) }">{{'Work' | translate}}</span>
                           }
 
                         </span>

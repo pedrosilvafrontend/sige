@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Inject, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Inject, Output, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, UntypedFormArray } from '@angular/forms';
 import { SchoolListComponent } from '@modules/schools/school-list/school-list.component';
 import { School } from '@models';
@@ -20,6 +20,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatButton
   ],
   templateUrl: './school-list-select.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './school-list-select.component.scss'
 })
 export class SchoolListSelectComponent {

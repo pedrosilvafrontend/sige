@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import {
   FormBuilder,
   Validators,
@@ -24,6 +24,7 @@ import { AuthService } from '@services';
   styleUrls: ['./register.component.scss'],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     MatCardModule,
     ReactiveFormsModule,
