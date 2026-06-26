@@ -5,7 +5,7 @@ import { School } from '@models';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-school-list-select',
@@ -16,7 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatDialogContent,
     MatIcon,
     MatIconButton,
-    TranslateModule,
+    TranslatePipe,
     MatButton
   ],
   templateUrl: './school-list-select.component.html',

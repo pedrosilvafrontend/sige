@@ -18,7 +18,7 @@ import {
 import { firstValueFrom, Observable, startWith, Subject, take, takeUntil } from 'rxjs';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption } from '@angular/material/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { CurricularComponent } from '@models/curricular-component.model';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatInput } from '@angular/material/input';
@@ -33,7 +33,7 @@ import { map } from 'rxjs/operators';
     MatFormField,
     MatLabel,
     MatOption,
-    TranslateModule,
+    TranslatePipe,
     FormsModule,
     MatAutocompleteTrigger,
     MatInput,

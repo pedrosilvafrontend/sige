@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption } from '@angular/material/core';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { firstValueFrom, Observable, startWith, Subject, takeUntil } from 'rxjs';
 import { Util } from '@core/util/util';
 import { School } from '@models';
@@ -33,7 +33,7 @@ import { map } from 'rxjs/operators';
     MatOption,
     MatAutocompleteModule,
     MatInputModule,
-    TranslateModule,
+    TranslatePipe,
     TitleCasePipe,
     ReactiveFormsModule,
     AsyncPipe,

@@ -25,7 +25,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PageHeaderComponent } from '@ui/page-header/page-header.component';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { firstValueFrom, takeUntil } from 'rxjs';
 import { LesEvent } from '@modules/lessons/lesson-events/index';
 import { MatDialog } from '@angular/material/dialog';
@@ -42,9 +42,7 @@ import { Button } from '@ui/button/button';
 import { ActivityConfig, LessonBatch, LessonEvent } from '@models';
 import { LessonEventService } from '@services/lesson-event.service';
 import { UpdateService } from '@services/update.service';
-import { map } from 'rxjs/operators';
 import { ActivityService } from '@modules/config/activity/activity.service';
-import { MatBadge } from '@angular/material/badge';
 
 @Component({
   selector: 'app-lesson-events',
@@ -76,7 +74,7 @@ import { MatBadge } from '@angular/material/badge';
     MatTable,
     MatTooltip,
     PageHeaderComponent,
-    TranslateModule,
+    TranslatePipe,
     FormsModule,
     MatMenuTrigger,
     MatHeaderCellDef,
@@ -85,7 +83,6 @@ import { MatBadge } from '@angular/material/badge';
     ReactiveFormsModule,
     Button,
     NgStyle,
-    MatBadge
   ],
   providers: [
     TranslatePipe

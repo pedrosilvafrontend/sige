@@ -28,7 +28,7 @@ import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular
 import { MatButtonModule } from '@angular/material/button';
 import { PageHeaderComponent } from '@ui/page-header/page-header.component';
 import { MatCardModule } from '@angular/material/card';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, lastValueFrom, Observable, of, Subject, take, takeUntil } from 'rxjs';
 import {
   LessonEventFormDialogComponent
@@ -76,7 +76,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatFormFieldModule,
     MatSelectModule,
     FormGroupEntriesPipe,
-    TranslateModule,
+    TranslatePipe,
     TitleCasePipe,
     SchoolSelectComponent,
     TeacherSelectComponent,

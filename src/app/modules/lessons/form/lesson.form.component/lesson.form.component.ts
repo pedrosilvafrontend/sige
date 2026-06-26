@@ -9,7 +9,7 @@ import {
 import { MatError, MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatOption } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BehaviorSubject, firstValueFrom, startWith, Subject, takeUntil } from 'rxjs';
 import {
   School,
@@ -52,7 +52,7 @@ import { LessonForm } from '@form/lesson.form';
     MatOption,
     MatSelect,
     ReactiveFormsModule,
-    TranslateModule,
+    TranslatePipe,
     SchoolSelectComponent,
     MatDatepicker,
     MatDatepickerInput,

@@ -31,7 +31,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { LessonFormComponent } from '@modules/lessons';
 import { Subject, takeUntil } from 'rxjs';
 import { Util } from '@core/util/util';
@@ -63,7 +63,7 @@ export interface DialogData {
     MatInputModule,
     MatSelectModule,
     MatOptionModule,
-    TranslateModule,
+    TranslatePipe,
     LessonFormComponent,
     Datepicker,
     Button,

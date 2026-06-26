@@ -9,7 +9,7 @@ import {
 import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { WorkService } from '@core/services/work.service';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Work } from '@models';
 
 @Component({
@@ -24,7 +24,7 @@ import { Work } from '@models';
     MatDialogActions,
     MatButtonModule,
     MatDialogClose,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class WorksDeleteDialogComponent {

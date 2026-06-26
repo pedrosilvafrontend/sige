@@ -9,7 +9,7 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Util } from '@core/util/util';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { firstValueFrom, startWith, Subject, takeUntil } from 'rxjs';
@@ -31,7 +31,7 @@ import { map } from 'rxjs/operators';
     MatLabel,
     MatOption,
     TitleCasePipe,
-    TranslateModule,
+    TranslatePipe,
     MatAutocompleteTrigger,
     MatInput,
     ReactiveFormsModule,

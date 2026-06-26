@@ -21,7 +21,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { School, SchoolClass, CurricularComponent, LessonBatch, ILessonForm } from '@models';
 import { UserTable } from '../../../users/users.model';
 import { LessonFormComponent } from '@modules/lessons';
@@ -49,7 +49,7 @@ import { LessonForm } from '@form/lesson.form';
     MatOptionModule,
     MatDialogClose,
     MatNativeDateModule,
-    TranslateModule,
+    TranslatePipe,
     LessonFormComponent,
     Button,
     MatDialogActions

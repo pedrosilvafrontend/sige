@@ -8,7 +8,7 @@ import {
 } from '@angular/material/dialog';
 import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { DayShiftsService } from '../../day-shifts.service';
 
 export interface ClassDialogData {
@@ -30,7 +30,7 @@ export interface ClassDialogData {
     MatDialogActions,
     MatButtonModule,
     MatDialogClose,
-    TranslateModule,
+    TranslatePipe,
   ],
 })
 export class SubjectDeleteDialogComponent {

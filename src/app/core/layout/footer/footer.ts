@@ -1,13 +1,11 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ConfigService } from '@modules/config/config/config.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AppData } from '@models/app-data';
-import { AsyncPipe, DatePipe, JsonPipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-footer',
   imports: [
-    JsonPipe,
     AsyncPipe,
     DatePipe
   ],

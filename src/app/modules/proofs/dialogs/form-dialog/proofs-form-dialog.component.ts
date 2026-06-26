@@ -22,13 +22,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Test } from '@models';
 import { Button } from '@ui/button/button';
-import { IProofForm, ProofForm } from '@form/proof.form';
+import { IProofForm } from '@form/proof.form';
 import { AuthService } from '@services';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { TestFormComponent } from '@modules/common/form/test-form/test.form';
 
 export interface DialogData {
@@ -40,7 +39,6 @@ export interface DialogData {
 @Component({
   selector: 'app-proofs-form-dialog',
   templateUrl: './proofs-form-dialog.component.html',
-  // styleUrls: ['./proofs-form-dialog.component.scss'],
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'pt-BR' }],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -57,10 +55,9 @@ export interface DialogData {
     MatOptionModule,
     MatDialogClose,
     MatNativeDateModule,
-    TranslateModule,
+    TranslatePipe,
     MatDialogActions,
     Button,
-    MatCheckbox,
     TestFormComponent,
   ],
 })

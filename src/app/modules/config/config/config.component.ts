@@ -12,7 +12,6 @@ import { ConfigData, ConfigResponse } from '@models/config.model';
 import { TranslatePipe } from '@ngx-translate/core';
 import { UserService } from '@modules/users/user.service';
 import { Datepicker } from '@ui/field/datepicker/datepicker';
-import { JsonPipe } from '@angular/common';
 import { UserSchoolAssociation } from '@models';
 import { firstValueFrom } from 'rxjs';
 import { FormValidators } from '@form';
@@ -30,7 +29,6 @@ import { MatCheckbox } from '@angular/material/checkbox';
     ReactiveFormsModule,
     TranslatePipe,
     Datepicker,
-    JsonPipe,
     Button,
     MatCheckbox,
   ],

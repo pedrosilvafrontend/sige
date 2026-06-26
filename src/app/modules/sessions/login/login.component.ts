@@ -1,7 +1,6 @@
 import { Component, inject, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService, SettingsService } from '@services';
-import { TranslateModule } from '@ngx-translate/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -13,7 +12,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { Button } from '@ui/button/button';
 import { LoadingService } from '@services/loading.service';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
 
 @Component({
@@ -30,7 +29,6 @@ import { Subject, takeUntil } from 'rxjs';
     MatInputModule,
     MatIconModule,
     MatCheckboxModule,
-    TranslateModule,
     Field,
     Button,
     NgOptimizedImage

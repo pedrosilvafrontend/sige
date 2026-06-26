@@ -27,7 +27,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { distinctUntilChanged, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { Button } from '@ui/button/button';
@@ -59,7 +59,7 @@ export interface DialogData {
     MatOptionModule,
     MatDialogClose,
     MatNativeDateModule,
-    TranslateModule,
+    TranslatePipe,
     Button,
     MatDialogActions,
   ],

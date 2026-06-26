@@ -7,10 +7,10 @@ import {
 import { provideRouter, withHashLocation } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
-import { errorInterceptor, responseInterceptor, tokenInterceptor } from './core/interceptor';
-import { provideTranslateService, TranslateModule } from '@ngx-translate/core';
-import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { HttpClient, provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
+import { errorInterceptor, responseInterceptor, tokenInterceptor } from '@core/interceptor';
+import { provideTranslateService, TranslateLoader, TranslateProviders } from '@ngx-translate/core';
+import { provideTranslateHttpLoader, TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { pt } from 'date-fns/locale';
@@ -40,7 +40,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withXhr(), 
+    provideHttpClient(withXhr(),
       withInterceptors([
         tokenInterceptor,
         responseInterceptor,
@@ -48,12 +48,11 @@ export const appConfig: ApplicationConfig = {
       ])
     ),
     provideTranslateService({
-      lang: 'pt',
-      fallbackLang: 'pt',
       loader: provideTranslateHttpLoader({
         prefix: '/i18n/',
         suffix: '.json'
-      })
+      }),
+      fallbackLang: 'pt'
     }),
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
@@ -65,13 +64,6 @@ export const appConfig: ApplicationConfig = {
         timeOut: 3000,
         positionClass: 'toast-top-right',
         preventDuplicates: true,
-      }),
-      TranslateModule.forRoot({
-        // loader: {
-        //   provide: TranslateLoader,
-        //   useFactory: createTranslateLoader,
-        //   deps: [HttpClient],
-        // },
       }),
       NgxEditorModule.forRoot({
         locals: {

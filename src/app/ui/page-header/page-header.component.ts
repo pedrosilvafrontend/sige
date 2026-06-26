@@ -9,7 +9,7 @@ import {
 import { Router } from '@angular/router';
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
 import { MenuService } from '@services';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
     selector: 'ui-page-header',
@@ -18,7 +18,7 @@ import { TranslateModule } from '@ngx-translate/core';
     encapsulation: ViewEncapsulation.None,
     standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [TranslateModule],
+  imports: [TranslatePipe],
 })
 export class PageHeaderComponent implements OnInit {
   @HostBinding('class') class = 'page-header';

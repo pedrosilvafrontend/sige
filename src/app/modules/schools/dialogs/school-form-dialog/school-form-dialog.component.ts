@@ -27,7 +27,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AddressFormComponent } from '@modules/address/address-form/address-form.component';
 import { SchoolsUtils } from '../../schools.utils';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
@@ -67,7 +67,7 @@ export interface DialogData {
     MatOptionModule,
     MatDialogClose,
     MatNativeDateModule,
-    TranslateModule,
+    TranslatePipe,
     AddressFormComponent,
     NgxMaskDirective,
     Button,

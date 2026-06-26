@@ -20,7 +20,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LessonsFormDialogComponent } from './dialogs/lessons-form-dialog/lessons-form-dialog.component';
 import { AuthService, LessonsService } from '@services';
 import { LessonsDialogComponent } from './dialogs/lessons-delete-dialog/lessons-delete.component';
@@ -63,7 +63,7 @@ import { Skeleton } from '@ui/skeleton/skeleton';
     MatMenuModule,
     MatPaginatorModule,
     DatePipe,
-    TranslateModule,
+    TranslatePipe,
     GridLesson,
     GridTeacherLesson,
     Skeleton,

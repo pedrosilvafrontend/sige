@@ -21,7 +21,7 @@ import {
 import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { Autocomplete, ObjPipe } from '@util';
 
@@ -36,7 +36,7 @@ import { Autocomplete, ObjPipe } from '@util';
     MatIcon,
     MatInput,
     MatOption,
-    TranslateModule,
+    TranslatePipe,
     ReactiveFormsModule,
     ObjPipe,
     NgClass,

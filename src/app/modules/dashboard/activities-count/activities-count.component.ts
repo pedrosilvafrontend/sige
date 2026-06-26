@@ -12,7 +12,6 @@ import {
 } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { TranslateModule } from '@ngx-translate/core';
 import { ActivitiesCount, ActivitiesCountFilters, ActivitiesCountResponse } from '@core/models/dashboard.model';
 import { NgStyle } from '@angular/common';
 import { ClassSelectComponent } from '@modules/classes/class-select/class-select.component';
@@ -27,7 +26,6 @@ import { SchoolSelectComponent } from '@modules/schools/school-select/school-sel
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
-    TranslateModule,
     NgStyle,
     ClassSelectComponent,
     SchoolSelectComponent,
