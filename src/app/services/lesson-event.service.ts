@@ -10,7 +10,7 @@ import { environment } from '@env/environment';
   providedIn: 'root',
 })
 export class LessonEventService {
-  private readonly API_URL = `${environment.baseUrl}/lesson-events`;
+  readonly API_URL = `${environment.baseUrl}/lesson-events`;
 
   private getAllParams = signal<any>({});
   private lessonEventsResource = httpResource<LessonEvent[]>(() => {
@@ -23,7 +23,6 @@ export class LessonEventService {
   readonly lessonEventsLoading = computed(() => this.lessonEventsResource.isLoading());
   readonly lessonEventsErro = computed(() => this.lessonEventsResource.error());
   readonly lessonEventsStatus = computed(() => this.lessonEventsResource.status());
-  readonly lessonEventsProgress = computed(() => this.lessonEventsResource.progress());
 
   getBy(params: any) {
     this.getAllParams.set(params || {});

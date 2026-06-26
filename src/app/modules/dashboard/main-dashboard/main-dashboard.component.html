@@ -2,7 +2,7 @@
 <div class="main-dashboard">
 <!--  <div class="d-flex justify-content-between align-items-center inline-fields">-->
   <h2>Próximas atividades</h2>
-  <div class="filters row align-items-center" [formGroup]="filters">
+  <div class="filters row align-items-center gap-3" [formGroup]="filters">
     <div class="col-sm-12 col-md-6 col-lg-3">
       <mat-form-field size="small" class="example-full-width" appearance="outline" subscriptSizing="dynamic">
         <mat-label>{{ 'Date' | translate }}</mat-label>
@@ -20,7 +20,7 @@
         </mat-datepicker>
       </mat-form-field>
     </div>
-    <div class="col-sm-12 col-md-6 col-lg-3">
+    <div class="col-sm-12 col-md-6 col-lg-4">
       <app-activities-filter-form (change)="activitiesFilterChange($event)"></app-activities-filter-form>
     </div>
     <div class="col-sm-12 col-md-6 col-lg">

@@ -1,0 +1,59 @@
+<!--<ui-button (onClick)="modal.open()"></ui-button>-->
+<ui-modal #modal [template]="template" [options]="{width: '800px', disableClose: true}"></ui-modal>
+<ng-template #template let-hasNext="hasNext" let-classHash="classHash">
+  <div class="modalHeader">
+    <div mat-dialog-title>
+      <div class="modalTitle">
+        {{ "Select a lesson" | translate }}
+      </div>
+    </div>
+    <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="modal.close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-dialog-content>
+    <form [formRoot]="filtersForm" (submit)="getEvents()">
+      <div class="filters row align-items-center">
+        <div class="col-sm-12 col-md-6 col-lg-3">
+          <mat-form-field size="small" class="example-full-width" appearance="outline" subscriptSizing="dynamic">
+            <mat-label>{{ 'Date' | translate }}</mat-label>
+            <input matInput
+                   [matDatepicker]="picker"
+                   [formField]="filtersForm.date"
+                   [datePickerFormat]="isManager ? 'dd/MM/yyyy' : 'MM/yyyy'"
+                   [min]="minDate"
+                   [max]="maxDate">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker
+                            [startView]="isManager ? 'month' : 'year'"
+                            (monthSelected)="monthSelected($event, picker)"
+                            panelClass="example-month-picker">
+            </mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row row-gap-24 my-4">
+      @for (event of events; let i = $index; track i) {
+        <div class="col activity-col">
+          <ui-skeleton type="card" [loading]="isLoading()">
+            <ui-event-card [color]="event.color || ''" [auth]="auth" [event]="event" [activities]="activities" (click)="select(event)"></ui-event-card>
+          </ui-skeleton>
+        </div>
+      }
+
+      <div class="col activity-col"></div>
+      <div class="col activity-col"></div>
+      <div class="col activity-col"></div>
+      <div class="col activity-col"></div>
+      <div class="col activity-col"></div>
+      <div class="col activity-col"></div>
+      <div class="col activity-col"></div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <div class="dialog-buttons">
+      <ui-button color="neutral" (onClick)="modal.close()">Cancelar</ui-button>
+    </div>
+  </mat-dialog-actions>
+</ng-template>

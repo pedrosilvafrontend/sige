@@ -35,13 +35,13 @@ import {
   School,
   SchoolClass, UniqueLessonEvent, Work, EventMerge,
 } from '@models';
-import { AuthService, ClassesGetAllParams, ClassesService, CurricularComponentsService } from '@services';
+import { AuthService, ClassesService, CurricularComponentsService } from '@services';
 import { Button } from '@ui/button/button';
 import { ProofService } from '@core/services/proof.service';
 import { ModalComponent, ModalDialogComponent } from '@ui/modal/modal.component';
 import { LessonEventExtraService } from '@services/lesson-event-extra.service';
 import { TestFormComponent } from '@modules/common/form/test-form/test.form';
-import { DatePipe, JsonPipe, NgClass } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
 import { IProofForm } from '@form/proof.form';
 import { MessageService } from '@services/message.service';
 import { TextEditor } from '@ui/text-editor/text-editor';
@@ -53,6 +53,8 @@ import { EventColors } from '@modules/modals/event-colors/event-colors';
 import { ColorBy, newColorBy } from '@models/colors-by';
 import { ActivatedRoute } from '@angular/router';
 import { LessonEventService } from '@services/lesson-event.service';
+import { EventSelectModal } from '@ui/event-select-modal/event-select-modal';
+import { CodePrefixPipe } from '@util/code-prefix-pipe';
 
 export interface DialogData {
   item: EventMerge;
@@ -96,7 +98,8 @@ export interface DialogData {
     WorkFormModal,
     EventColors,
     DatePipe,
-    JsonPipe,
+    EventSelectModal,
+    CodePrefixPipe,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit {
@@ -142,10 +145,46 @@ export class LessonEventFormDialogComponent implements OnInit {
     disableClose: true
   };
   activities: Map<string, ActivityConfig> = new Map();
-  colorBy: ColorBy;
+  colorBy: ColorBy = newColorBy();
   initialSelectedProofEvents: UniqueLessonEvent[] = [];
   lessonId = 0;
   classHash = '';
+
+  copyProof(proof: Test, event?: LessonEvent) {
+    return new Test({
+      type: proof.type,
+      curricularComponent: event?.curricularComponent ?? proof.curricularComponent,
+      title: proof.title,
+      content: proof.content,
+      score: proof.score,
+      whereToFindIt: proof.whereToFindIt,
+      lessonId: event?.lesson?.id || 0,
+      curricularComponentId: event?.curricularComponent?.id || 0,
+      timeScheduleId: event?.frequency?.timeSchedule?.id || 0,
+      date: event?.date || ''
+    });
+  }
+
+  async reset(event?: LessonEvent) {
+    this.event = event || new LessonEvent();
+    this.form.reset();
+    this.dialogData.item = this.event;
+    this.lessonId = this.event.lesson?.id || 0;
+    this.proof = this.copyProof(this.proof, this.event);
+
+    this.dialogData = {
+      item: this.event,
+      lessonId: this.event.lesson?.id || 0,
+      timeScheduleId: this.event.frequency?.timeSchedule?.id || 0,
+      date: this.event.date,
+      action: 'edit',
+      colorBy: newColorBy(),
+      classHash: ''
+    }
+    this.construct();
+    await this.ngOnInit();
+    this.cdr.detectChanges();
+  }
 
   private _work!: Work;
   get work(): Work {
@@ -176,6 +215,10 @@ export class LessonEventFormDialogComponent implements OnInit {
   }
 
   constructor() {
+    this.construct();
+  }
+
+  construct() {
     const { item, action, lessonId, timeScheduleId, date, colorBy, classHash } = this.dialogData || {};
     this.classHash = classHash || '';
     this.lessonId = item.lessonId || item.lesson?.id || 0;
@@ -349,14 +392,33 @@ export class LessonEventFormDialogComponent implements OnInit {
     }
   }
 
-  saveTestNext(testModal: ModalComponent) {
-    if (this.classesIterator) {
-      const nextClass = this.classesIterator.next();
-      if (!nextClass.done) {
-        // this.proofForm.controls.schoolClass.setValue(nextClass.value);
-        testModal.open();
-      }
+  openEventSelect = () => {};
+
+  setEventSelect(eventSelectModal: EventSelectModal) {
+    this.openEventSelect = () => {
+      eventSelectModal.open().then();
+      // eventSelectModal.open().then(ref => {
+      //   ref?.afterClosed().subscribe((value: any) => {
+      //     if (!value) {
+      //       this.openEventSelect();
+      //     }
+      //   });
+      // });
     }
+  }
+
+  saveTestNext(testModal: ModalComponent) {
+    this.saveProof(() => {
+      testModal.close(true);
+      this.openEventSelect();
+    })
+    // if (this.classesIterator) {
+    //   const nextClass = this.classesIterator.next();
+    //   if (!nextClass.done) {
+    //     // this.proofForm.controls.schoolClass.setValue(nextClass.value);
+    //     testModal.open();
+    //   }
+    // }
   }
 
   deleteAllProofs(callback?: () => void) {
@@ -480,6 +542,15 @@ export class LessonEventFormDialogComponent implements OnInit {
       this.classesIterator = classes.values(); // classes[Symbol.iterator]();
       testContext.hasNext = true;
     }
-    proofModal.open(testContext);
+    proofModal.open(testContext).afterClosed().subscribe((resp: any) => {
+      if (!resp) {
+        this.openEventSelect();
+      }
+    });
+  }
+
+  async selectEvent(event: LessonEvent, testModal: ModalComponent) {
+    this.reset(event).then();
+    this.openTestModal(testModal).then();
   }
 }

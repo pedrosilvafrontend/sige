@@ -82,7 +82,12 @@
               @let classCode = fullTest?.schoolClass?.code || dialogData.item.schoolClass?.code || '';
               <div mat-dialog-title>
                 <div class="modalTitle">
-                  {{ (proof?.type || "Test") | translate }}
+                  @if (proof.id) {
+                    {{ "Edit "+(proof?.type || "test") | translate }} <span class="text-secondary text-opacity-50">#{{ proof.id }}</span>
+                  }
+                  @if (!proof.id) {
+                    {{ "New "+(proof?.type || "test") | translate }}
+                  }
                 </div>
                 @if (classCode) {
                   <div class="modalSubtitle">
@@ -165,10 +170,10 @@
                     </ui-button>
                   }
 
-                  @if (hasNext) {
+                  @if (hasNext && proof.type !== 'MULTICLASS_TEST') {
                     <ui-button
                       [disabled]="proofForm.invalid"
-                      (onClick)="saveTestNext(proofModal)">
+                      (onClick)="setEventSelect(eventSelectModal); saveTestNext(proofModal)">
                       Salvar e próximo
                     </ui-button>
                   }
@@ -176,6 +181,9 @@
               </div>
             </mat-dialog-actions>
           </ng-template>
+
+          @let codePrefix = dialogData.item.schoolClass?.code | codePrefix;
+          <ui-event-select-modal #eventSelectModal [params]="{ codePrefix }" (onSelect)="selectEvent($event, proofModal)"></ui-event-select-modal>
 
           <ui-modal #deleteProofModal [template]="deleteProofTemplate"></ui-modal>
           <ng-template #deleteProofTemplate>

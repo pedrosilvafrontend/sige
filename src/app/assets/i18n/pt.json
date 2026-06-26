@@ -208,6 +208,8 @@
   "HOLIDAY": "Feriado",
   "EVENT": "Evento",
   "Test": "Prova",
+  "New TEST": "Nova prova",
+  "Edit TEST": "Editar prova",
   "Category": "Categoria",
   "Title": "Título",
   "Start date": "Data início",
@@ -340,5 +342,7 @@
   "Update Lessons dates": "Atualizar datas das aulas",
   "MULTICLASS_TEST": "Prova bimestral",
   "TEST_OF_OVERCOMING": "Prova de superação",
-  "Teacher / test administrator": "Professor / Aplicador da prova"
+  "Teacher / test administrator": "Professor / Aplicador da prova",
+  "Select a event": "Selecione um evento",
+  "Select a lesson": "Selecione uma aula"
 }
