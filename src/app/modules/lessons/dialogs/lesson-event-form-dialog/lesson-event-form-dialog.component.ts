@@ -35,13 +35,13 @@ import {
   School,
   SchoolClass, UniqueLessonEvent, Work, EventMerge,
 } from '@models';
-import { AuthService } from '@services';
+import { AuthService, ClassesGetAllParams, ClassesService, CurricularComponentsService } from '@services';
 import { Button } from '@ui/button/button';
 import { ProofService } from '@core/services/proof.service';
 import { ModalComponent, ModalDialogComponent } from '@ui/modal/modal.component';
 import { LessonEventExtraService } from '@services/lesson-event-extra.service';
 import { TestFormComponent } from '@modules/common/form/test-form/test.form';
-import { DatePipe, NgClass } from '@angular/common';
+import { DatePipe, JsonPipe, NgClass } from '@angular/common';
 import { IProofForm } from '@form/proof.form';
 import { MessageService } from '@services/message.service';
 import { TextEditor } from '@ui/text-editor/text-editor';
@@ -96,6 +96,7 @@ export interface DialogData {
     WorkFormModal,
     EventColors,
     DatePipe,
+    JsonPipe,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit {
@@ -104,12 +105,14 @@ export class LessonEventFormDialogComponent implements OnInit {
   private proofService = inject(ProofService);
   private workService = inject(WorkService);
   private authService = inject(AuthService);
+  private classService = inject(ClassesService);
   private cdr = inject(ChangeDetectorRef);
   private fb = inject(FormBuilder);
   private lessonEventService = inject(LessonEventService);
   private lessonEventExtraService = inject(LessonEventExtraService);
   private message = inject(MessageService);
   private route = inject(ActivatedRoute);
+  protected ccService = inject(CurricularComponentsService);
   auth = this.authService.user$.value;
   readonly = !this.auth.id;
   closeRefresh = false;
@@ -341,32 +344,17 @@ export class LessonEventFormDialogComponent implements OnInit {
 
         this.saveOrUpdateProof(data, callback);
 
-        // const request$ = isUpdate ? this.proofService.update(data) : this.proofService.add(data);
-        // request$.subscribe({
-        //   next: (response: any) => {
-        //     this.message.success('Salvo com sucesso!');
-        //     callback?.();
-        //     this.closeRefresh = true;
-        //     let proof: Proof;
-        //     if (isMulticlass && Array.isArray(response)) {
-        //       proof = response.find((p: Proof) => p.lessonId === lessonId);
-        //     }
-        //     else {
-        //       proof = response;
-        //     }
-        //     this.proof = proof;
-        //     this.proofForm.patchValue(proof);
-        //   },
-        //   error: (error) => {
-        //     console.error('Proof Update Error:', error);
-        //     this.form.setErrors({ temp: true });
-        //   },
-        // });
       }
 
-      if (this.action === 'edit') {
-        // TODO: adicionar instrumentos avaliativos e observação
+    }
+  }
 
+  saveTestNext(testModal: ModalComponent) {
+    if (this.classesIterator) {
+      const nextClass = this.classesIterator.next();
+      if (!nextClass.done) {
+        // this.proofForm.controls.schoolClass.setValue(nextClass.value);
+        testModal.open();
       }
     }
   }
@@ -470,4 +458,28 @@ export class LessonEventFormDialogComponent implements OnInit {
   }
 
   protected readonly ProofService = ProofService;
+
+  protected classesIterator!: IterableIterator<SchoolClass>;
+  protected async openTestModal(proofModal: ModalComponent) {
+    let codePrefix = this.dialogData.item.schoolClass?.codePrefix || '';
+    const schoolClass = this.dialogData.item.schoolClass;
+    const classCode = schoolClass?.code || '';
+    const testContext: any = {
+      classHash: this.classHash,
+    };
+    if (!codePrefix && classCode) {
+      codePrefix = classCode.match(/^[A-Za-z]+\d+/)?.[0] || '';
+    }
+    const resp = await firstValueFrom(this.classService.getAll({ codePrefix }));
+    const classes = (resp.data || []).sort((a, b) => {
+      if (a.code === classCode) return -1;
+      if (b.code === classCode) return 1;
+      return a.code && b.code ? a.code.localeCompare(b.code) : 0;
+    });
+    if (classes.length > 1) {
+      this.classesIterator = classes.values(); // classes[Symbol.iterator]();
+      testContext.hasNext = true;
+    }
+    proofModal.open(testContext);
+  }
 }
