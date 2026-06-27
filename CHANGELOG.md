@@ -1,3 +1,10 @@
+## [1.1.54](https://github.com/pedrosilvafrontend/sige/compare/v1.1.53...v1.1.54) (2026-06-27)
+
+
+### Bug Fixes
+
+* copy .npmrc on Docker build for resolve ERESOLVE (ngx-mask vs Angular 22) ([49944f3](https://github.com/pedrosilvafrontend/sige/commit/49944f3b79a4882577f11f05691f7f0041b6c48f))
+
 ## [1.1.53](https://github.com/pedrosilvafrontend/sige/compare/v1.1.52...v1.1.53) (2026-06-27)
 
 
