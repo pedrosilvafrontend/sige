@@ -1,3 +1,19 @@
+## [1.1.53](https://github.com/pedrosilvafrontend/sige/compare/v1.1.52...v1.1.53) (2026-06-27)
+
+
+### Bug Fixes
+
+* datepicker date-fns adapter ([c06c5f1](https://github.com/pedrosilvafrontend/sige/commit/c06c5f10b83a7f0880b40422f979824f399eace7))
+
+
+### Features
+
+* activities filter component ([2a2addb](https://github.com/pedrosilvafrontend/sige/commit/2a2addbc4a98b73378069fce222e030efb4af2a8))
+* calendar styles ([9b1ac6a](https://github.com/pedrosilvafrontend/sige/commit/9b1ac6aa29f6238b82a52f772ffb1819190b604d))
+* dashboard add activities filter ([cb2bb13](https://github.com/pedrosilvafrontend/sige/commit/cb2bb132d3059a800fc15109620b31bab28fd819))
+* save and next test in dialog ([2d131bb](https://github.com/pedrosilvafrontend/sige/commit/2d131bbc2087758fe3615097c2dc98ba7b6de52d))
+* save and next test in dialog ([4c77e00](https://github.com/pedrosilvafrontend/sige/commit/4c77e0073e03b17a7f7370f9b77a9d7ef53f8436))
+
 ## [1.1.52](https://github.com/pedrosilvafrontend/sige/compare/v1.1.51...v1.1.52) (2026-06-15)
 
 
