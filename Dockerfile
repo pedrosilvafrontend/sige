@@ -4,10 +4,10 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 # Copia os arquivos de configuração
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json .npmrc ./
 
 # Instala as dependências
-RUN npm install
+RUN npm ci
 
 # Copia o código-fonte e constrói a aplicação
 COPY . .
