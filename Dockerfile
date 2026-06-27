@@ -1,13 +1,13 @@
 # Estágio de build
-FROM node:20-alpine AS build
+FROM node:22-alpine AS build
 
 WORKDIR /app
 
 # Copia os arquivos de configuração
-COPY package.json package-lock.json .npmrc ./
+COPY package.json package-lock.json ./
 
 # Instala as dependências
-RUN npm ci
+RUN npm install --legacy-peer-deps
 
 # Copia o código-fonte e constrói a aplicação
 COPY . .
