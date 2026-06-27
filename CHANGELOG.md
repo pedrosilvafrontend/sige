@@ -1,3 +1,10 @@
+## [1.1.55](https://github.com/pedrosilvafrontend/sige/compare/v1.1.54...v1.1.55) (2026-06-27)
+
+
+### Bug Fixes
+
+* corrige build Docker (--legacy-peer-deps e Node 22 para Angular 22) ([e563e47](https://github.com/pedrosilvafrontend/sige/commit/e563e47d5ad3d9882564d83dc86527d03b6b1bb8))
+
 ## [1.1.54](https://github.com/pedrosilvafrontend/sige/compare/v1.1.53...v1.1.54) (2026-06-27)
 
 
