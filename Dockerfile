@@ -1,5 +1,5 @@
 # Estágio de build
-FROM node:20-alpine AS build
+FROM node:22-alpine AS build
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 # Instala as dependências
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copia o código-fonte e constrói a aplicação
 COPY . .
