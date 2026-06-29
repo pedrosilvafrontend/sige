@@ -1,3 +1,10 @@
+## [1.1.56](https://github.com/pedrosilvafrontend/sige/compare/v1.1.55...v1.1.56) (2026-06-29)
+
+
+### Features
+
+* test duplicate with compare ([33b061c](https://github.com/pedrosilvafrontend/sige/commit/33b061cd169671591514afecce52bc7775b7cc19))
+
 ## [1.1.55](https://github.com/pedrosilvafrontend/sige/compare/v1.1.54...v1.1.55) (2026-06-27)
 
 
