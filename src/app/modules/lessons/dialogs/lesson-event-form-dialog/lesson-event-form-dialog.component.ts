@@ -4,7 +4,15 @@ import {
   MatDialogContent,
   MatDialogClose, MatDialogActions, MatDialogTitle, MatDialogConfig,
 } from '@angular/material/dialog';
-import { ChangeDetectorRef, Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+  OnDestroy,
+  viewChild
+} from '@angular/core';
 import {
   ReactiveFormsModule,
   FormsModule,
@@ -35,7 +43,7 @@ import {
   School,
   SchoolClass, UniqueLessonEvent, Work, EventMerge,
 } from '@models';
-import { AuthService, ClassesService, CurricularComponentsService } from '@services';
+import { AuthService, ClassesService } from '@services';
 import { Button } from '@ui/button/button';
 import { ProofService } from '@core/services/proof.service';
 import { ModalComponent, ModalDialogComponent } from '@ui/modal/modal.component';
@@ -48,13 +56,14 @@ import { TextEditor } from '@ui/text-editor/text-editor';
 import { IWorkForm } from '@form/work.form';
 import { WorkService } from '@services/work.service';
 import { WorkFormModal } from '@modules/works/modals/work-form-modal/work-form-modal';
-import { firstValueFrom, take } from 'rxjs';
+import { firstValueFrom, Subject, take, takeUntil } from 'rxjs';
 import { EventColors } from '@modules/modals/event-colors/event-colors';
 import { ColorBy, newColorBy } from '@models/colors-by';
-import { ActivatedRoute } from '@angular/router';
 import { LessonEventService } from '@services/lesson-event.service';
 import { EventSelectModal } from '@ui/event-select-modal/event-select-modal';
 import { CodePrefixPipe } from '@util/code-prefix-pipe';
+import { TestCompareModal } from '@ui/test-compare-modal/test-compare-modal';
+import Swal from 'sweetalert2';
 
 export interface DialogData {
   item: EventMerge;
@@ -100,9 +109,10 @@ export interface DialogData {
     DatePipe,
     EventSelectModal,
     CodePrefixPipe,
+    TestCompareModal,
   ],
 })
-export class LessonEventFormDialogComponent implements OnInit {
+export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
   protected dialogData: DialogData = inject(MAT_DIALOG_DATA);
   public ref = inject(MatDialogRef<LessonEventFormDialogComponent>);
   private proofService = inject(ProofService);
@@ -114,13 +124,22 @@ export class LessonEventFormDialogComponent implements OnInit {
   private lessonEventService = inject(LessonEventService);
   private lessonEventExtraService = inject(LessonEventExtraService);
   private message = inject(MessageService);
-  private route = inject(ActivatedRoute);
-  protected ccService = inject(CurricularComponentsService);
+  private _saveTestNextMode = false;
+  get saveTestNextMode(): boolean {
+    return this._saveTestNextMode;
+  }
+  set saveTestNextMode(value: boolean) {
+    this._saveTestNextMode = value;
+    if (!value) {
+      this.originalTest = new Test();
+    }
+  }
+  testCompareModal = viewChild<ModalComponent>('testCompareModal');
   auth = this.authService.user$.value;
   readonly = !this.auth.id;
   closeRefresh = false;
   event = new LessonEvent();
-  proof: Test = new Test();
+  test: Test = new Test();
   generalEvent!: GeneralEvent;
   extra: LessonEventExtra = new class implements LessonEventExtra {}
   action = 'edit';
@@ -149,15 +168,18 @@ export class LessonEventFormDialogComponent implements OnInit {
   initialSelectedProofEvents: UniqueLessonEvent[] = [];
   lessonId = 0;
   classHash = '';
+  private destroy$ = new Subject<void>();
+  originalTest: Test = new Test();
+  overrideTest: Test | null = null;
 
-  copyProof(proof: Test, event?: LessonEvent) {
+  copyTest(test: Test, event?: LessonEvent) {
     return new Test({
-      type: proof.type,
-      curricularComponent: event?.curricularComponent ?? proof.curricularComponent,
-      title: proof.title,
-      content: proof.content,
-      score: proof.score,
-      whereToFindIt: proof.whereToFindIt,
+      type: test.type,
+      curricularComponent: event?.curricularComponent ?? test.curricularComponent,
+      title: test.title,
+      content: test.content,
+      score: test.score,
+      whereToFindIt: test.whereToFindIt,
       lessonId: event?.lesson?.id || 0,
       curricularComponentId: event?.curricularComponent?.id || 0,
       timeScheduleId: event?.frequency?.timeSchedule?.id || 0,
@@ -170,7 +192,8 @@ export class LessonEventFormDialogComponent implements OnInit {
     this.form.reset();
     this.dialogData.item = this.event;
     this.lessonId = this.event.lesson?.id || 0;
-    this.proof = this.copyProof(this.proof, this.event);
+    // this.test = this.copyTest(this.test, this.event);
+    this.overrideTest = this.copyTest(this.test, this.event);
 
     this.dialogData = {
       item: this.event,
@@ -310,7 +333,7 @@ export class LessonEventFormDialogComponent implements OnInit {
     })
   }
 
-  saveOrUpdateProof(data: Test, callback?: () => void) {
+  saveOrUpdateProof(data: Test, callback?: (success: boolean) => void) {
     const isUpdate = !!data?.id;
     const isMulticlass = data?.type === 'MULTICLASS_TEST';
     const lessonId = this.lessonId;
@@ -321,7 +344,7 @@ export class LessonEventFormDialogComponent implements OnInit {
     request$.subscribe({
       next: (response: any) => {
         this.message.success('Salvo com sucesso!');
-        callback?.();
+        callback?.(true);
         this.closeRefresh = true;
         let proof: Test;
         if (isMulticlass && Array.isArray(response)) {
@@ -330,17 +353,27 @@ export class LessonEventFormDialogComponent implements OnInit {
         else {
           proof = response;
         }
-        this.proof = proof;
+        this.test = proof;
         this.proofForm.patchValue(proof);
       },
       error: (error) => {
+        callback?.(false);
         console.error('Proof Update Error:', error);
         this.form.setErrors({ temp: true });
       },
     });
   }
 
-  saveProof(callback?: () => void, confirmModal?: ModalComponent) {
+  saveTest(proofModal: ModalComponent, deleteProofOnUpdateModal: ModalComponent) {
+    this.saveTestNextMode = false;
+    this.saveProof((success: boolean) => {
+      if (success) {
+        proofModal.close(true);
+      }
+    }, deleteProofOnUpdateModal)
+  }
+
+  saveProof(callback?: (success: boolean) => void, confirmModal?: ModalComponent) {
     if (this.proofForm.valid) {
       const formData = this.form.getRawValue() as LessonEventFormValue;
       const proof = this.proofForm.getRawValue();
@@ -396,29 +429,27 @@ export class LessonEventFormDialogComponent implements OnInit {
 
   setEventSelect(eventSelectModal: EventSelectModal) {
     this.openEventSelect = () => {
-      eventSelectModal.open().then();
-      // eventSelectModal.open().then(ref => {
-      //   ref?.afterClosed().subscribe((value: any) => {
-      //     if (!value) {
-      //       this.openEventSelect();
-      //     }
-      //   });
-      // });
+      eventSelectModal.open().then((ref) => {
+        ref?.afterClosed().pipe(takeUntil(this.destroy$))
+          .subscribe((value: any) => {
+            if (!value) {
+              this.saveTestNextMode = false;
+            }
+          });
+      });
     }
   }
 
   saveTestNext(testModal: ModalComponent) {
-    this.saveProof(() => {
-      testModal.close(true);
-      this.openEventSelect();
+    this.saveTestNextMode = true;
+    this.saveProof((success: boolean) => {
+      if (success) {
+        testModal.close(true);
+        this.openEventSelect();
+      } else {
+        this.saveTestNextMode = false;
+      }
     })
-    // if (this.classesIterator) {
-    //   const nextClass = this.classesIterator.next();
-    //   if (!nextClass.done) {
-    //     // this.proofForm.controls.schoolClass.setValue(nextClass.value);
-    //     testModal.open();
-    //   }
-    // }
   }
 
   deleteAllProofs(callback?: () => void) {
@@ -431,10 +462,6 @@ export class LessonEventFormDialogComponent implements OnInit {
         this.closeRefresh = true;
         callback?.();
       })
-      // this.saveProof(() => {
-      //   this.proofForm.controls.events.clear();
-      //   callback?.();
-      // });
     }
   }
 
@@ -502,10 +529,10 @@ export class LessonEventFormDialogComponent implements OnInit {
       this.event = event;
       if (this.event?.evalTools?.proof?.id) {
         const proof = this.event.evalTools.proof;
-        if (!this.proof.timeScheduleId) {
-          this.proof.timeScheduleId = this.timeScheduleId;
+        if (!this.test.timeScheduleId) {
+          this.test.timeScheduleId = this.timeScheduleId;
         }
-        this.proof = proof;
+        this.test = proof;
       }
       if (this.event?.evalTools?.work?.id) {
         this.work = this.event.evalTools.work;
@@ -521,13 +548,13 @@ export class LessonEventFormDialogComponent implements OnInit {
 
   protected readonly ProofService = ProofService;
 
-  protected classesIterator!: IterableIterator<SchoolClass>;
-  protected async openTestModal(proofModal: ModalComponent) {
+  protected async openTestModal(proofModal: ModalComponent, overrideTest?: Partial<Test> | null) {
     let codePrefix = this.dialogData.item.schoolClass?.codePrefix || '';
     const schoolClass = this.dialogData.item.schoolClass;
     const classCode = schoolClass?.code || '';
     const testContext: any = {
       classHash: this.classHash,
+      overrideTest
     };
     if (!codePrefix && classCode) {
       codePrefix = classCode.match(/^[A-Za-z]+\d+/)?.[0] || '';
@@ -539,18 +566,63 @@ export class LessonEventFormDialogComponent implements OnInit {
       return a.code && b.code ? a.code.localeCompare(b.code) : 0;
     });
     if (classes.length > 1) {
-      this.classesIterator = classes.values(); // classes[Symbol.iterator]();
       testContext.hasNext = true;
     }
-    proofModal.open(testContext).afterClosed().subscribe((resp: any) => {
-      if (!resp) {
+    proofModal.open(testContext).afterClosed().pipe(take(1)).subscribe((resp: any) => {
+      if (!resp && this.saveTestNextMode) {
         this.openEventSelect();
       }
     });
   }
 
   async selectEvent(event: LessonEvent, testModal: ModalComponent) {
+    const originalTest = event.evalTools.proof;
+    if (originalTest?.type === 'MULTICLASS_TEST') {
+      await Swal.fire({
+        title: 'Prova bimestral',
+        text: 'Não é possível duplicar para prova bimestral',
+        icon: 'warning',
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+    if (originalTest?.id) {
+      this.originalTest = originalTest;
+      const ref = this.testCompareModal()?.open();
+      ref?.afterClosed().pipe(take(1)).subscribe((resp: any) => {
+
+        if (!resp) {
+          this.originalTest = new Test();
+          this.overrideTest = null;
+        }
+        if (resp === true || resp === false) {
+          if (resp) {
+            this.originalTest = originalTest;
+            this.overrideTest = Object.assign({}, this.test);
+          } else {
+            this.overrideTest = null;
+          }
+
+          this.openTestModal(testModal, this.overrideTest).then();
+        }
+        this.reset(event).then();
+      });
+      return;
+    }
     this.reset(event).then();
     this.openTestModal(testModal).then();
+  }
+
+  confirmOverrideTest(confirm: boolean) {
+    if (!confirm) {
+      this.originalTest = new Test();
+      this.overrideTest = null;
+    }
+    this.testCompareModal()?.close(confirm);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

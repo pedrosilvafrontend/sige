@@ -64,6 +64,7 @@ export class EventSelectModal {
   readonly eventResource = newEventResource({});
   params = input<any>({});
   onSelect = output<LessonEvent>();
+  title = input('Select a lesson');
 
   constructor() {
     effect(() => {

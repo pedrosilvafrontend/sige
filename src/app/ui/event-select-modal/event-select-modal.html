@@ -4,7 +4,7 @@
   <div class="modalHeader">
     <div mat-dialog-title>
       <div class="modalTitle">
-        {{ "Select a lesson" | translate }}
+        {{ (title() || "Select a lesson") | translate }}
       </div>
     </div>
     <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="modal.close()">

@@ -12,7 +12,8 @@ import {
 import {
   CompactType,
   DisplayGrid,
-  Gridster, GridsterApi,
+  Gridster,
+  GridsterApi,
   GridsterConfig,
   GridsterItem,
   GridsterItemConfig,

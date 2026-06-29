@@ -1,0 +1,117 @@
+<ui-modal #modal [template]="template" [options]="{width: '800px', disableClose: true}"></ui-modal>
+<ng-template #template let-hasNext="hasNext" let-classHash="classHash">
+  <div class="modalHeader">
+    <div mat-dialog-title>
+      <div class="modalTitle">
+        {{ title() | translate }}
+      </div>
+      @if (subtitle()) {
+        <div class="modalSubtitle">
+          {{ subtitle() | translate }}
+        </div>
+      }
+    </div>
+    <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="modal.close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-dialog-content>
+    <div class="row">
+      <div class="col-sm-12 col-md-6">
+        <h4>{{ 'From' | translate }}</h4>
+        <form [formRoot]="formA">
+          <div>
+            <ui-field
+              id="titleA"
+              name="titleA"
+              [label]="'Title' | translate"
+              [formField]="formA.title"
+            >
+            </ui-field>
+          </div>
+          <div>
+            <ui-field
+              id="scoreA"
+              name="scoreA"
+              cType="score"
+              [label]="'Score' | translate"
+              [formField]="formA.score"
+            >
+            </ui-field>
+          </div>
+          <div>
+            <ui-textarea
+              id="contentA"
+              name="contentA"
+              [label]="'Content' | translate"
+              [formField]="formA.content"
+            ></ui-textarea>
+          </div>
+          <div>
+            <ui-textarea
+              id="whereToFindItA"
+              name="whereToFindItA"
+              [label]="'Where to find it' | translate"
+              [formField]="formA.whereToFindIt"
+            >
+            </ui-textarea>
+          </div>
+        </form>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <h4>{{ 'To' | translate }}</h4>
+        <form [formRoot]="formB">
+          <div>
+            <ui-field
+              id="titleB"
+              name="titleB"
+              [label]="'Title' | translate"
+              [formField]="formB.title"
+            >
+            </ui-field>
+          </div>
+          <div>
+            <ui-field
+              id="scoreB"
+              name="scoreB"
+              cType="score"
+              [label]="'Score' | translate"
+              [formField]="formB.score"
+            >
+            </ui-field>
+          </div>
+          <div>
+            <ui-textarea
+              id="contentB"
+              name="contentB"
+              [label]="'Content' | translate"
+              [formField]="formB.content"
+            ></ui-textarea>
+          </div>
+          <div>
+            <ui-textarea
+              id="whereToFindItB"
+              name="whereToFindItB"
+              [label]="'Where to find it' | translate"
+              [formField]="formB.whereToFindIt"
+            >
+            </ui-textarea>
+          </div>
+        </form>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <div class="dialog-buttons">
+      <ui-button
+        (onClick)="actionClick(false)">
+        {{ actionLabelNo() | translate }}
+      </ui-button>
+      <ui-button
+        color="danger"
+        (onClick)="actionClick(true)">
+        {{ actionLabel() | translate }}
+      </ui-button>
+    </div>
+  </mat-dialog-actions>
+</ng-template>
