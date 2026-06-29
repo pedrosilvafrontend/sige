@@ -57,12 +57,12 @@ export class TestFormComponent implements OnInit, OnDestroy {
   form: FormGroup<IProofForm> = this.createForm();
   classControl: FormControl<SchoolClass | null> = new FormControl<SchoolClass | null>(null);
   ccControl = this.form.controls.curricularComponent;
-  data = input<Partial<Test>>({});
-  testIdInput = input<number>(0, { alias: 'testId' });
-  classHash = input<string>();
+  test = input<Partial<Test>>({});
+  classHash = input<string>('');
   schoolId = input.required<number>();
   timeScheduleId = input.required<number>();
-  dateInput = input.required<string>({ alias: 'date' });
+  override = input<Partial<Test> | null>();
+  // dateInput = input.required<string>({ alias: 'date' });
   showEventCards = input<boolean>(true);
   initialSelectedEvents = output<UniqueLessonEvent[]>();
   date!: string;
@@ -104,7 +104,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
       }
       this.cdr.detectChanges();
 
-      let date = this.dateInput();
+      let date = this.eventInput()?.date || '';
       if (typeof date !== 'string') {
         if ((date as Date).toISOString) {
           date = (date as Date).toISOString();
@@ -112,59 +112,77 @@ export class TestFormComponent implements OnInit, OnDestroy {
       }
       this.date = date;
 
-      if (this.data() && !this.testIdInput()) {
-        const data = this.data();
-        this.form.patchValue(data);
-        if (data.type === 'MULTICLASS_TEST') {
-          this.changeType();
-        }
-        // const eventInput = this.eventInput();
-        // const { start, end, lesson, date, weekday, school } = eventInput || {};
-        // this.setEvent(new LessonEvent({ start, end, lesson, date, weekday, school }));
-      }
+      // if (this.test() && !this.testId) {
+      //   const data = this.test();
+      //   this.form.patchValue(data);
+      //   if (data.type === 'MULTICLASS_TEST') {
+      //     this.changeType();
+      //   }
+      //   // const eventInput = this.eventInput();
+      //   // const { start, end, lesson, date, weekday, school } = eventInput || {};
+      //   // this.setEvent(new LessonEvent({ start, end, lesson, date, weekday, school }));
+      // }
       // else {
-      //   this.setEvent(this.eventInput());
       // }
 
-      this.isMulticlassRef = this.data()?.lessonId ? this.data()?.lessonId === this.eventInput()?.lesson.id : false;
+      this.isMulticlassRef = this.test()?.lessonId ? this.test()?.lessonId === this.eventInput()?.lesson.id : false;
 
       this.form.controls.schoolId?.setValue(this.schoolId());
 
     })
 
     effect(() => {
-      if (this.testId !== this.testIdInput()) {
-        this.testId = this.testIdInput() || 0;
-        this.getProof(this.testId, this.classHash() || '').then();
+      const event = this.eventInput();
+      if (event) {
+        this.setEvent(event);
+      }
+
+      if (this.classHash()) {
+        const testId = this.test()?.id || 0;
+        this.getTest(testId, this.classHash() || '').then();
+      }
+      else {
+        let id = event?.evalTools?.proof?.id || 0;
+        let partialTest: Partial<Test>;
+        if (this.override()) {
+          partialTest = this.override() || {};
+        } else if (id) {
+          partialTest = event?.evalTools?.proof || {};
+        } else if (this.test()) {
+          partialTest = this.test();
+        } else {
+          partialTest = new Test();
+        }
+
+        const { title, score, content, whereToFindIt } = partialTest;
+        this.form.patchValue({
+          id: id || 0,
+          title: title || '',
+          score: score || '',
+          content: content || '',
+          whereToFindIt: whereToFindIt || ''
+        });
+
       }
     });
   }
 
-  async getProof(proofId: number, classHash?: string) {
-    if (!proofId) {
+  async getTest(testId: number, classHash?: string) {
+    if (!testId) {
       return;
     }
 
-    if (proofId) {
+    if (testId) {
       const request$ = classHash
-        ? this.proofService.getByHash(classHash || '', proofId)
-        : this.proofService.getById(proofId);
-      const proof = await firstValueFrom(request$);
-      if (proof) {
-        // const currentLessonId = this.eventInput()?.lesson?.id || 0;
-        // const data = proof;
-        // if (currentLessonId && currentLessonId !== proof.lessonId) {
-        //   data.id = 0;
-        // }
-        // this.form.patchValue({ type: data.type }, { emitEvent: false });
-        this.form.patchValue(proof);
-        const cc = proof.curricularComponent || new CurricularComponent({ id: proof.curricularComponentId });
+        ? this.proofService.getByHash(classHash || '', testId)
+        : this.proofService.getById(testId);
+      const test = await firstValueFrom(request$);
+      if (test) {
+        this.form.patchValue(test);
+        const cc = test.curricularComponent || new CurricularComponent({ id: test.curricularComponentId });
         this.ccControl.setValue(cc);
       }
-      this.proof = proof;
-      // const eventInput = this.eventInput();
-      // const { start, end, lesson, date, weekday, school } = eventInput || {};
-      // this.setEvent(new LessonEvent({ start, end, lesson, date, weekday, school }));
+      this.proof = test;
     }
     else {
       const event = this.eventInput();
@@ -185,14 +203,6 @@ export class TestFormComponent implements OnInit, OnDestroy {
 
     this.form.controls.lessonId?.setValue(event.lesson.id || 0);
   }
-
-  // onChangeCc() {
-  //   const cc = this.ccControl.value;
-  //   if (!cc) {
-  //     this.setEvent(this.eventInput());
-  //     return;
-  //   }
-  // }
 
   timeChange = 0;
   changeType() {
@@ -240,7 +250,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
         (e) => e.evalTools.proof?.type === 'MULTICLASS_TEST');
       const multiclassTest = eventWithMultiClass?.evalTools.proof;
       if (multiclassTest?.id && !this.form.controls.id.value) {
-        await this.getProof(multiclassTest.id);
+        await this.getTest(multiclassTest.id);
       }
       const multiclassEventRef = this.events.find(
         e => {
@@ -320,7 +330,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
     })
 
     if (this.testId) {
-      await this.getProof(this.testId || 0, this.classHash() || '');
+      await this.getTest(this.testId || 0, this.classHash() || '');
 
       if (this.proof?.type === 'MULTICLASS_TEST') {
         this.changeType();

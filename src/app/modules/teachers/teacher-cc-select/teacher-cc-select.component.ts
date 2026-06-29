@@ -14,7 +14,7 @@ import { AsyncPipe, TitleCasePipe } from '@angular/common';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatInput } from '@angular/material/input';
 import { map } from 'rxjs/operators';
-import {Button} from '@ui/button/button';
+import { Button } from '@ui/button/button';
 
 @Component({
   selector: 'app-teacher-cc-select',

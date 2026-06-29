@@ -15,11 +15,9 @@
       <app-test-form
         #testFormComponent
         class="d-block mt-3"
-        [data]="proof"
-        [testId]="proof?.id || 0"
+        [test]="proof"
         [schoolId]="proof.schoolId"
         [timeScheduleId]="proof.timeSchedule?.id || 0"
-        [date]="proof.date"
         [showEventCards]="false"
         (form$)="(form = $event)"
       >
