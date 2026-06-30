@@ -1,3 +1,10 @@
+## [1.1.57](https://github.com/pedrosilvafrontend/sige/compare/v1.1.56...v1.1.57) (2026-06-30)
+
+
+### Features
+
+* test duplicate fix ([0bdc694](https://github.com/pedrosilvafrontend/sige/commit/0bdc694e4e3b68c64389df3d0ef68ebc7925fde0))
+
 ## [1.1.56](https://github.com/pedrosilvafrontend/sige/compare/v1.1.55...v1.1.56) (2026-06-29)
 
 
