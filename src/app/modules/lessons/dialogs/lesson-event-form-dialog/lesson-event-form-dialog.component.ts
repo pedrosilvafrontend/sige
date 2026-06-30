@@ -49,7 +49,7 @@ import { ProofService } from '@core/services/proof.service';
 import { ModalComponent, ModalDialogComponent } from '@ui/modal/modal.component';
 import { LessonEventExtraService } from '@services/lesson-event-extra.service';
 import { TestFormComponent } from '@modules/common/form/test-form/test.form';
-import { DatePipe, NgClass } from '@angular/common';
+import { DatePipe, NgClass, SlicePipe } from '@angular/common';
 import { IProofForm } from '@form/proof.form';
 import { MessageService } from '@services/message.service';
 import { TextEditor } from '@ui/text-editor/text-editor';
@@ -110,6 +110,7 @@ export interface DialogData {
     EventSelectModal,
     CodePrefixPipe,
     TestCompareModal,
+    SlicePipe,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit, OnDestroy {

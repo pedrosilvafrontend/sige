@@ -53,8 +53,8 @@ export class TestCompareModal {
 
   constructor() {
     effect(() => {
-      this.testA.set(this.testAIn());
-      this.testB.set(this.testBIn());
+      this.testA.set(new Test(this.testAIn()));
+      this.testB.set(new Test(this.testBIn()));
     });
   }
 

@@ -142,29 +142,33 @@ export class TestFormComponent implements OnInit, OnDestroy {
         this.getTest(testId, this.classHash() || '').then();
       }
       else {
-        let id = event?.evalTools?.proof?.id || 0;
-        let partialTest: Partial<Test>;
         if (this.override()) {
-          partialTest = this.override() || {};
-        } else if (id) {
-          partialTest = event?.evalTools?.proof || {};
+          const id = event?.evalTools?.proof?.id || 0;
+          const { title, score, content, whereToFindIt } = this.override() || {};
+          this.pathValue({ id, title, score, content, whereToFindIt }, true);
+        } else if (event?.evalTools?.proof?.id) {
+          this.pathValue(event?.evalTools?.proof || {}, true);
         } else if (this.test()) {
-          partialTest = this.test();
+          this.pathValue(this.test());
         } else {
-          partialTest = new Test();
+          this.pathValue(new Test());
         }
-
-        const { title, score, content, whereToFindIt } = partialTest;
-        this.form.patchValue({
-          id: id || 0,
-          title: title || '',
-          score: score || '',
-          content: content || '',
-          whereToFindIt: whereToFindIt || ''
-        });
-
       }
     });
+  }
+
+  pathValue(test: Partial<Test>, forceId?: boolean) {
+    const { title, score, content, whereToFindIt } = test;
+    const data: Partial<Test> = {
+      title: title || '',
+      score: score || '',
+      content: content || '',
+      whereToFindIt: whereToFindIt || ''
+    };
+    if (forceId) {
+      data.id = test.id || 0;
+    }
+    this.form.patchValue(data);
   }
 
   async getTest(testId: number, classHash?: string) {
