@@ -3,7 +3,7 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { firstValueFrom, startWith, Subject, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, firstValueFrom, startWith, Subject, takeUntil } from 'rxjs';
 import { ActivityConfig, LessonEvent, Test } from '@models';
 import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -22,16 +22,12 @@ import { EventCard } from '@ui/event-card/event-card';
 import { Skeleton } from '@ui/skeleton/skeleton';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { UserColorsService } from '@core/services/user-colors.service';
-import { ColorsBy, newColorsBy, ColorsMap, ColoringBy } from '@models/colors-by';
-import { ColoringByPipe, getColorBy } from '@util/coloring-by-pipe';
+import { newColorsBy, ColorsMap, ColoringBy } from '@models/colors-by';
+import { getColorBy } from '@util/coloring-by-pipe';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInput } from '@angular/material/input';
-import { Util } from '@util/util';
 import { endOfYear, format, isValid, setDay, setMonth, setYear, startOfDay } from 'date-fns';
 import { DatePickerFormatDirective } from '@util/datepicker-format.directive';
-import { LoadingBar } from '@ui/loading-bar/loading-bar';
-import { debounceTime } from 'rxjs/operators';
-import { Debounce } from '@util/debounce';
 import { DateUtil } from '@util';
 import { FnsPipe } from '@util/fns-pipe';
 import { ActivitiesFilterFormComponent } from '@form/activities-filter-form/activities-filter-form.component';
@@ -93,7 +89,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   minDate = startOfDay(new Date());
   maxDate = endOfYear(new Date());
   filters: FormGroup<DashFilters> = this.fb.group<DashFilters>({
-    date: this.fb.control<Date | null>(null),
+    date: this.fb.control<Date | null>(new Date()),
     colorBy: this.fb.control<ColoringBy>(null),
   });
   loadedEvents = false;
@@ -156,8 +152,19 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     this.loading = false;
 
     this.filters.valueChanges
-      .pipe(takeUntil(this.destroy$), startWith(this.filters.getRawValue()))
+      .pipe(
+        debounceTime(600), // Aguarda 600 milissegundos sem o usuário digitar
+        distinctUntilChanged(), // Só executa se o valor atual for diferente do anterior
+        takeUntil(this.destroy$),
+        startWith(this.filters.getRawValue())
+      )
       .subscribe(() => {
+        const dateCtrl = this.filters.controls.date;
+        const validDate = (date: Date) => !isNaN(date?.getTime?.());
+        if (!dateCtrl.value || !validDate(dateCtrl.value)) {
+          dateCtrl.setValue(new Date());
+          return;
+        }
         this.refresh();
       });
   }

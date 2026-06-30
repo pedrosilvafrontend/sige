@@ -44,11 +44,6 @@
   <div class="">
     <div class="text-center">
       @let date = filters.controls.date.value;
-      @if (lessonEventService.lessonEventsStatus() === 'resolved' && !events.length) {
-        <h2 class="my-5 text-muted fw-light">
-          Não há eventos para o filtro selecionado
-        </h2>
-      }
 
       @if (loadedEvents && !events.length) {
         @if (date) {
@@ -59,6 +54,10 @@
             } @else {
               Não há eventos para o mês de <strong>{{ 'format' | fns:date:'MMMM':{ locale: 'ptBR' } }}</strong>
             }
+          </h2>
+        } @else {
+          <h2 class="my-5 text-muted fw-light">
+            Não há eventos para o filtro selecionado
           </h2>
         }
       }

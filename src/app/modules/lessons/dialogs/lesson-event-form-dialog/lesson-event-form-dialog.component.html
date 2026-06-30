@@ -80,23 +80,24 @@
             <div class="modalHeader">
               @let fullTest = testFormComponent.proof;
               @let classCode = fullTest?.schoolClass?.code || dialogData.item.schoolClass?.code || '';
+              @let rawTest = proofForm?.getRawValue();
               <div mat-dialog-title>
                 <div class="modalTitle">
-                  @if (test.id) {
-                    {{ "Edit "+(test?.type || "test") | translate }} <span class="text-secondary text-opacity-50">#{{ test.id }}</span>
+                  @if (rawTest?.id) {
+                    {{ "Edit "+(rawTest?.type || "test") | translate }} <span class="text-secondary text-opacity-50">#{{ rawTest.id }}</span>
                   }
-                  @if (!test.id) {
-                    {{ "New "+(test?.type || "test") | translate }}
+                  @if (!rawTest?.id) {
+                    {{ "New "+(rawTest?.type || "test") | translate }}
                   }
                 </div>
                 @if (classCode) {
                   <div class="modalSubtitle">
                     <span>Turma: <strong>{{ classCode }}</strong></span>
-                    @if (test?.date) {
-                      <span>Data: <strong>{{ test?.date | date:'dd/MM/yyyy' }}</strong></span>
+                    @if (event?.date) {
+                      <span>Data: <strong>{{ event?.date | date:'dd/MM/yyyy' }}</strong></span>
                     }
                     @if (event?.frequency?.timeSchedule?.startTime; as time) {
-                      <span>Hora: <strong>{{ time }}</strong></span>
+                      <span>Hora: <strong>{{ time | slice:0:5 }}</strong></span>
                     }
                   </div>
                 }
