@@ -7,12 +7,12 @@ import { ptBR } from 'date-fns/locale/pt-BR';
 })
 export class FnsPipe implements PipeTransform {
 
-  transform(fnsFunctionName: string, ...args: unknown[]): unknown {
-    if (!fnsFunctionName) return null;
-    const fnsFunction = (fns as any)[fnsFunctionName];
-    if (!fnsFunction) return null;
+  transform(date: fns.DateArg<Date> & {}, funcName: string, ...args: unknown[]): any {
+    if (!funcName) return null;
+    const fn = (fns as any)[funcName];
+    if (!fn) return null;
 
-    args = (args || []).map((arg: any) => {
+    args = [date, ...args].map((arg: any) => {
       if (typeof arg === 'object') {
         if (['pt', 'ptBR'].includes(arg?.locale)) {
           arg.locale = ptBR;
@@ -21,17 +21,10 @@ export class FnsPipe implements PipeTransform {
       return arg;
     });
 
-
-    if (fnsFunctionName == 'format'){
-      return fnsFunction(...args);
+    if (funcName == 'format'){
+      return fn(...args);
     }
-    // if (outFormat){
-    //   const val = fnsFunction(...args);
-    //   if (fns.isValid(val)) {
-    //     return fns.format(val, outFormat);
-    //   }
-    // }
-    return fnsFunction(...args);
+    return fn(...args);
   }
 
 }

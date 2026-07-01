@@ -26,12 +26,13 @@ import { newColorsBy, ColorsMap, ColoringBy } from '@models/colors-by';
 import { getColorBy } from '@util/coloring-by-pipe';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInput } from '@angular/material/input';
-import { endOfYear, format, isValid, setDay, setMonth, setYear, startOfDay } from 'date-fns';
+import { addBusinessDays, endOfYear, format, isValid, setDay, setMonth, setYear, startOfDay } from 'date-fns';
 import { DatePickerFormatDirective } from '@util/datepicker-format.directive';
 import { DateUtil } from '@util';
 import { FnsPipe } from '@util/fns-pipe';
 import { ActivitiesFilterFormComponent } from '@form/activities-filter-form/activities-filter-form.component';
 import { ActivitiesFilter } from '@form/lesson-event-filter.form';
+import { Button } from '@ui/button/button';
 
 interface DashFilters {
   date: FormControl<Date | null>;
@@ -56,7 +57,8 @@ interface DashFilters {
     DatePickerFormatDirective,
     DatePipe,
     FnsPipe,
-    ActivitiesFilterFormComponent
+    ActivitiesFilterFormComponent,
+    Button
   ],
   providers: [
     TranslatePipe,
@@ -94,6 +96,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   });
   loadedEvents = false;
   activitiesFilter!: ActivitiesFilter;
+  activitiesFilterText = '';
 
   get colorByControl(): FormControl<ColoringBy> {
     return this.filters.controls.colorBy;
@@ -146,6 +149,22 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     datepicker.close(); // Halts navigation so it doesn't drill down to days
   }
 
+  onNextDayClick() {
+    this.loadedEvents = false;
+    const ctrl = this.filters.controls.date;
+    let ctrlValue = ctrl.value ? new Date(ctrl.value) : new Date();
+    ctrlValue = addBusinessDays(ctrlValue, 1);
+    ctrl.setValue(ctrlValue);
+  }
+
+  onNextMonthClick() {
+    this.loadedEvents = false;
+    const ctrl = this.filters.controls.date;
+    let ctrlValue = ctrl.value ? new Date(ctrl.value) : new Date();
+    ctrlValue = setMonth(ctrlValue, ctrlValue.getMonth() + 1);
+    ctrl.setValue(ctrlValue);
+  }
+
   async ngOnInit() {
 
     this.activities = await this.activityService.getMap();
@@ -173,7 +192,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     this.loading = true;
     // await this.getColors();
     await this.getEvents();
-    this.cdr.detectChanges();
+    this.cdr.markForCheck();
     this.loading = false;
   }
 
@@ -199,8 +218,10 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     }
     this.lessonEventService.getBy(params);
 
-    // this.events = await firstValueFrom(this.lessonEventService.getAll(params).pipe(debounceTime(500),distinctUntilChanged()));
-    this.loadedEvents = true;
+    setTimeout(() => {
+      this.loadedEvents = true;
+      this.cdr.markForCheck();
+    }, 500)
     this.cdr.detectChanges();
   }
 
@@ -257,6 +278,17 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
 
   protected activitiesFilterChange($event: ActivitiesFilter) {
     this.activitiesFilter = $event;
+    if ($event.lesson) {
+      this.activitiesFilterText = 'aulas';
+    } else if ($event.test && $event.work) {
+      this.activitiesFilterText = 'provas ou trabalhos';
+    } else if ($event.test) {
+      this.activitiesFilterText = 'provas';
+    } else if ($event.work) {
+      this.activitiesFilterText = 'trabalhos';
+    } else {
+      this.activitiesFilterText = '';
+    }
     this.refresh().then();
   }
 }
