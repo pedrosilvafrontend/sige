@@ -44,20 +44,25 @@
   <div class="">
     <div class="text-center">
       @let date = filters.controls.date.value;
-
       @if (loadedEvents && !events.length) {
         @if (date) {
-          <h2 class="my-5 text-muted fw-light">
+          <h2 class="my-5 text-muted fw-light lh-base">
             @if (isManager) {
-              Não há eventos para <strong>{{ 'format' | fns:date:'EEE':{ locale: 'ptBR' } }}</strong>
+              Não há {{ activitiesFilterText }} para <strong>{{ date | fns:'format':'EEE':{ locale: 'ptBR' } }}</strong>
               dia {{ date | date: 'dd/MM/yyyy' }}
+              <br>
+              @let nextDay = date | fns:'addBusinessDays':1;
+              <ui-button size="small" (onClick)="onNextDayClick()">Buscar: {{ nextDay | fns:'format':'EEE dd/MMM':{ locale: 'ptBR' } }}</ui-button>
             } @else {
-              Não há eventos para o mês de <strong>{{ 'format' | fns:date:'MMMM':{ locale: 'ptBR' } }}</strong>
+              Não há {{ activitiesFilterText }} para <strong>{{ date | fns:'format':'MMMM':{ locale: 'ptBR' } }}</strong>
+              <br>
+              @let nextMonth = date | fns:'addMonths':1;
+              <ui-button size="small" (onClick)="onNextMonthClick()">Buscar: {{ nextMonth | fns:'format':'MMMM':{ locale: 'ptBR' } }}</ui-button>
             }
           </h2>
         } @else {
           <h2 class="my-5 text-muted fw-light">
-            Não há eventos para o filtro selecionado
+            Não há {{ activitiesFilterText }} para o filtro selecionado
           </h2>
         }
       }
