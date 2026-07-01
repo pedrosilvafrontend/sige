@@ -21,7 +21,7 @@
       </mat-form-field>
     </div>
     <div class="col-sm-12 col-md-6 col-lg-4">
-      <app-activities-filter-form (change)="activitiesFilterChange($event)"></app-activities-filter-form>
+      <app-activities-filter-form (change)="activitiesFilterChange($event)" [data]="activitiesFilterData"></app-activities-filter-form>
     </div>
     <div class="col-sm-12 col-md-6 col-lg">
       <mat-label class="msr-3">{{ 'Coloring by' | translate }}:</mat-label>
@@ -44,7 +44,7 @@
   <div class="">
     <div class="text-center">
       @let date = filters.controls.date.value;
-      @if (loadedEvents && !events.length) {
+      @if (loadedStage > 1 && !events.length) {
         @if (date) {
           <h2 class="my-5 text-muted fw-light lh-base">
             @if (isManager) {

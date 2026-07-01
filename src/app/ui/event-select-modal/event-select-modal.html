@@ -33,6 +33,16 @@
         </div>
       </div>
     </form>
+    @if (!events.length) {
+      <div class="text-center">
+        Não há eventos para
+        @if (isManager) {
+          {{ filters().date | fns:'format':'dd/MM/yyyy':fnsLocale }}
+        } @else {
+          {{ filters().date | fns:'format':'MM/yyyy':fnsLocale }}
+        }
+      </div>
+    }
     <div class="row row-gap-24 my-4">
       @for (event of events; let i = $index; track i) {
         <div class="col activity-col">

@@ -1,4 +1,13 @@
-import { Component, effect, output, signal, untracked, ChangeDetectionStrategy, debounced } from '@angular/core';
+import {
+  Component,
+  effect,
+  output,
+  signal,
+  untracked,
+  ChangeDetectionStrategy,
+  debounced,
+  WritableSignal, input
+} from '@angular/core';
 import { MatCheckbox } from "@angular/material/checkbox";
 import { TitleCasePipe } from "@angular/common";
 import { TranslatePipe } from "@ngx-translate/core";
@@ -18,20 +27,22 @@ import { ActivitiesFilter } from '@form/lesson-event-filter.form';
 })
 export class ActivitiesFilterFormComponent {
 
-  change = output<ActivitiesFilter>();
-  form$ = output<FieldTree<ActivitiesFilter>>({ alias: 'form' })
-
   readonly filtersModel = signal<ActivitiesFilter>({
     test: false,
     work: false,
     lesson: true,
   });
+  data = input<Partial<ActivitiesFilter>>();
+  change = output<ActivitiesFilter>();
+  model = output<WritableSignal<ActivitiesFilter>>();
+  form$ = output<FieldTree<ActivitiesFilter>>({ alias: 'form' })
 
   readonly filtersForm = form(this.filtersModel);
   readonly filtersDebounced = debounced(() => this.filtersModel(), 500);
 
   constructor() {
     this.form$.emit(this.filtersForm);
+    this.model.emit(this.filtersModel);
     effect(() => {
 
       const currentTest = this.filtersModel().test;
@@ -54,6 +65,15 @@ export class ActivitiesFilterFormComponent {
       const stabilizedFilters = this.filtersDebounced.value();
       if (stabilizedFilters) {
         this.change.emit(stabilizedFilters);
+      }
+    });
+
+    effect(() => {
+      if (this.data()) {
+        this.filtersModel.update((curr) => ({
+          ...curr,
+          ...this.data()
+        }))
       }
     });
   }

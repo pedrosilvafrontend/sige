@@ -18,6 +18,7 @@ import { form, FormRoot, FormField } from '@angular/forms/signals';
 import { DatePickerFormatDirective } from '@util/datepicker-format.directive';
 import Swal from 'sweetalert2';
 import { newEventResource } from '@core/resources/lesson-event.resource';
+import { FnsPipe } from '@util/fns-pipe';
 
 @Component({
   selector: 'ui-event-select-modal',
@@ -41,7 +42,8 @@ import { newEventResource } from '@core/resources/lesson-event.resource';
     MatSuffix,
     FormRoot,
     FormField,
-    DatePickerFormatDirective
+    DatePickerFormatDirective,
+    FnsPipe
   ],
   templateUrl: './event-select-modal.html',
   styleUrl: './event-select-modal.scss',
@@ -65,6 +67,7 @@ export class EventSelectModal {
   params = input<any>({});
   onSelect = output<LessonEvent>();
   title = input('Select a lesson');
+  fnsLocale = { locale: 'ptBR' };
 
   constructor() {
     effect(() => {
