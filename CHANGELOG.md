@@ -1,3 +1,10 @@
+## [1.1.59](https://github.com/pedrosilvafrontend/sige/compare/v1.1.58...v1.1.59) (2026-07-01)
+
+
+### Features
+
+* teacher dashboard test selected if exists ([a4bd28a](https://github.com/pedrosilvafrontend/sige/commit/a4bd28af05e9f8fa260a27e495d32bfa41e5eb5e))
+
 ## [1.1.58](https://github.com/pedrosilvafrontend/sige/compare/v1.1.57...v1.1.58) (2026-07-01)
 
 
