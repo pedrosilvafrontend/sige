@@ -1,3 +1,10 @@
+## [1.1.58](https://github.com/pedrosilvafrontend/sige/compare/v1.1.57...v1.1.58) (2026-07-01)
+
+
+### Features
+
+* dashboard empty events with date navigation ([33a2ae1](https://github.com/pedrosilvafrontend/sige/commit/33a2ae1baf42d35a2110d0b4869dec4d6c195f59))
+
 ## [1.1.57](https://github.com/pedrosilvafrontend/sige/compare/v1.1.56...v1.1.57) (2026-06-30)
 
 
