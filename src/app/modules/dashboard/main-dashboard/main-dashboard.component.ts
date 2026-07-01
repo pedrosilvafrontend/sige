@@ -1,6 +1,6 @@
 import {
   ChangeDetectorRef, Component, effect, inject, input, OnDestroy, OnInit, signal, ChangeDetectionStrategy,
-  ViewEncapsulation
+  ViewEncapsulation, WritableSignal
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { debounceTime, distinctUntilChanged, firstValueFrom, startWith, Subject, takeUntil } from 'rxjs';
@@ -33,6 +33,7 @@ import { FnsPipe } from '@util/fns-pipe';
 import { ActivitiesFilterFormComponent } from '@form/activities-filter-form/activities-filter-form.component';
 import { ActivitiesFilter } from '@form/lesson-event-filter.form';
 import { Button } from '@ui/button/button';
+import { FieldTree } from '@angular/forms/signals';
 
 interface DashFilters {
   date: FormControl<Date | null>;
@@ -94,14 +95,15 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     date: this.fb.control<Date | null>(new Date()),
     colorBy: this.fb.control<ColoringBy>(null),
   });
-  loadedEvents = false;
+  loadedStage = 0;
   activitiesFilter!: ActivitiesFilter;
   activitiesFilterText = '';
+  protected activitiesFilterData: Partial<ActivitiesFilter> = {};
+  firstGet = true;
 
   get colorByControl(): FormControl<ColoringBy> {
     return this.filters.controls.colorBy;
   }
-
   timeLoading = 0;
   get loading() {
     return this.isLoading();
@@ -130,7 +132,13 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     });
 
     effect(() => {
-      this.events = this.lessonEventService.lessonEvents() || [];
+      const events = this.lessonEventService.lessonEvents() || [];
+      if (this.loadedStage && this.firstGet) {
+        this.onFirstGet(events);
+        this.firstGet = false;
+      } else {
+        this.events = events;
+      }
       this.cdr.detectChanges();
     });
   }
@@ -150,7 +158,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   }
 
   onNextDayClick() {
-    this.loadedEvents = false;
+    this.loadedStage = 0;
     const ctrl = this.filters.controls.date;
     let ctrlValue = ctrl.value ? new Date(ctrl.value) : new Date();
     ctrlValue = addBusinessDays(ctrlValue, 1);
@@ -158,7 +166,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   }
 
   onNextMonthClick() {
-    this.loadedEvents = false;
+    this.loadedStage = 0;
     const ctrl = this.filters.controls.date;
     let ctrlValue = ctrl.value ? new Date(ctrl.value) : new Date();
     ctrlValue = setMonth(ctrlValue, ctrlValue.getMonth() + 1);
@@ -177,7 +185,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$),
         startWith(this.filters.getRawValue())
       )
-      .subscribe(() => {
+      .subscribe(async () => {
         const dateCtrl = this.filters.controls.date;
         const validDate = (date: Date) => !isNaN(date?.getTime?.());
         if (!dateCtrl.value || !validDate(dateCtrl.value)) {
@@ -197,7 +205,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   }
 
   private async getEvents() {
-    this.loadedEvents = false;
+    this.loadedStage = 0;
     this.events.length = 0;
     const { date, ...filters } = this.filters.getRawValue();
     const nextBusinessDay = DateUtil.nextBusinessDay(new Date());
@@ -217,12 +225,25 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
       params.date = formattedDate;
     }
     this.lessonEventService.getBy(params);
+    this.loadedStage = 1;
 
     setTimeout(() => {
-      this.loadedEvents = true;
+      this.loadedStage = 2;
       this.cdr.markForCheck();
     }, 500)
     this.cdr.detectChanges();
+  }
+
+  onFirstGet(events: LessonEvent[]) {
+    const lessonsWithTest = (events || []).filter(e => e.evalTools.proof?.id);
+    if (lessonsWithTest.length) {
+      this.activitiesFilterData = {
+        test: true
+      }
+      return lessonsWithTest;
+    }
+
+    return events;
   }
 
 
