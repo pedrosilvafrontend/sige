@@ -1,3 +1,11 @@
+## [1.1.60](https://github.com/pedrosilvafrontend/sige/compare/v1.1.59...v1.1.60) (2026-07-08)
+
+
+### Bug Fixes
+
+* public calendar incorrect auth required ([be54a4b](https://github.com/pedrosilvafrontend/sige/commit/be54a4b4391df50b85c3aa6cf28c1b2f0a86e17d))
+* public calendar incorrect auth required ([4d125ef](https://github.com/pedrosilvafrontend/sige/commit/4d125ef479710723b7be6fbb6b2c10af46ac6bd4))
+
 ## [1.1.59](https://github.com/pedrosilvafrontend/sige/compare/v1.1.58...v1.1.59) (2026-07-01)
 
 
