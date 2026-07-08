@@ -34,6 +34,7 @@ import { ActivitiesFilterFormComponent } from '@form/activities-filter-form/acti
 import { ActivitiesFilter } from '@form/lesson-event-filter.form';
 import { Button } from '@ui/button/button';
 import { FieldTree } from '@angular/forms/signals';
+import { LessonEventStateService } from '@services/lesson-event.state.service';
 
 interface DashFilters {
   date: FormControl<Date | null>;
@@ -71,6 +72,7 @@ interface DashFilters {
 })
 export class MainDashboardComponent implements OnInit, OnDestroy {
   protected lessonEventService = inject(LessonEventService);
+  protected lessonEventStateService = inject(LessonEventStateService);
   private userColorsService = inject(UserColorsService);
   private cdr = inject(ChangeDetectorRef);
   private dialog = inject(MatDialog);
@@ -132,7 +134,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     });
 
     effect(() => {
-      const events = this.lessonEventService.lessonEvents() || [];
+      const events = this.lessonEventStateService.lessonEvents() || [];
       if (this.loadedStage && this.firstGet) {
         this.onFirstGet(events);
         this.firstGet = false;
@@ -192,8 +194,10 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
           dateCtrl.setValue(new Date());
           return;
         }
-        this.refresh();
+        await this.refresh();
       });
+
+    await this.refresh();
   }
 
   async refresh() {
@@ -224,7 +228,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     } else {
       params.date = formattedDate;
     }
-    this.lessonEventService.getBy(params);
+    this.lessonEventStateService.getBy(params);
     this.loadedStage = 1;
 
     setTimeout(() => {
@@ -235,12 +239,14 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   }
 
   onFirstGet(events: LessonEvent[]) {
-    const lessonsWithTest = (events || []).filter(e => e.evalTools.proof?.id);
-    if (lessonsWithTest.length) {
-      this.activitiesFilterData = {
-        test: true
+    if (this.auth()?.role === 'teacher') {
+      const lessonsWithTest = (events || []).filter(e => e.evalTools.proof?.id);
+      if (lessonsWithTest.length) {
+        this.activitiesFilterData = {
+          test: true
+        }
+        return lessonsWithTest;
       }
-      return lessonsWithTest;
     }
 
     return events;
