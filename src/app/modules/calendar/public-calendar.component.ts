@@ -47,7 +47,6 @@ import { map } from 'rxjs/operators';
 import { DegreesService } from '@services/degrees.service';
 import { LessonEventService } from '@services/lesson-event.service';
 import { ActivityService } from '@modules/config/activity/activity.service';
-import { LessonsFormDialogComponent } from '@modules/lessons';
 import { Skeleton } from '@ui/skeleton/skeleton';
 import { LoadingService } from '@services/loading.service';
 import { startOfYear } from 'date-fns';

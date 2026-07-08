@@ -1,34 +1,34 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, Signal, signal } from '@angular/core';
 import { LessonEvent, LiteEvent } from '@models';
 import { Observable, take } from 'rxjs';
-import { HttpClient, HttpErrorResponse, httpResource } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, httpResource, HttpResourceRef } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '@env/environment';
+import { ActivatedRoute } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LessonEventService {
   readonly API_URL = `${environment.baseUrl}/lesson-events`;
+  private http = inject(HttpClient);
 
-  private getAllParams = signal<any>({});
-  private lessonEventsResource = httpResource<LessonEvent[]>(() => {
-    return {
-      url: `${this.API_URL}`,
-      params: this.getAllParams()
-    }
-  });
-  readonly lessonEvents = computed(() => this.lessonEventsResource.value());
-  readonly lessonEventsLoading = computed(() => this.lessonEventsResource.isLoading());
-  readonly lessonEventsErro = computed(() => this.lessonEventsResource.error());
-  readonly lessonEventsStatus = computed(() => this.lessonEventsResource.status());
-
-  getBy(params: any) {
-    this.getAllParams.set(params || {});
-  }
-
-  constructor(private http: HttpClient) { }
+  // private getAllParams = signal<any>({});
+  // private lessonEventsResource = httpResource<LessonEvent[]>(() => {
+  //   return {
+  //     url: `${this.API_URL}`,
+  //     params: this.getAllParams()
+  //   }
+  // });
+  // readonly lessonEvents = computed(() => this.lessonEventsResource.value());
+  // readonly lessonEventsLoading = computed(() => this.lessonEventsResource.isLoading());
+  // readonly lessonEventsErro = computed(() => this.lessonEventsResource.error());
+  // readonly lessonEventsStatus = computed(() => this.lessonEventsResource.status());
+  //
+  // getBy(params: any) {
+  //   this.getAllParams.set(params || {});
+  // }
 
   getAll(params?: any): Observable<LessonEvent[]> {
     if (params?.classHash) {
