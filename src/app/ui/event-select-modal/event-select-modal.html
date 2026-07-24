@@ -22,7 +22,8 @@
                    [formField]="filtersForm.date"
                    [datePickerFormat]="isManager ? 'dd/MM/yyyy' : 'MM/yyyy'"
                    [min]="minDate"
-                   [max]="maxDate">
+                   [max]="maxDate"
+                   (dateChange)="dateSelect($event, picker)">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker
                             [startView]="isManager ? 'month' : 'year'"
