@@ -162,10 +162,7 @@ export class EventSelectModal implements OnInit {
     return await firstValueFrom(request$);
   }
 
-  monthSelected(normalizedMonthAndYear: Date, datepicker: MatDatepicker<Date>) {
-    // if (this.isManager) {
-    //   return;
-    // }
+  dateSelected(normalizedMonthAndYear: Date, datepicker: MatDatepicker<Date>) {
     const filterDate = this.filters().date;
     let date = filterDate ? new Date(filterDate) : new Date();
 
@@ -180,9 +177,11 @@ export class EventSelectModal implements OnInit {
     this.getEvents().then();
   }
 
-  dateSelect(ev: any, datepicker: MatDatepicker<Date>) {
-    this.monthSelected(ev.value, datepicker);
-    console.log('>>>', ev);
+  datepickerSelect(ev: any, datepicker: MatDatepicker<Date>) {
+    if (!this.isManager) {
+      return;
+    }
+    this.dateSelected(ev.value, datepicker);
   }
 
   async ngOnInit() {

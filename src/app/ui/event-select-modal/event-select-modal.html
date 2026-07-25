@@ -23,11 +23,11 @@
                    [datePickerFormat]="isManager ? 'dd/MM/yyyy' : 'MM/yyyy'"
                    [min]="minDate"
                    [max]="maxDate"
-                   (dateChange)="dateSelect($event, picker)">
+                   (dateChange)="datepickerSelect($event, picker)">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker
                             [startView]="isManager ? 'month' : 'year'"
-                            (monthSelected)="monthSelected($event, picker)"
+                            (monthSelected)="dateSelected($event, picker)"
                             panelClass="example-month-picker">
             </mat-datepicker>
           </mat-form-field>
