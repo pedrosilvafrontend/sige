@@ -17,8 +17,14 @@ import { MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/i
 import { form, FormRoot, FormField } from '@angular/forms/signals';
 import { DatePickerFormatDirective } from '@util/datepicker-format.directive';
 import Swal from 'sweetalert2';
-import { newEventResource } from '@core/resources/lesson-event.resource';
+import {
+  EventResource,
+  eventResourceFactory,
+  EventsResourceParams,
+  newEventResource
+} from '@core/resources/lesson-event.resource';
 import { FnsPipe } from '@util/fns-pipe';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'ui-event-select-modal',
@@ -48,7 +54,7 @@ import { FnsPipe } from '@util/fns-pipe';
   templateUrl: './event-select-modal.html',
   styleUrl: './event-select-modal.scss',
 })
-export class EventSelectModal {
+export class EventSelectModal implements OnInit {
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
   protected lessonEventService = inject(LessonEventService);
@@ -63,17 +69,21 @@ export class EventSelectModal {
   filtersForm = form(this.filters);
   lastDate = '';
   modal = viewChild<ModalComponent>('modal');
-  readonly eventResource = newEventResource({});
+  private eventResource!: EventResource;
   params = input<any>({});
   onSelect = output<LessonEvent>();
   title = input('Select a lesson');
   fnsLocale = { locale: 'ptBR' };
+  classHash = '';
+  eventResourceParams: EventsResourceParams = {}
+  getEventResource = eventResourceFactory();
 
   constructor() {
-    effect(() => {
-      this.events = this.eventResource.events() || [];
-      this.cdr.detectChanges();
-    });
+    // const getEventResource = eventResourceFactory();
+    // effect(() => {
+    //   this.classHash = this.params()?.['classHash'] || '';
+    //
+    // });
   }
 
   async open(filterParams?: any) {
@@ -122,6 +132,7 @@ export class EventSelectModal {
     const params: any = {
       limit: 150,
       prevDate: false,
+      classHash: this.classHash,
       ...filterParams,
       ...(this.params() || {})
     }
@@ -130,17 +141,28 @@ export class EventSelectModal {
     } else {
       params.date = formattedDate;
     }
-    this.eventResource.update(params);
+    if (!this.eventResource) {
+      this.eventResource = this.getEventResource(params);
+    } else {
+      this.eventResource.update(params);
+    }
+
+    this.events = await this._getEvents(params);
 
     // this.loadedEvents = true;
     this.cdr.detectChanges();
     this.isLoading.set(false);
   }
 
-  monthSelected(normalizedMonthAndYear: Date, datepicker: MatDatepicker<Date>) {
-    if (this.isManager) {
-      return;
-    }
+  async _getEvents(params: any) {
+    this.classHash = this.params()?.['classHash'] || '';
+    const request$ = this.classHash
+      ? this.lessonEventService.getPublicAll(params)
+      : this.lessonEventService.getAll(params);
+    return await firstValueFrom(request$);
+  }
+
+  dateSelected(normalizedMonthAndYear: Date, datepicker: MatDatepicker<Date>) {
     const filterDate = this.filters().date;
     let date = filterDate ? new Date(filterDate) : new Date();
 
@@ -153,6 +175,16 @@ export class EventSelectModal {
     }));
     datepicker.close();
     this.getEvents().then();
+  }
+
+  datepickerSelect(ev: any, datepicker: MatDatepicker<Date>) {
+    if (!this.isManager) {
+      return;
+    }
+    this.dateSelected(ev.value, datepicker);
+  }
+
+  async ngOnInit() {
   }
 
 }

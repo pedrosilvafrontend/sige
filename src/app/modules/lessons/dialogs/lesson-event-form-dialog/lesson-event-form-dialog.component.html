@@ -191,7 +191,7 @@
 
           @let codePrefix = dialogData.item.schoolClass?.code | codePrefix;
           <ui-event-select-modal #eventSelectModal
-                                 [params]="{ codePrefix }"
+                                 [params]="{ codePrefix, classHash }"
                                  [title]="'Select a lesson for duplicate test'"
                                  (onSelect)="selectEvent($event, proofModal)">
           </ui-event-select-modal>
