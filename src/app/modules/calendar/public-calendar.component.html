@@ -18,7 +18,7 @@
                   <div class="col">
                     <app-teacher-cc-select
                       formControlName="teacher"
-                      [schoolId]="$safeNavigationMigration(filters.get('school')?.value?.id)"
+                      [schoolId]="filters.get('school')?.value?.id || null"
                       [classHash]="classHash"
                     >
                     </app-teacher-cc-select>
@@ -32,7 +32,7 @@
                         @let key = entry[0];
                         @let control = entry[1];
                         <li>
-                          <mat-checkbox color="primary" [formControl]="control">
+                          <mat-checkbox color="primary" [formControl]="control" (change)="applyFilter()">
                             {{key | uppercase | translate | titlecase}}
                           </mat-checkbox>
                         </li>
@@ -42,14 +42,14 @@
                         @let key = entry[0];
                         @let control = entry[1];
                         <li>
-                          <mat-checkbox color="primary" [formControl]="control">
+                          <mat-checkbox color="primary" [formControl]="control" (change)="applyFilter()">
                             {{key | uppercase | translate | titlecase}}
                           </mat-checkbox>
                         </li>
                       }
                     </ul>
 
-                    <ui-button type="submit">Buscar</ui-button>
+<!--                    <ui-button type="submit">Buscar</ui-button>-->
                   </div>
                   <div class="d-flex flex-wrap gap-2 align-items-center w-100 justify-content-end" [formGroup]="calendarOptionsForm">
                     <ui-button (onClick)="setToday()">Hoje</ui-button>
