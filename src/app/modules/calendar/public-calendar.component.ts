@@ -28,7 +28,7 @@ import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { firstValueFrom, lastValueFrom, Observable, of, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { debounceTime, firstValueFrom, lastValueFrom, Observable, of, Subject, switchMap, take, takeUntil } from 'rxjs';
 import {
   LessonEventFormDialogComponent
 } from '@modules/lessons/dialogs/lesson-event-form-dialog/lesson-event-form-dialog.component';
@@ -298,13 +298,14 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
 
     this.filterChanges();
 
-    // this.filters.valueChanges.pipe(
-    //   takeUntil(this.destroy$),
-    //   debounceTime(700)
-    // ).subscribe((data: any) => {
-    //   this.applyFilter();
-    // })
-    // this.applyFilter();
+    this.filters.valueChanges.pipe(
+      takeUntil(this.destroy$),
+      debounceTime(700)
+    ).subscribe((data: any) => {
+      this.applyFilter();
+    })
+    this.applyFilter();
+
     this.activities = await firstValueFrom(
       this.activityService.getAll({classHash: this.classHash}).pipe(
         map(activities => {
@@ -628,11 +629,6 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
         })
       },
       loading: (isLoading: any) => {
-        console.log('Loading state changed:', isLoading);
-        if (!isLoading) {
-          // isLoading passa para 'false' quando todos os eventos são renderizados
-          console.log('Todos os eventos foram renderizados');
-        }
         self.fcLoading(isLoading);
       },
       ...this.calendarOptionsForm.value

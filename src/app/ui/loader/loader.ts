@@ -24,18 +24,6 @@ export class Loader implements OnInit, OnDestroy {
     return this.loadingService.isShow();
   }
 
-  constructor() {
-    effect(() => {
-      if (this.loadingService.isShow()) {
-        console.log('show');
-        // this.loadingService.show();
-      } else {
-        console.log('hide');
-        // this.loadingService.hide();
-      }
-    });
-  }
-
   ngOnInit(): void {
     // Change a boolean property every 1000ms (1 second)
     this.intervalId = setInterval(() => {

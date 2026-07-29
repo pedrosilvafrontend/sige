@@ -57,7 +57,7 @@
                       <app-class-select
                         formControlName="schoolClass"
                         [schoolId]="filters.get('school')?.value?.id || null"
-                        [degreeId]="$safeNavigationMigration(filters.get('degreeId')?.value)"
+                        [degreeId]="filters.get('degreeId')?.value || ''"
                       >
                       </app-class-select>
                     </div>
@@ -67,7 +67,7 @@
                     <div class="col">
                       <app-teacher-select
                         formControlName="teacher"
-                        [schoolId]="$safeNavigationMigration(filters.get('school')?.value?.id)"
+                        [schoolId]="filters.get('school')?.value?.id || null"
                         [classHash]="classHash"
                       >
                       </app-teacher-select>
