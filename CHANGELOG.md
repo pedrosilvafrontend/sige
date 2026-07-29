@@ -1,3 +1,10 @@
+## [1.1.62](https://github.com/pedrosilvafrontend/sige/compare/v1.1.61...v1.1.62) (2026-07-29)
+
+
+### Features
+
+* public calendar filters auto search ([643131c](https://github.com/pedrosilvafrontend/sige/commit/643131c3e48e8dd9e0e19b1d09c10cdc8c78b102))
+
 ## [1.1.61](https://github.com/pedrosilvafrontend/sige/compare/v1.1.60...v1.1.61) (2026-07-25)
 
 
