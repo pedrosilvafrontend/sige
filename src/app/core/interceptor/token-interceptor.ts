@@ -29,6 +29,9 @@ export const tokenInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown
   const shouldAppendToken = (url: string) => !hasHttpScheme(url);
 
   let headers = request.headers;
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  headers = headers.append('X-Timezone', timezone);
+
   if (tokenService.valid() && shouldAppendToken(request.url)) {
     headers = request.headers.append(
       'Authorization',
@@ -44,8 +47,6 @@ export const tokenInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown
       headers = headers.append('X-Class-Hash', classHash);
     }
 
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    headers = headers.append('X-Timezone', timezone);
     // headers = headers.append('X-School-ID', store.get(schoolStoreKey) || '');
     return next(
         request.clone({
@@ -65,8 +66,9 @@ export const tokenInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown
       );
   }
   else {
+    const origin = router.url;
     if (request.url.startsWith('/api/')) {
-      if (!request.url.startsWith('/api/public/') && !request.url.startsWith('/api/health')) {
+      if (!request.url.startsWith('/api/public/') && !request.url.startsWith('/api/health') && !origin.includes('/public/')) {
         // router.navigateByUrl('/login').then();
         dialog.closeAll();
         return next(request).pipe(tap(() => router.navigateByUrl('/login').then()));

@@ -67,6 +67,10 @@ ul {
   margin: 0;
 }
 
+hr {
+  border: 1px inset rgba(0, 0, 0, 0.1);
+}
+
 [hidden] { display: none !important; }
 
 .gap-1 { gap: 0.5rem; }
@@ -539,14 +543,26 @@ fieldset {
 }
 
 .mdc-text-field--disabled {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
   .mdc-notched-outline {
-    background-color: #faf9fd;
+    //background-color: #faf9fd;
+    background-color: transparent;
   }
   .mdc-text-field__input, .mdc-floating-label, .mat-mdc-select-min-line {
     color: #4f4f4f !important;
   }
   .mat-mdc-notch-piece {
-    border-color: #eeeeee !important;
+    border-color: transparent !important;
+  }
+  .mdc-notched-outline__notch label {
+    left: 0;
+  }
+  .mdc-notched-outline__leading {
+    width: 0 !important;
+  }
+  .mat-mdc-select-arrow-wrapper {
+    display: none;
   }
 }
 

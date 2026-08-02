@@ -64,6 +64,8 @@ import { EventSelectModal } from '@ui/event-select-modal/event-select-modal';
 import { CodePrefixPipe } from '@util/code-prefix-pipe';
 import { TestCompareModal } from '@ui/test-compare-modal/test-compare-modal';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+import { WorkFormComponent } from '@modules/common/form/work-form/work-form.component';
 
 export interface DialogData {
   item: EventMerge;
@@ -111,11 +113,13 @@ export interface DialogData {
     CodePrefixPipe,
     TestCompareModal,
     SlicePipe,
+    WorkFormComponent,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
   protected dialogData: DialogData = inject(MAT_DIALOG_DATA);
   public ref = inject(MatDialogRef<LessonEventFormDialogComponent>);
+  private router = inject(Router);
   private proofService = inject(ProofService);
   private workService = inject(WorkService);
   private authService = inject(AuthService);
@@ -497,6 +501,13 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
     this.ref.close(this.closeRefresh);
   }
 
+  async getEvents(params: any) {
+    const request$ = params.classHash
+      ? this.lessonEventService.getPublicAll(params)
+      : this.lessonEventService.getAll(params);
+    return await firstValueFrom(request$);
+  }
+
   async ngOnInit() {
     if (this.dialogData.item) {
       const item = this.dialogData.item;
@@ -514,10 +525,7 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
         if (classHash) {
           params.classHash = classHash;
         }
-        const request$ = classHash
-          ? this.lessonEventService.getPublicAll(params)
-          : this.lessonEventService.getAll(params);
-        const events = await firstValueFrom(request$);
+        const events = await this.getEvents(params);
 
         if (events.length == 1) {
           event = events[0];
@@ -557,17 +565,20 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
       classHash: this.classHash,
       overrideTest
     };
-    if (!codePrefix && classCode) {
-      codePrefix = classCode.match(/^[A-Za-z]+\d+/)?.[0] || '';
-    }
-    const resp = await firstValueFrom(this.classService.getAll({ codePrefix }));
-    const classes = (resp.data || []).sort((a, b) => {
-      if (a.code === classCode) return -1;
-      if (b.code === classCode) return 1;
-      return a.code && b.code ? a.code.localeCompare(b.code) : 0;
-    });
-    if (classes.length > 1) {
-      testContext.hasNext = true;
+
+    if (!this.router.url.includes('/public/')) {
+      if (!codePrefix && classCode) {
+        codePrefix = classCode.match(/^[A-Za-z]+\d+/)?.[0] || '';
+      }
+      const resp = await firstValueFrom(this.classService.getAll({codePrefix}));
+      const classes = (resp.data || []).sort((a, b) => {
+        if (a.code === classCode) return -1;
+        if (b.code === classCode) return 1;
+        return a.code && b.code ? a.code.localeCompare(b.code) : 0;
+      });
+      if (classes.length > 1) {
+        testContext.hasNext = true;
+      }
     }
     proofModal.open(testContext).afterClosed().pipe(take(1)).subscribe((resp: any) => {
       if (!resp && this.saveTestNextMode) {

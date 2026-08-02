@@ -21,6 +21,50 @@
                                   (form$)="setForm($event)"
           ></app-lesson-events-form>
 
+          @if (test && test.id) {
+            <div class="p-3 mb-3 bg-body-secondary bg-opacity-75">
+              <h3 class="m-0">
+                {{ test.type | translate }}
+              </h3>
+              <div>
+                Status: {{ test.status | translate }}
+              </div>
+              <hr class="mb-5">
+              <app-test-form
+                class="d-block mt-3"
+                [test]="overrideTest || test"
+                [classHash]="classHash"
+                [schoolId]="schoolId"
+                [override]="overrideTest"
+                [timeScheduleId]="timeScheduleId"
+                [event]="event"
+                [disabled]="true"
+                (form$)="(proofForm = $event)"
+                (initialSelectedEvents)="(initialSelectedProofEvents = $event)"
+              >
+              </app-test-form>
+            </div>
+          }
+
+          @if (work && work.id) {
+            <div class="p-3 mb-3 bg-body-secondary bg-opacity-75">
+              <h3 class="m-0">
+                {{ 'WORK' | translate }}
+              </h3>
+              <div>
+                Status: {{ work.status | translate }}
+              </div>
+              <hr class="mb-5">
+
+              <app-work-form
+                class="d-block mt-3"
+                [schoolId]="schoolId"
+                [data]="work"
+                [disabled]="true"
+              ></app-work-form>
+
+            </div>
+          }
 <!--          <div class="row">-->
 <!--            <div class="col-md-2">-->
 <!--              <mat-form-field appearance="outline" class="w-100">-->
@@ -83,20 +127,23 @@
               @let rawTest = proofForm?.getRawValue();
               <div mat-dialog-title>
                 <div class="modalTitle">
-                  @if (rawTest?.id) {
-                    {{ "Edit "+(rawTest?.type || "test") | translate }} <span class="text-secondary text-opacity-50">#{{ rawTest.id }}</span>
+                  @if (readonly || disabled) {
+                    {{ (rawTest && rawTest.type || "test") | translate }} <span class="text-secondary text-opacity-50">#{{ (rawTest && rawTest.id) || ''  }}</span>
                   }
-                  @if (!rawTest?.id) {
+                  @else if (rawTest && rawTest.id) {
+                    {{ "Edit "+(rawTest.type || "test") | translate }} <span class="text-secondary text-opacity-50">#{{ rawTest.id }}</span>
+                  }
+                  @else {
                     {{ "New "+(rawTest?.type || "test") | translate }}
                   }
                 </div>
                 @if (classCode) {
                   <div class="modalSubtitle">
                     <span>Turma: <strong>{{ classCode }}</strong></span>
-                    @if (event?.date) {
-                      <span>Data: <strong>{{ event?.date | date:'dd/MM/yyyy' }}</strong></span>
+                    @if (event && event.date) {
+                      <span>Data: <strong>{{ event.date | date:'dd/MM/yyyy' }}</strong></span>
                     }
-                    @if (event?.frequency?.timeSchedule?.startTime; as time) {
+                    @if ((event && event.frequency && event.frequency.timeSchedule && event.frequency.timeSchedule.startTime) || ''; as time) {
                       <span>Hora: <strong>{{ time | slice:0:5 }}</strong></span>
                     }
                   </div>
@@ -292,14 +339,14 @@
           <ui-button color="default" (onClick)="planningModal.open()">{{ 'Planning' | translate }}</ui-button>
         }
         <app-work-form-modal #workModal [work]="work" [schoolId]="schoolId" [hidden]="readonly && !work.id" [disabled]="readonly">
-          @if (!readonly || work.id) {
+          @if (!readonly && !disabled) {
             <ui-button color="default" (onClick)="workModalOpen(workModal.open)" badge=""
                        [badgeColor]="activityStatusClass[work.status]" [disabled]="!work.id && (isMaxTotal || isMaxWorks)">
               {{ 'Work' | translate }}
             </ui-button>
           }
         </app-work-form-modal>
-        @if (!readonly || test.id) {
+        @if (!readonly && !disabled) {
           <ui-button color="default" (onClick)="openTestModal(proofModal)" badge=""
                      [badgeColor]="activityStatusClass[test.status]" [disabled]="!test.id && (isMaxTotal || isMaxProofs)">
             {{ 'Proof' | translate }}
