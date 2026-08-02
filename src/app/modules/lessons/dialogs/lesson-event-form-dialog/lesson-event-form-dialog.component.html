@@ -83,20 +83,23 @@
               @let rawTest = proofForm?.getRawValue();
               <div mat-dialog-title>
                 <div class="modalTitle">
-                  @if (rawTest?.id) {
-                    {{ "Edit "+(rawTest?.type || "test") | translate }} <span class="text-secondary text-opacity-50">#{{ rawTest.id }}</span>
+                  @if (readonly || disabled) {
+                    {{ (rawTest && rawTest.type || "test") | translate }} <span class="text-secondary text-opacity-50">#{{ (rawTest && rawTest.id) || ''  }}</span>
                   }
-                  @if (!rawTest?.id) {
+                  @else if (rawTest && rawTest.id) {
+                    {{ "Edit "+(rawTest.type || "test") | translate }} <span class="text-secondary text-opacity-50">#{{ rawTest.id }}</span>
+                  }
+                  @else {
                     {{ "New "+(rawTest?.type || "test") | translate }}
                   }
                 </div>
                 @if (classCode) {
                   <div class="modalSubtitle">
                     <span>Turma: <strong>{{ classCode }}</strong></span>
-                    @if (event?.date) {
-                      <span>Data: <strong>{{ event?.date | date:'dd/MM/yyyy' }}</strong></span>
+                    @if (event && event.date) {
+                      <span>Data: <strong>{{ event.date | date:'dd/MM/yyyy' }}</strong></span>
                     }
-                    @if (event?.frequency?.timeSchedule?.startTime; as time) {
+                    @if ((event && event.frequency && event.frequency.timeSchedule && event.frequency.timeSchedule.startTime) || ''; as time) {
                       <span>Hora: <strong>{{ time | slice:0:5 }}</strong></span>
                     }
                   </div>
