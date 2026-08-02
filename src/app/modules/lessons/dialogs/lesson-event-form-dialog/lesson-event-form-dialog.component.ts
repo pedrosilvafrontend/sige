@@ -65,6 +65,7 @@ import { CodePrefixPipe } from '@util/code-prefix-pipe';
 import { TestCompareModal } from '@ui/test-compare-modal/test-compare-modal';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { WorkFormComponent } from '@modules/common/form/work-form/work-form.component';
 
 export interface DialogData {
   item: EventMerge;
@@ -112,6 +113,7 @@ export interface DialogData {
     CodePrefixPipe,
     TestCompareModal,
     SlicePipe,
+    WorkFormComponent,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
