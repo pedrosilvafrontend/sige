@@ -51,7 +51,7 @@ export function LessonEventForm(data?: LessonEvent): FormGroup<LessonEventForm> 
   });
 
   const evalToolsForm = fb.group<EvalToolsForm>({
-    proof: ProofForm.form(evalTools?.proof),
+    proof: ProofForm.form(evalTools?.test),
     work: WorkForm.form(evalTools?.work),
   });
 

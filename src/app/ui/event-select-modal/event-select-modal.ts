@@ -7,7 +7,7 @@ import { MatIconButton } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
 import { EventCard } from '@ui/event-card/event-card';
 import { Skeleton } from '@ui/skeleton/skeleton';
-import { ActivityConfig, LessonEvent } from '@models';
+import { ActivityConfig, LessonEvent, LiteEvent } from '@models';
 import { AuthService } from '@services';
 import { DateUtil } from '@util';
 import { endOfYear, format, isValid, setMonth, setYear, startOfDay } from 'date-fns';

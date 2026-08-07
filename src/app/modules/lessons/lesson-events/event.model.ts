@@ -1,6 +1,6 @@
 import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Activity } from '@modules/config/activity/activity.model';
-import { IProofForm } from '@form/proof.form';
+import { ITestForm } from '@form/proof.form';
 import { LessonBatch, School, Test, Work } from '@models';
 import { IWorkForm } from '@form/work.form';
 
@@ -28,7 +28,7 @@ export interface LesEventForm {
   startHour: AbstractControl<string>;
   endHour: AbstractControl<string>;
   activities: FormArray;
-  test?: FormGroup<IProofForm>;
+  test?: FormGroup<ITestForm>;
   work?: FormGroup<IWorkForm>;
   observations: AbstractControl<string>;
 }

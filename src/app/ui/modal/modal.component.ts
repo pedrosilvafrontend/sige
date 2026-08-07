@@ -61,12 +61,12 @@ export class ModalDialogComponent {
   changeDetection: ChangeDetectionStrategy.Eager,
   template: ``,
 })
-export class ModalComponent implements OnInit {
+export class ModalComponent<T=any> implements OnInit {
   private dialog = inject(MatDialog);
   private _ref!: MatDialogRef<ModalDialogComponent>;
   public template = input<TemplateRef<any>>();
   public options = input<any>({})
-  modal = output<ModalComponent>();
+  modal = output<ModalComponent<T>>();
 
   get ref(): MatDialogRef<ModalDialogComponent> {
     return this._ref;

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DeleteWorkModal } from './delete-work-modal';
+import { TestDeleteModal } from './test-delete-modal';
 
-describe('DeleteWorkModal', () => {
-  let component: DeleteWorkModal;
-  let fixture: ComponentFixture<DeleteWorkModal>;
+describe('TestDeleteModal', () => {
+  let component: TestDeleteModal;
+  let fixture: ComponentFixture<TestDeleteModal>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DeleteWorkModal]
+      imports: [TestDeleteModal]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DeleteWorkModal);
+    fixture = TestBed.createComponent(TestDeleteModal);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

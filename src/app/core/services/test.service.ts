@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class ProofService extends BaseService<Test> {
+export class TestService extends BaseService<Test> {
 
   constructor() {
     super('proofs')

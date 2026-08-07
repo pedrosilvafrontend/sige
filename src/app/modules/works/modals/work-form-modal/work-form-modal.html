@@ -39,7 +39,7 @@
       @let isWorkManager = auth.role === 'admin' || auth.role === 'principal' || auth.role === 'coordinator';
 
       @if (data?.id && !disableWork) {
-        <app-delete-work-modal [work]="data" (close)="onDeleteWork($event)"></app-delete-work-modal>
+        <app-work-delete-modal [work]="data" (close)="onDeleteWork($event)"></app-work-delete-modal>
       }
 
       @if (!disabled() && isWorkManager) {
@@ -68,6 +68,14 @@
           }
         </ui-button>
       }
+
+<!--      @if (hasNext) {-->
+        <ui-button
+          [disabled]="form.invalid"
+          (onClick)="onSubmit(true)">
+          {{ 'Save and duplicate' | translate }}
+        </ui-button>
+<!--      }-->
     </div>
   </div>
 </ng-template>

@@ -23,7 +23,7 @@ import {
 } from '@angular/material/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { rowsAnimation } from '@util';
-import { ProofService } from '@core/services/proof.service';
+import { TestService } from '@core/services/test.service';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -74,7 +74,7 @@ import { AuthService } from '@services';
 export class ProofsComponent implements OnInit, OnDestroy {
 
   private dialog = inject(MatDialog);
-  private service = inject(ProofService);
+  private service = inject(TestService);
   private authService = inject(AuthService);
   private snackBar = inject(MatSnackBar);
   public translate = inject(TranslateService);

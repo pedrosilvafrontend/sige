@@ -48,6 +48,12 @@ export class LessonEventService {
       .pipe(take(1), catchError(this.handleError));
   }
 
+  getByYearId(params?: any): Observable<LessonEvent[]> {
+    return this.http
+      .get<LessonEvent[]>(`${this.API_URL}/year/${params?.yearId || 0}`, { params: params || {} })
+      .pipe(take(1), catchError(this.handleError));
+  }
+
   getPublicAllLite(params?: any): Observable<LiteEvent[]> {
     const classHash = params?.classHash
     if (!classHash) {

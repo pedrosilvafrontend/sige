@@ -11,7 +11,7 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   OnDestroy,
-  viewChild
+  viewChild, effect
 } from '@angular/core';
 import {
   ReactiveFormsModule,
@@ -45,27 +45,24 @@ import {
 } from '@models';
 import { AuthService, ClassesService } from '@services';
 import { Button } from '@ui/button/button';
-import { ProofService } from '@core/services/proof.service';
+import { TestService } from '@core/services/test.service';
 import { ModalComponent, ModalDialogComponent } from '@ui/modal/modal.component';
 import { LessonEventExtraService } from '@services/lesson-event-extra.service';
 import { TestFormComponent } from '@modules/common/form/test-form/test.form';
-import { DatePipe, NgClass, SlicePipe } from '@angular/common';
-import { IProofForm } from '@form/proof.form';
+import { ITestForm } from '@form/proof.form';
 import { MessageService } from '@services/message.service';
 import { TextEditor } from '@ui/text-editor/text-editor';
 import { IWorkForm } from '@form/work.form';
 import { WorkService } from '@services/work.service';
 import { WorkFormModal } from '@modules/works/modals/work-form-modal/work-form-modal';
-import { firstValueFrom, Subject, take, takeUntil } from 'rxjs';
+import { firstValueFrom, Subject, take } from 'rxjs';
 import { EventColors } from '@modules/modals/event-colors/event-colors';
 import { ColorBy, newColorBy } from '@models/colors-by';
 import { LessonEventService } from '@services/lesson-event.service';
-import { EventSelectModal } from '@ui/event-select-modal/event-select-modal';
-import { CodePrefixPipe } from '@util/code-prefix-pipe';
-import { TestCompareModal } from '@ui/test-compare-modal/test-compare-modal';
-import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { WorkFormComponent } from '@modules/common/form/work-form/work-form.component';
+import { ActivityDuplicate } from '@ui/event-select-modal/activity-duplicate';
+import { TestFormModal } from '@modules/works/modals/test-form-modal/test-form-modal';
 
 export interface DialogData {
   item: EventMerge;
@@ -104,23 +101,18 @@ export interface DialogData {
     MatDialogTitle,
     ModalComponent,
     TestFormComponent,
-    NgClass,
     TextEditor,
     WorkFormModal,
     EventColors,
-    DatePipe,
-    EventSelectModal,
-    CodePrefixPipe,
-    TestCompareModal,
-    SlicePipe,
     WorkFormComponent,
+    TestFormModal,
   ],
 })
 export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
   protected dialogData: DialogData = inject(MAT_DIALOG_DATA);
   public ref = inject(MatDialogRef<LessonEventFormDialogComponent>);
   private router = inject(Router);
-  private proofService = inject(ProofService);
+  private testService = inject(TestService);
   private workService = inject(WorkService);
   private authService = inject(AuthService);
   private classService = inject(ClassesService);
@@ -129,28 +121,47 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
   private lessonEventService = inject(LessonEventService);
   private lessonEventExtraService = inject(LessonEventExtraService);
   private message = inject(MessageService);
-  private _saveTestNextMode = false;
-  get saveTestNextMode(): boolean {
-    return this._saveTestNextMode;
-  }
-  set saveTestNextMode(value: boolean) {
-    this._saveTestNextMode = value;
-    if (!value) {
-      this.originalTest = new Test();
-    }
-  }
-  testCompareModal = viewChild<ModalComponent>('testCompareModal');
+  private testDup!: ActivityDuplicate<Test>;
+
+  // private _saveTestNextMode = false;
+  // get saveTestNextMode(): boolean {
+  //   return this._saveTestNextMode;
+  // }
+  // set saveTestNextMode(value: boolean) {
+  //   this._saveTestNextMode = value;
+  //   if (!value) {
+  //     this.originalTest = new Test();
+  //   }
+  // }
+  // testCompareModal = viewChild<ModalComponent>('testCompareModal');
+  // testModal = viewChild<ModalComponent>('testModal');
+  // eventSelectModal = viewChild<ModalComponent>('eventSelectModal');
   auth = this.authService.user$.value;
   readonly = !this.auth.id;
   closeRefresh = false;
   event = new LessonEvent();
-  test: Test = new Test();
+
+  private _test: Test = new Test();
+  set test(test: Test) {
+    if (!this.testDup) {
+      this._test = test;
+      return;
+    }
+    this.testDup.data = test;
+  }
+  get test() {
+    if (!this.testDup) {
+      return this._test;
+    }
+    return this.testDup.data;
+  }
+
   generalEvent!: GeneralEvent;
   extra: LessonEventExtra = new class implements LessonEventExtra {}
   action = 'edit';
   dialogTitle!: string;
   form!: UntypedFormGroup;
-  proofForm!: FormGroup<IProofForm>;
+  proofForm!: FormGroup<ITestForm>;
   workForm!: FormGroup<IWorkForm>;
   extraForm: UntypedFormGroup = this.fb.group({
     id: [''],
@@ -174,31 +185,30 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
   lessonId = 0;
   classHash = '';
   private destroy$ = new Subject<void>();
-  originalTest: Test = new Test();
-  overrideTest: Test | null = null;
+  // originalTest: Test = new Test();
+  // overrideTest: Test | null = null;
 
-  copyTest(test: Test, event?: LessonEvent) {
-    return new Test({
-      type: test.type,
-      curricularComponent: event?.curricularComponent ?? test.curricularComponent,
-      title: test.title,
-      content: test.content,
-      score: test.score,
-      whereToFindIt: test.whereToFindIt,
-      lessonId: event?.lesson?.id || 0,
-      curricularComponentId: event?.curricularComponent?.id || 0,
-      timeScheduleId: event?.frequency?.timeSchedule?.id || 0,
-      date: event?.date || ''
-    });
-  }
+  // copyTest(test: Test, event?: LessonEvent) {
+  //   return new Test({
+  //     type: test.type,
+  //     curricularComponent: event?.curricularComponent ?? test.curricularComponent,
+  //     title: test.title,
+  //     content: test.content,
+  //     score: test.score,
+  //     whereToFindIt: test.whereToFindIt,
+  //     lessonId: event?.lesson?.id || 0,
+  //     curricularComponentId: event?.curricularComponent?.id || 0,
+  //     timeScheduleId: event?.frequency?.timeSchedule?.id || 0,
+  //     date: event?.date || ''
+  //   });
+  // }
 
   async reset(event?: LessonEvent) {
     this.event = event || new LessonEvent();
+    // this.overrideTest = this.copyTest(this.test, this.event);
     this.form.reset();
     this.dialogData.item = this.event;
     this.lessonId = this.event.lesson?.id || 0;
-    // this.test = this.copyTest(this.test, this.event);
-    this.overrideTest = this.copyTest(this.test, this.event);
 
     this.dialogData = {
       item: this.event,
@@ -244,6 +254,22 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
 
   constructor() {
     this.construct();
+
+    // effect(() => {
+    //   const testModal = this.testModal();
+    //   const eventSelectModal = this.eventSelectModal();
+    //   if (!this.testDup && testModal && eventSelectModal) {
+    //     this.testDup = new ActivityDuplicate<Test>(Test, testModal, eventSelectModal);
+    //   }
+    // });
+
+    // effect(() => {
+    //   const workModal = this.workModal();
+    //   const eventSelectModal = this.eventSelectModal();
+    //   if (!this.workDup && workModal && eventSelectModal) {
+    //     this.workDup = new ActivityDuplicate<Test>(Test, workModal, eventSelectModal);
+    //   }
+    // });
   }
 
   construct() {
@@ -301,10 +327,18 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
   workModalOpen(openFn: (data?: Work) => MatDialogRef<ModalDialogComponent, any>) {
     const ref = openFn?.(this.work);
     if (ref) {
-      ref.afterClosed().pipe(take(1)).subscribe((data) => {
-        if (data?.id) {
+      ref.afterClosed().pipe(take(1)).subscribe((res: { data: Work, goNext?: boolean }) => {
+        if (res?.data?.id) {
           this.closeRefresh = true;
-          this.work = data;
+          this.work = res.data;
+          // this.saveWorkNextMode = true;
+        } else {
+          // this.saveWorkNextMode = false;
+        }
+        if (res.goNext) {
+          this.closeRefresh = true;
+          // this.openEventSelect();
+          this.testDup.openEventSelect();
         }
       })
     }
@@ -338,132 +372,139 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
     })
   }
 
-  saveOrUpdateProof(data: Test, callback?: (success: boolean) => void) {
-    const isUpdate = !!data?.id;
-    const isMulticlass = data?.type === 'MULTICLASS_TEST';
-    const lessonId = this.lessonId;
-    if (!lessonId) {
-      return;
-    }
-    const request$ = isUpdate ? this.proofService.update(data) : this.proofService.add(data);
-    request$.subscribe({
-      next: (response: any) => {
-        this.message.success('Salvo com sucesso!');
-        callback?.(true);
-        this.closeRefresh = true;
-        let proof: Test;
-        if (isMulticlass && Array.isArray(response)) {
-          proof = response.find((p: Test) => p.lessonId === lessonId);
-        }
-        else {
-          proof = response;
-        }
-        this.test = proof;
-        this.proofForm.patchValue(proof);
-      },
-      error: (error) => {
-        callback?.(false);
-        console.error('Proof Update Error:', error);
-        this.form.setErrors({ temp: true });
-      },
-    });
-  }
+  // saveOrUpdateProof(data: Test, callback?: (success: boolean) => void) {
+  //   const isUpdate = !!data?.id;
+  //   const isMulticlass = data?.type === 'MULTICLASS_TEST';
+  //   const lessonId = this.lessonId;
+  //   if (!lessonId) {
+  //     return;
+  //   }
+  //   const request$ = isUpdate ? this.testService.update(data) : this.testService.add(data);
+  //   request$.subscribe({
+  //     next: (response: any) => {
+  //       this.message.success('Salvo com sucesso!');
+  //       callback?.(true);
+  //       this.closeRefresh = true;
+  //       let proof: Test;
+  //       if (isMulticlass && Array.isArray(response)) {
+  //         proof = response.find((p: Test) => p.lessonId === lessonId);
+  //       }
+  //       else {
+  //         proof = response;
+  //       }
+  //       this.test = proof;
+  //       this.proofForm.patchValue(proof);
+  //     },
+  //     error: (error) => {
+  //       callback?.(false);
+  //       console.error('Proof Update Error:', error);
+  //       this.form.setErrors({ temp: true });
+  //     },
+  //   });
+  // }
+  //
+  // testNextMode(nextMode: boolean) {
+  //   if (this.testDup) {
+  //     this.testDup.nextMode = nextMode;
+  //   }
+  // }
+  //
+  // saveTest(proofModal: ModalComponent, deleteProofOnUpdateModal: ModalComponent) {
+  //   this.testNextMode(false);
+  //   this.saveProof((success: boolean) => {
+  //     if (success) {
+  //       proofModal.close(true);
+  //     }
+  //   }, deleteProofOnUpdateModal)
+  // }
+  //
+  // saveProof(callback?: (success: boolean) => void, confirmModal?: ModalComponent) {
+  //   if (this.proofForm.valid) {
+  //     const formData = this.form.getRawValue() as LessonEventFormValue;
+  //     const proof = this.proofForm.getRawValue();
+  //     const isUpdate = !!proof?.id;
+  //     const isMulticlass = proof?.type === 'MULTICLASS_TEST';
+  //     const lessonId = this.lessonId;
+  //     // const ccId = this.dialogData.item?.curricularComponent?.id || 0;
+  //     if (!lessonId) {
+  //       return;
+  //     }
+  //     if (proof?.score || isMulticlass) {
+  //       // const events = proof.events?.filter((e: UniqueLessonEvent) => e.selected) || [];
+  //       const events = proof.events;
+  //       const data: Test = {
+  //         id: proof.id || 0,
+  //         type: proof.type || 'TEST',
+  //         lessonId: lessonId,
+  //         schoolId: proof.schoolId || this.schoolId,
+  //         content: proof.content || '',
+  //         date: formData.date,
+  //         score: proof.score || '',
+  //         status: proof.status || '',
+  //         timeScheduleId: formData.timeSchedule?.id || 0,
+  //         title: proof.title || '',
+  //         whereToFindIt: proof.whereToFindIt || '',
+  //         events: events,
+  //         curricularComponentId: proof.curricularComponent?.id || 0
+  //       }
+  //
+  //       // alerta de provas a serem excluídas
+  //       const originalSelected = this.initialSelectedProofEvents.map((e) => e.proofId);
+  //       const proofExcludes = isUpdate ? proof.events?.filter((e) => !e.selected && originalSelected.includes(e.proofId)) || [] : [];
+  //       const hasExcludes = proofExcludes.length > 0;
+  //       if (hasExcludes) {
+  //         const modalRef = confirmModal?.open({ events: proofExcludes });
+  //         modalRef?.afterClosed().pipe(take(1))
+  //           .subscribe((confirmed: boolean) => {
+  //             if (confirmed) {
+  //               this.saveOrUpdateProof(data, callback);
+  //             }
+  //           });
+  //         return;
+  //       }
+  //
+  //       this.saveOrUpdateProof(data, callback);
+  //
+  //     }
+  //
+  //   }
+  // }
 
-  saveTest(proofModal: ModalComponent, deleteProofOnUpdateModal: ModalComponent) {
-    this.saveTestNextMode = false;
-    this.saveProof((success: boolean) => {
-      if (success) {
-        proofModal.close(true);
-      }
-    }, deleteProofOnUpdateModal)
-  }
+  // openEventSelect = () => {};
+  //
+  // setEventSelect(eventSelectModal: EventSelectModal) {
+  //   this.openEventSelect = () => {
+  //     eventSelectModal.open().then((ref) => {
+  //       ref?.afterClosed().pipe(takeUntil(this.destroy$))
+  //         .subscribe((value: any) => {
+  //           if (!value) {
+  //             this.testNextMode(false);
+  //           }
+  //         });
+  //     });
+  //   }
+  // }
 
-  saveProof(callback?: (success: boolean) => void, confirmModal?: ModalComponent) {
-    if (this.proofForm.valid) {
-      const formData = this.form.getRawValue() as LessonEventFormValue;
-      const proof = this.proofForm.getRawValue();
-      const isUpdate = !!proof?.id;
-      const isMulticlass = proof?.type === 'MULTICLASS_TEST';
-      const lessonId = this.lessonId;
-      // const ccId = this.dialogData.item?.curricularComponent?.id || 0;
-      if (!lessonId) {
-        return;
-      }
-      if (proof?.score || isMulticlass) {
-        // const events = proof.events?.filter((e: UniqueLessonEvent) => e.selected) || [];
-        const events = proof.events;
-        const data: Test = {
-          id: proof.id || 0,
-          type: proof.type || 'TEST',
-          lessonId: lessonId,
-          schoolId: proof.schoolId || this.schoolId,
-          content: proof.content || '',
-          date: formData.date,
-          score: proof.score || '',
-          status: proof.status || '',
-          timeScheduleId: formData.timeSchedule?.id || 0,
-          title: proof.title || '',
-          whereToFindIt: proof.whereToFindIt || '',
-          events: events,
-          curricularComponentId: proof.curricularComponent?.id || 0
-        }
-
-        // alerta de provas a serem excluídas
-        const originalSelected = this.initialSelectedProofEvents.map((e) => e.proofId);
-        const proofExcludes = isUpdate ? proof.events?.filter((e) => !e.selected && originalSelected.includes(e.proofId)) || [] : [];
-        const hasExcludes = proofExcludes.length > 0;
-        if (hasExcludes) {
-          const modalRef = confirmModal?.open({ events: proofExcludes });
-          modalRef?.afterClosed().pipe(take(1))
-            .subscribe((confirmed: boolean) => {
-              if (confirmed) {
-                this.saveOrUpdateProof(data, callback);
-              }
-            });
-          return;
-        }
-
-        this.saveOrUpdateProof(data, callback);
-
-      }
-
-    }
-  }
-
-  openEventSelect = () => {};
-
-  setEventSelect(eventSelectModal: EventSelectModal) {
-    this.openEventSelect = () => {
-      eventSelectModal.open().then((ref) => {
-        ref?.afterClosed().pipe(takeUntil(this.destroy$))
-          .subscribe((value: any) => {
-            if (!value) {
-              this.saveTestNextMode = false;
-            }
-          });
-      });
-    }
-  }
-
-  saveTestNext(testModal: ModalComponent) {
-    this.saveTestNextMode = true;
-    this.saveProof((success: boolean) => {
-      if (success) {
-        testModal.close(true);
-        this.openEventSelect();
-      } else {
-        this.saveTestNextMode = false;
-      }
-    })
-  }
+  // saveTestNext(testModal: ModalComponent) {
+  //   this.testNextMode(true);
+  //   this.saveProof((success: boolean) => {
+  //     if (success) {
+  //       testModal.close(true);
+  //       // this.openEventSelect();
+  //       this.testDup.openEventSelect();
+  //     } else {
+  //       this.testNextMode(false);
+  //     }
+  //   })
+  // }
 
   deleteAllProofs(callback?: () => void) {
     const proof = this.proofForm.value;
     if (proof.type === 'MULTICLASS_TEST') {
-      this.proofService.deleteAll(proof.id || 0).subscribe(() => {
+      this.testService.deleteAll(proof.id || 0).subscribe(() => {
         this.message.success('Provas excluídas com sucesso!');
         this.proofForm.reset();
-        Object.assign(this.event.evalTools.proof || {}, this.proofForm.value);
+        Object.assign(this.event.evalTools.test || {}, this.proofForm.value);
         this.closeRefresh = true;
         callback?.();
       })
@@ -472,10 +513,10 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
 
   deleteProof(callback?: () => void) {
     const proof = this.proofForm.value;
-    this.proofService.deleteItem(proof.id || 0).subscribe(() => {
+    this.testService.deleteItem(proof.id || 0).subscribe(() => {
       this.message.success('Prova excluída com sucesso!');
       this.proofForm.reset();
-      Object.assign(this.event.evalTools.proof || {}, this.proofForm.value);
+      Object.assign(this.event.evalTools.test || {}, this.proofForm.value);
       this.closeRefresh = true;
       callback?.();
     })
@@ -536,8 +577,8 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
 
       // this.event = this.dialogData.item;
       this.event = event;
-      if (this.event?.evalTools?.proof?.id) {
-        const proof = this.event.evalTools.proof;
+      if (this.event?.evalTools?.test?.id) {
+        const proof = this.event.evalTools.test;
         if (!this.test.timeScheduleId) {
           this.test.timeScheduleId = this.timeScheduleId;
         }
@@ -555,83 +596,86 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
 
   }
 
-  protected readonly ProofService = ProofService;
+  protected readonly ProofService = TestService;
 
-  protected async openTestModal(proofModal: ModalComponent, overrideTest?: Partial<Test> | null) {
-    let codePrefix = this.dialogData.item.schoolClass?.codePrefix || '';
-    const schoolClass = this.dialogData.item.schoolClass;
-    const classCode = schoolClass?.code || '';
-    const testContext: any = {
-      classHash: this.classHash,
-      overrideTest
-    };
+  // protected async openTestModal(proofModal: ModalComponent, overrideTest?: Partial<Test> | null) {
+  //   let codePrefix = this.dialogData.item.schoolClass?.codePrefix || '';
+  //   const schoolClass = this.dialogData.item.schoolClass;
+  //   const classCode = schoolClass?.code || '';
+  //   const testContext: any = {
+  //     classHash: this.classHash,
+  //     overrideTest
+  //   };
+  //
+  //   if (!this.router.url.includes('/public/')) {
+  //     if (!codePrefix && classCode) {
+  //       codePrefix = classCode.match(/^[A-Za-z]+\d+/)?.[0] || '';
+  //     }
+  //     const resp = await firstValueFrom(this.classService.getAll({codePrefix}));
+  //     const classes = (resp.data || []).sort((a, b) => {
+  //       if (a.code === classCode) return -1;
+  //       if (b.code === classCode) return 1;
+  //       return a.code && b.code ? a.code.localeCompare(b.code) : 0;
+  //     });
+  //     if (classes.length > 1) {
+  //       testContext.hasNext = true;
+  //     }
+  //   }
+  //   await this.testDup.openModal(testContext);
+  //   // proofModal.open(testContext).afterClosed().pipe(take(1)).subscribe((resp: any) => {
+  //   //   if (!resp && this.saveTestNextMode) {
+  //   //     this.openEventSelect();
+  //   //   }
+  //   // });
+  // }
 
-    if (!this.router.url.includes('/public/')) {
-      if (!codePrefix && classCode) {
-        codePrefix = classCode.match(/^[A-Za-z]+\d+/)?.[0] || '';
-      }
-      const resp = await firstValueFrom(this.classService.getAll({codePrefix}));
-      const classes = (resp.data || []).sort((a, b) => {
-        if (a.code === classCode) return -1;
-        if (b.code === classCode) return 1;
-        return a.code && b.code ? a.code.localeCompare(b.code) : 0;
-      });
-      if (classes.length > 1) {
-        testContext.hasNext = true;
-      }
-    }
-    proofModal.open(testContext).afterClosed().pipe(take(1)).subscribe((resp: any) => {
-      if (!resp && this.saveTestNextMode) {
-        this.openEventSelect();
-      }
-    });
-  }
+  // async selectEvent(event: LessonEvent, testModal: ModalComponent) {
+  //   const originalTest = event.evalTools.test;
+  //   if (originalTest?.type === 'MULTICLASS_TEST') {
+  //     await Swal.fire({
+  //       title: 'Prova bimestral',
+  //       text: 'Não é possível duplicar para prova bimestral',
+  //       icon: 'warning',
+  //       confirmButtonText: 'OK',
+  //     });
+  //     return;
+  //   }
+  //   if (originalTest?.id) {
+  //     this.originalTest = originalTest;
+  //     const ref = this.testCompareModal()?.open();
+  //     ref?.afterClosed().pipe(take(1)).subscribe((resp: any) => {
+  //
+  //       if (!resp) {
+  //         this.originalTest = new Test();
+  //         this.overrideTest = null;
+  //       }
+  //       if (resp === true || resp === false) {
+  //         if (resp) {
+  //           this.originalTest = originalTest;
+  //           this.overrideTest = Object.assign({}, this.test);
+  //         } else {
+  //           this.overrideTest = null;
+  //         }
+  //
+  //         this.openTestModal(testModal, this.overrideTest).then();
+  //       }
+  //       this.reset(event).then();
+  //     });
+  //     return;
+  //   }
+  //   this.reset(event).then();
+  //   this.openTestModal(testModal).then();
+  // }
 
-  async selectEvent(event: LessonEvent, testModal: ModalComponent) {
-    const originalTest = event.evalTools.proof;
-    if (originalTest?.type === 'MULTICLASS_TEST') {
-      await Swal.fire({
-        title: 'Prova bimestral',
-        text: 'Não é possível duplicar para prova bimestral',
-        icon: 'warning',
-        confirmButtonText: 'OK',
-      });
-      return;
-    }
-    if (originalTest?.id) {
-      this.originalTest = originalTest;
-      const ref = this.testCompareModal()?.open();
-      ref?.afterClosed().pipe(take(1)).subscribe((resp: any) => {
-
-        if (!resp) {
-          this.originalTest = new Test();
-          this.overrideTest = null;
-        }
-        if (resp === true || resp === false) {
-          if (resp) {
-            this.originalTest = originalTest;
-            this.overrideTest = Object.assign({}, this.test);
-          } else {
-            this.overrideTest = null;
-          }
-
-          this.openTestModal(testModal, this.overrideTest).then();
-        }
-        this.reset(event).then();
-      });
-      return;
-    }
-    this.reset(event).then();
-    this.openTestModal(testModal).then();
-  }
-
-  confirmOverrideTest(confirm: boolean) {
-    if (!confirm) {
-      this.originalTest = new Test();
-      this.overrideTest = null;
-    }
-    this.testCompareModal()?.close(confirm);
-  }
+  // confirmOverrideTest(confirm: boolean) {
+  //   if (!confirm) {
+  //     this.testDup.target = new Test();
+  //     this.testDup.overrideData = null;
+  //     // this.originalTest = new Test();
+  //     // this.overrideTest = null;
+  //   }
+  //   this.testCompareModal()?.close(confirm);
+  // }
 
   ngOnDestroy() {
     this.destroy$.next();

@@ -1,4 +1,4 @@
-import { Component, inject, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, input, ChangeDetectionStrategy, viewChild } from '@angular/core';
 import { Button } from '@ui/button/button';
 import {
   MatDialogActions,
@@ -8,13 +8,16 @@ import {
 import { ModalComponent } from '@ui/modal/modal.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import { WorkFormComponent } from '@modules/common/form/work-form/work-form.component';
-import { Work } from '@models';
+import { GeneralEvent, LessonEvent, Test, Work } from '@models';
 import { NgClass } from '@angular/common';
 import { WorkService } from '@services/work.service';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
-import { DeleteWorkModal } from '@modules/works/modals/delete-work-modal/delete-work-modal';
+import { WorkDeleteModal } from '@modules/works/modals/work-delete-modal/work-delete-modal.component';
 import { BaseModal } from '@modules/modals/base-modal/base-modal';
+import Swal from 'sweetalert2';
+import { firstValueFrom, take } from 'rxjs';
+import { ActivityDuplicate } from '@ui/event-select-modal/activity-duplicate';
 
 @Component({
   selector: 'app-work-form-modal',
@@ -29,7 +32,7 @@ import { BaseModal } from '@modules/modals/base-modal/base-modal';
     NgClass,
     MatIcon,
     MatIconButton,
-    DeleteWorkModal
+    WorkDeleteModal
   ],
   templateUrl: './work-form-modal.html',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -47,7 +50,7 @@ export class WorkFormModal extends BaseModal<Work> {
     this.data = new Work();
   }
 
-  onSubmit() {
+  async onSubmit(goNext?: boolean) {
     if (this.readonly()) {
       return;
     }
@@ -64,18 +67,26 @@ export class WorkFormModal extends BaseModal<Work> {
         date,
         timeScheduleId,
       }
-      const request$ = data.id ? this.workService.update(data) : this.workService.add(data);
-      request$.subscribe({
-        next: (response) => {
-          this.alert('Salvo com sucesso!');
-          this.form.reset();
-          this.modal.close(response);
-        },
-        error: (error) => {
-          console.error('Work Add Error:', error);
-          // this.form.setErrors({ temp: true });
-        }
-      })
+
+      const workResponse = await firstValueFrom(data.id ? this.workService.update(data) : this.workService.add(data));
+      if (workResponse.id) {
+        this.alert('Salvo com sucesso!');
+        this.form.reset();
+        this.modal.close({data: workResponse, goNext});
+      }
+
+      // const request$ = data.id ? this.workService.update(data) : this.workService.add(data);
+      // request$.subscribe({
+      //   next: (response) => {
+      //     this.alert('Salvo com sucesso!');
+      //     this.form.reset();
+      //     this.modal.close({data: response, goNext});
+      //   },
+      //   error: (error) => {
+      //     console.error('Work Add Error:', error);
+      //     // this.form.setErrors({ temp: true });
+      //   }
+      // })
     }
   }
 

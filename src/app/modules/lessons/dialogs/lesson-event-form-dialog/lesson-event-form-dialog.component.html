@@ -79,7 +79,7 @@
         <div class="col-sm-12">
 <!--          @let proof = event.evalTools.proof;-->
           <ui-modal #planningModal [template]="planningTemplate" [options]="planningModalOptions"></ui-modal>
-          <ui-modal #proofModal [template]="proofTemplate" [options]="{width: '800px', disableClose: true}"></ui-modal>
+<!--          <ui-modal #testModal [template]="testTemplate" [options]="{width: '800px', disableClose: true}"></ui-modal>-->
 <!--          <ui-modal #workModal [template]="workTemplate" [options]="{width: '800px', disableClose: true}"></ui-modal>-->
 
           <app-event-colors #colorModal [event]="event" [colorBy]="colorBy"></app-event-colors>
@@ -120,7 +120,7 @@
             </mat-dialog-actions>
           </ng-template>
 
-          <ng-template #proofTemplate let-hasNext="hasNext" let-classHash="classHash" let-overrideTest="overrideTest">
+          <!--<ng-template #testTemplate let-hasNext="hasNext" let-classHash="classHash" let-overrideTest="overrideTest">
             <div class="modalHeader">
               @let fullTest = testFormComponent.proof;
               @let classCode = fullTest?.schoolClass?.code || dialogData.item.schoolClass?.code || '';
@@ -149,13 +149,12 @@
                   </div>
                 }
               </div>
-              <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="proofModal.close()">
+              <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="testModal.close()">
                 <mat-icon>close</mat-icon>
               </button>
             </div>
             <mat-dialog-content>
-<!--              TODO: comparar o componente curricular com o do usuario logado e não teacherId-->
-<!--              @let notAllowedTeacher = !!(auth.role == 'teacher' && proof?.id && (fullTest?.teacher?.id !== auth.id || proof.status == 'APPROVED'));-->
+&lt;!&ndash;              TODO: comparar o componente curricular com o do usuario logado e não teacherId&ndash;&gt;
               @let notAllowedTeacher = false;
               @let disableTest = disabled || readonly || notAllowedTeacher;
               @if (test && test.status) {
@@ -179,7 +178,6 @@
                 (initialSelectedEvents)="(initialSelectedProofEvents = $event)"
               >
               </app-test-form>
-<!--              <pre>{{ proofForm.getRawValue() | json }}</pre>-->
             </mat-dialog-content>
             <mat-dialog-actions>
               <div class="dialog-buttons">
@@ -187,29 +185,23 @@
                 @if (test?.id && !disableTest && (test.type != 'MULTICLASS_TEST' || isManager)) {
                   <ui-button color="danger" (onClick)="deleteProofModal.open()">Excluír prova</ui-button>
                 }
-                <ui-button color="neutral" (onClick)="proofModal.close()" cdkFocusInitial>
+                <ui-button color="neutral" (onClick)="testModal.close()" cdkFocusInitial>
                   @if (disableTest) {
                     Fechar
                   } @else {
                     Cancelar
                   }
                 </ui-button>
-<!--                @if (isManager) {-->
-<!--                  <ui-button (onClick)="approveProof(proofModal.close)">-->
-<!--                    {{ 'Approve' | translate }}-->
-<!--                  </ui-button>-->
-<!--                }-->
                 @if (!disableTest) {
-<!--                  deleteProofOnUpdateModal-->
                   @if (test.type == 'MULTICLASS_TEST') {
-                    <ui-button [disabled]="proofForm.invalid" (onClick)="saveTest(proofModal, deleteProofOnUpdateModal)">
+                    <ui-button [disabled]="proofForm.invalid" (onClick)="saveTest(testModal, deleteProofOnUpdateModal)">
                       Salvar
                       @if (test.status && test.status != 'APPROVED' && isManager && (proofForm.controls.score.value && proofForm.controls.content.value)) {
                         e aprovar
                       }
                     </ui-button>
                   } @else {
-                    <ui-button [disabled]="proofForm.invalid" (onClick)="saveTest(proofModal, deleteProofOnUpdateModal)">
+                    <ui-button [disabled]="proofForm.invalid" (onClick)="saveTest(testModal, deleteProofOnUpdateModal)">
                       Salvar
                       @if (test.status && test.status != 'APPROVED' && isManager) {
                         e aprovar
@@ -220,7 +212,7 @@
                   @if (hasNext && test.type !== 'MULTICLASS_TEST') {
                     <ui-button
                       [disabled]="proofForm.invalid"
-                      (onClick)="setEventSelect(eventSelectModal); saveTestNext(proofModal)">
+                      (onClick)="setEventSelect(eventSelectModal); saveTestNext(testModal)">
                       {{ 'Save and duplicate' | translate }}
                     </ui-button>
                   }
@@ -236,14 +228,17 @@
                                  (actionClick)="confirmOverrideTest($event)">
           </ui-test-compare-modal>
 
-          @let codePrefix = dialogData.item.schoolClass?.code | codePrefix;
+          @let yearId = dialogData.item.schoolClass?.yearId;
+          @let ccId = dialogData.item.curricularComponentId || dialogData.item.curricularComponent?.id || undefined;
           <ui-event-select-modal #eventSelectModal
-                                 [params]="{ codePrefix, classHash }"
+                                 [params]="{ classHash, yearId, ccId }"
                                  [title]="'Select a lesson for duplicate test'"
-                                 (onSelect)="selectEvent($event, proofModal)">
-          </ui-event-select-modal>
+                                 (onSelect)="selectEvent($event, testModal)">
+          </ui-event-select-modal>-->
 
-          <ui-modal #deleteProofModal [template]="deleteProofTemplate"></ui-modal>
+          <app-test-form-modal [event]="event" (modal)="testModal = $event"></app-test-form-modal>
+
+          <!--<ui-modal #deleteProofModal [template]="deleteProofTemplate"></ui-modal>
           <ng-template #deleteProofTemplate>
             @let isMulticlass = test.type === 'MULTICLASS_TEST';
             @if (isMulticlass) {
@@ -254,10 +249,10 @@
               <mat-dialog-actions>
                 <div class="dialog-buttons">
                   <ui-button color="neutral" (onClick)="deleteProofModal.close()" cdkFocusInitial>Cancelar</ui-button>
-                  <ui-button color="danger" (onClick)="deleteProof(proofModal.close);deleteProofModal.close()">
+                  <ui-button color="danger" (onClick)="deleteProof(testModal.close);deleteProofModal.close()">
                     Excluír apenas para {{ event.schoolClass.code }}
                   </ui-button>
-                  <ui-button color="danger" (onClick)="deleteAllProofs(proofModal.close);deleteProofModal.close()">
+                  <ui-button color="danger" (onClick)="deleteAllProofs(testModal.close);deleteProofModal.close()">
                     Excluír para todas as turmas
                   </ui-button>
                 </div>
@@ -271,23 +266,15 @@
               <mat-dialog-actions>
                 <div class="dialog-buttons">
                   <ui-button color="neutral" (onClick)="deleteProofModal.close()" cdkFocusInitial>Cancelar</ui-button>
-                  <ui-button color="danger" (onClick)="deleteProof(proofModal.close);deleteProofModal.close()">
+                  <ui-button color="danger" (onClick)="deleteProof(testModal.close);deleteProofModal.close()">
                     Excluír prova
                   </ui-button>
                 </div>
               </mat-dialog-actions>
             }
-            <!--<mat-dialog-actions>
-              <div class="dialog-buttons">
-                <ui-button color="neutral" (onClick)="deleteProofModal.close()" cdkFocusInitial>Cancelar</ui-button>
-                <ui-button color="danger" (onClick)="deleteProof(proofModal.close);deleteProofModal.close()">
-                  Excluír prova {{ isMulticlass ? 'para todas as turmas' : '' }}
-                </ui-button>
-              </div>
-            </mat-dialog-actions>-->
-          </ng-template>
+          </ng-template>-->
 
-          <ui-modal #deleteProofOnUpdateModal [template]="deleteProofOnUpdateTemplate"></ui-modal>
+          <!--<ui-modal #deleteProofOnUpdateModal [template]="deleteProofOnUpdateTemplate"></ui-modal>
           <ng-template #deleteProofOnUpdateTemplate let-events="events">
             @let isPlural = events.length > 1;
             <h3 mat-dialog-title>A ação excluirá
@@ -309,7 +296,7 @@
                 <ui-button color="danger" (onClick)="deleteProofOnUpdateModal.close(true)">Confirmar</ui-button>
               </div>
             </mat-dialog-actions>
-          </ng-template>
+          </ng-template>-->
 
           <ui-modal #deleteWorkModal [template]="deleteWorkTemplate"></ui-modal>
           <ng-template #deleteWorkTemplate>
@@ -347,7 +334,7 @@
           }
         </app-work-form-modal>
         @if (!readonly && !disabled) {
-          <ui-button color="default" (onClick)="openTestModal(proofModal)" badge=""
+          <ui-button color="default" (onClick)="openTestModal(testModal)" badge=""
                      [badgeColor]="activityStatusClass[test.status]" [disabled]="!test.id && (isMaxTotal || isMaxProofs)">
             {{ 'Proof' | translate }}
           </ui-button>

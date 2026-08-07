@@ -11,7 +11,7 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IProofForm, ProofForm } from '@form/proof.form';
+import { ITestForm, ProofForm } from '@form/proof.form';
 import { Field } from '@ui/field/field';
 import { CurricularComponent, LessonEvent, Test, SchoolClass, UniqueLessonEvent, User } from '@models';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -27,7 +27,7 @@ import {
 } from '@modules/config/curricular-components-list/curricular-component-select/curricular-component-select.component';
 import { FormUtil } from '@util/form-util';
 import { AuthService } from '@services';
-import { ProofService } from '@core/services/proof.service';
+import { TestService } from '@core/services/test.service';
 import { Util } from '@util/util';
 
 @Component({
@@ -50,11 +50,11 @@ export class TestFormComponent implements OnInit, OnDestroy {
   private lessonEventService = inject(LessonEventService);
   private cdr = inject(ChangeDetectorRef);
   private authService = inject(AuthService);
-  private proofService = inject(ProofService);
+  private proofService = inject(TestService);
 
   auth = this.authService.user$.value;
   destroy$ = new Subject<void>();
-  form: FormGroup<IProofForm> = this.createForm();
+  form: FormGroup<ITestForm> = this.createForm();
   classControl: FormControl<SchoolClass | null> = new FormControl<SchoolClass | null>(null);
   ccControl = this.form.controls.curricularComponent;
   test = input<Partial<Test>>({});
@@ -71,7 +71,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
   eventInput = input<LessonEvent>(undefined, {alias: 'event'});
   disabled = input(false);
   readOnly = input(false);
-  form$ = output<FormGroup<IProofForm>>();
+  form$ = output<FormGroup<ITestForm>>();
   events: LessonEvent[] = [];
   eventsLoading = signal(true);
   proofTypes = TestTypes;
@@ -143,11 +143,11 @@ export class TestFormComponent implements OnInit, OnDestroy {
       }
       else {
         if (this.override()) {
-          const id = event?.evalTools?.proof?.id || 0;
+          const id = event?.evalTools?.test?.id || 0;
           const { title, score, content, whereToFindIt } = this.override() || {};
           this.pathValue({ id, title, score, content, whereToFindIt }, true);
-        } else if (event?.evalTools?.proof?.id) {
-          this.pathValue(event?.evalTools?.proof || {}, true);
+        } else if (event?.evalTools?.test?.id) {
+          this.pathValue(event?.evalTools?.test || {}, true);
         } else if (this.test()) {
           this.pathValue(this.test());
         } else {
@@ -232,7 +232,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
 
       const initialSelecteds: UniqueLessonEvent[] = [];
       this.events = (lessons || []).map(l => {
-        const type = l.evalTools.proof?.type;
+        const type = l.evalTools.test?.type;
         const isMulti = type === 'MULTICLASS_TEST';
         const disabled = type && !isMulti;
         const isCreate = !this.form.controls.id.value;
@@ -251,18 +251,18 @@ export class TestFormComponent implements OnInit, OnDestroy {
       this.initialSelectedEvents.emit(initialSelecteds);
 
       const eventWithMultiClass = this.events.find(
-        (e) => e.evalTools.proof?.type === 'MULTICLASS_TEST');
-      const multiclassTest = eventWithMultiClass?.evalTools.proof;
+        (e) => e.evalTools.test?.type === 'MULTICLASS_TEST');
+      const multiclassTest = eventWithMultiClass?.evalTools.test;
       if (multiclassTest?.id && !this.form.controls.id.value) {
         await this.getTest(multiclassTest.id);
       }
       const multiclassEventRef = this.events.find(
         e => {
-          return e.evalTools.proof?.type === 'MULTICLASS_TEST' && e.evalTools.proof?.lessonId === e.lesson.id
+          return e.evalTools.test?.type === 'MULTICLASS_TEST' && e.evalTools.test?.lessonId === e.lesson.id
         });
       const currentEvent = this.events.find(
         e => e.lesson.id === this.eventInput()?.lesson.id);
-      this.isMulticlass = currentEvent?.evalTools?.proof?.type === 'MULTICLASS_TEST';
+      this.isMulticlass = currentEvent?.evalTools?.test?.type === 'MULTICLASS_TEST';
       const classRef = multiclassEventRef?.schoolClass || this.events[0]?.schoolClass;
       const classYearId = classRef?.yearId;
       if (classYearId) {

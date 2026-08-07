@@ -7,7 +7,7 @@ import { firstValueFrom, take } from 'rxjs';
 import { WorkService } from '@services/work.service';
 
 @Component({
-  selector: 'app-delete-work-modal',
+  selector: 'app-work-delete-modal',
   imports: [
     Button,
     MatDialogActions,
@@ -15,11 +15,11 @@ import { WorkService } from '@services/work.service';
     MatDialogTitle,
     ModalComponent,
   ],
-  templateUrl: './delete-work-modal.html',
+  templateUrl: './work-delete-modal.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styleUrl: './delete-work-modal.scss',
+  styleUrl: './work-delete-modal.component.scss',
 })
-export class DeleteWorkModal {
+export class WorkDeleteModal {
   work = input.required<Work>();
   close = output<boolean>();
   private workService = inject(WorkService);

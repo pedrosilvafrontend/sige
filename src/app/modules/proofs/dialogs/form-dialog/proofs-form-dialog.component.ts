@@ -5,7 +5,7 @@ import {
   MatDialogClose, MatDialogActions,
 } from '@angular/material/dialog';
 import { Component, inject, Inject, input, ChangeDetectionStrategy } from '@angular/core';
-import { ProofService } from '@core/services/proof.service';
+import { TestService } from '@core/services/test.service';
 import {
   ReactiveFormsModule,
   FormsModule,
@@ -25,7 +25,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Test } from '@models';
 import { Button } from '@ui/button/button';
-import { IProofForm } from '@form/proof.form';
+import { ITestForm } from '@form/proof.form';
 import { AuthService } from '@services';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TestFormComponent } from '@modules/common/form/test-form/test.form';
@@ -67,14 +67,14 @@ export class ProofsFormDialogComponent {
   auth = this.authService.user$.value;
   action: string;
   dialogTitle: string;
-  form!: FormGroup<IProofForm>;
+  form!: FormGroup<ITestForm>;
   proof: Test;
   disabled = input(false);
 
   constructor(
     public dialogRef: MatDialogRef<ProofsFormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    public service: ProofService,
+    public service: TestService,
   ) {
     this.action = data.action;
     if (this.action === 'edit') {

@@ -4,7 +4,7 @@ import { CurricularComponent, Test, ProofType, UniqueLessonEvent } from '@models
 export class ProofForm {
   private static fb = new FormBuilder();
 
-  static form(data?: Partial<Test>): FormGroup<IProofForm> {
+  static form(data?: Partial<Test>): FormGroup<ITestForm> {
     const fb = this.fb.nonNullable;
     const ctrls = {
       id: [data?.id || null],
@@ -27,7 +27,7 @@ export class ProofForm {
   }
 }
 
-export interface IProofForm {
+export interface ITestForm {
   id: FormControl<number | null>;
   type: FormControl<ProofType>;
   schoolId: FormControl<number | null>;

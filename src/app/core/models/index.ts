@@ -1,3 +1,6 @@
+import { Signal } from '@angular/core';
+import { ModalComponent } from '@ui/modal/modal.component';
+
 export * from './school.model';
 export * from './classes.model';
 export * from './interface';
@@ -23,4 +26,6 @@ export * from './curricular-component.model';
 export * from './user-school-association';
 export * from './time-schedule.model';
 export * from './general-event';
+
+export type ModalSignal = Signal<ModalComponent | undefined>;
 

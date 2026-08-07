@@ -1,8 +1,18 @@
-import { Component, effect, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  output,
+  ChangeDetectionStrategy,
+  OnDestroy,
+  Signal,
+  model, signal
+} from '@angular/core';
 import { AuthService } from '@services';
 import { ModalComponent, ModalDialogComponent, ModalOutput } from '@ui/modal/modal.component';
 import { MatDialogRef } from '@angular/material/dialog';
-import { take } from 'rxjs';
+import { Subject, take } from 'rxjs';
 import { UntypedFormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -13,16 +23,39 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
-export class BaseModal<T> {
+export class BaseModal<T, R=T> implements OnDestroy {
   private authService = inject(AuthService);
   private snackBar = inject(MatSnackBar);
   auth = this.authService.user$.value;
-  modal!: ModalComponent;
+  destroy$: Subject<void> = new Subject();
+  modal: Signal<ModalComponent<T> | undefined> = signal(undefined);
+
+  // private _modal!: ModalComponent | undefined;
+  // get modal(): ModalComponent | undefined {
+  //   return this._modal;
+  // }
+  // set modal(modal: ModalComponent | undefined) {
+  //   this._modal = modal;
+  //   if (modal) {
+  //     this.modal$.emit(modal);
+  //   }
+  // }
+
+  private _ref: MatDialogRef<ModalDialogComponent, R> | undefined;
+  get ref(): MatDialogRef<ModalDialogComponent, R> | undefined {
+    return this._ref;
+  }
+  set ref(ref: MatDialogRef<ModalDialogComponent, R> | undefined) {
+    this._ref = ref;
+    if (ref) {
+      this.ref$.emit(ref);
+    }
+  }
+
   modal$ = output<ModalOutput<T>>({ alias: 'modal' });
-  ref!: MatDialogRef<ModalDialogComponent, T>;
-  ref$ = output<MatDialogRef<ModalDialogComponent, T>>({ alias: 'ref' });
-  data!: T;
-  dataInput = input<T>();
+  ref$ = output<MatDialogRef<ModalDialogComponent, R>>({ alias: 'ref' });
+  // data!: T;
+  data = model<T>();
   form = new UntypedFormGroup({});
   disabled = input(false);
   disabledButton = input(false);
@@ -31,34 +64,28 @@ export class BaseModal<T> {
     this.open = this.open.bind(this);
 
     effect(() => {
-      const data = this.dataInput();
-      if (data) {
-        // console.log('dataInput changed', data);
-        this.data = data;
+      const modal = this.modal();
+      if (modal) {
+        this.modal$.emit(modal);
       }
     });
   }
 
-  open(data?: T) {
+  open(data?: T, context?: any) {
     if (data) {
-      this.data = data;
+      this.data.set(data);
     }
-    // this.item = {
-    //   ...(this.itemInput() || {}),
-    //   ...(data || {}),
-    // };
-    this.ref = this.modal?.open();
+    this.ref = this.modal()?.open(context);
     this.ref?.afterClosed().pipe(take(1)).subscribe((response) => {
       if (response) {
         this.form.reset(response);
       }
     });
-    this.ref$.emit(this.ref);
     return this.ref;
   }
 
-  close(result?: T) {
-    this.modal?.close(result);
+  close(result?: R) {
+    this.modal()?.close(result);
   }
 
   alert(
@@ -68,6 +95,11 @@ export class BaseModal<T> {
       duration: 3000,
       panelClass: 'snackbar',
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 }

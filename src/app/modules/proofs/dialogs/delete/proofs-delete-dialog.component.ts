@@ -7,7 +7,7 @@ import {
   MatDialogClose,
 } from '@angular/material/dialog';
 import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
-import { ProofService } from '@core/services/proof.service';
+import { TestService } from '@core/services/test.service';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Test } from '@models';
@@ -31,7 +31,7 @@ export class ProofsDeleteDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ProofsDeleteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Test,
-    public service: ProofService
+    public service: TestService
   ) {}
 
   confirmDelete(): void {
