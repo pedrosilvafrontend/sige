@@ -240,7 +240,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
 
   onFirstGet(events: LessonEvent[]) {
     if (this.auth()?.role === 'teacher') {
-      const lessonsWithTest = (events || []).filter(e => e.evalTools.proof?.id);
+      const lessonsWithTest = (events || []).filter(e => e.evalTools.test?.id);
       if (lessonsWithTest.length) {
         this.activitiesFilterData = {
           test: true

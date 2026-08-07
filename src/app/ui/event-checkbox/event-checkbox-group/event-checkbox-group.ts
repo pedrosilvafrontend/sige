@@ -38,7 +38,7 @@ export class EventCheckboxGroup {
   constructor() {
     effect(() => {
       const hasMulticlassProof = this.eventsInput().some(
-        event => event.evalTools.proof?.id && event.evalTools.proof?.type === 'MULTICLASS_TEST'
+        event => event.evalTools.test?.id && event.evalTools.test?.type === 'MULTICLASS_TEST'
       );
       const eventKeys = new Set<string>();
       const getEventKey = (uEvent: UniqueLessonEvent) => {
