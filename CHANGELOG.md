@@ -1,3 +1,10 @@
+## [1.1.64](https://github.com/pedrosilvafrontend/sige/compare/v1.1.63...v1.1.64) (2026-08-07)
+
+
+### Bug Fixes
+
+* test save and approve ([e102481](https://github.com/pedrosilvafrontend/sige/commit/e102481b0f19439101c86f502ecf6e8d290bb892))
+
 ## [1.1.63](https://github.com/pedrosilvafrontend/sige/compare/v1.1.62...v1.1.63) (2026-08-02)
 
 
