@@ -1,6 +1,6 @@
 <ng-content>
   <ui-button icon="grading" color="default" (onClick)="open()" badge=""
-             [badgeColor]="statusClass[data.status]" [disabled]="disabledButton()">
+             [badgeColor]="statusClass[data()?.status || '']" [disabled]="disabledButton()">
     <div class="d-flex gap-1 align-items-center">
       <span>
         {{ 'Work' | translate }}
@@ -9,73 +9,75 @@
   </ui-button>
 </ng-content>
 
-<ui-modal (modal)="setModal($event)" [template]="workTemplate" [options]="{width: '800px', disableClose: true}"></ui-modal>
+<ui-modal #modal [template]="workTemplate" [options]="{width: '800px', disableClose: true}"></ui-modal>
 <ng-template #workTemplate>
-  <div class="modalHeader">
-    <h3 mat-dialog-title>Trabalho</h3>
-    <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="modal.close()">
-      <mat-icon>close</mat-icon>
-    </button>
-  </div>
-  <mat-dialog-content>
-    @let disableWork = disabled() || (data.status == 'APPROVED' && auth.role == 'teacher');
-    @if (data && data.status) {
-      <div class="my-3">
-        <span class="badge" [ngClass]="'text-bg-'+statusClass[data.status]">
-          {{ data.status | translate }}
-        </span>
-      </div>
-    }
-    <app-work-form
-      class="d-block mt-3"
-      [schoolId]="schoolId()"
-      [data]="data || {}"
-      [disabled]="disabled()"
-      (form$)="(form = $event)"
-    ></app-work-form>
-  </mat-dialog-content>
-  <div matDialogActions>
-    <div class="dialog-buttons">
-      @let isWorkManager = auth.role === 'admin' || auth.role === 'principal' || auth.role === 'coordinator';
-
-      @if (data?.id && !disableWork) {
-        <app-work-delete-modal [work]="data" (close)="onDeleteWork($event)"></app-work-delete-modal>
+  @if (data(); as data) {
+    <div class="modalHeader">
+      <h3 mat-dialog-title>Trabalho</h3>
+      <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="modal.close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <mat-dialog-content>
+      @let disableWork = disabled() || (data.status == 'APPROVED' && auth.role == 'teacher');
+      @if (data && data.status) {
+        <div class="my-3">
+          <span class="badge" [ngClass]="'text-bg-'+statusClass[data.status]">
+            {{ data.status | translate }}
+          </span>
+        </div>
       }
+      <app-work-form
+        class="d-block mt-3"
+        [schoolId]="schoolId()"
+        [data]="data || {}"
+        [disabled]="disabled()"
+        (form$)="(form = $event)"
+      ></app-work-form>
+    </mat-dialog-content>
+    <div matDialogActions>
+      <div class="dialog-buttons">
+        @let isWorkManager = auth.role === 'admin' || auth.role === 'principal' || auth.role === 'coordinator';
 
-      @if (!disabled() && isWorkManager) {
-        @if (data.status === 'PENDING_APPROVAL') {
-          <ui-button color="danger" tabindex="-1" type="button" (onClick)="onReject()">{{ 'Reject' | translate }}</ui-button>
+        @if (data?.id && !disableWork) {
+          <app-work-delete-modal [work]="data" (close)="onDeleteWork($event)"></app-work-delete-modal>
         }
-        @if ((data.status === 'REJECTED' || data.status === 'PENDING_APPROVAL')) {
-          <ui-button color="success" tabindex="-1" type="button" (onClick)="onApprove()">{{ 'Approve' | translate }}</ui-button>
-        }
-      }
 
-      <ui-button color="neutral" type="button" (onClick)="modal.close()">
-        @if (disabled()) {
-          {{ 'Close' | translate }}
-        } @else {
-          {{ 'Cancel' | translate }}
+        @if (!disabled() && isWorkManager) {
+          @if (data.status === 'PENDING_APPROVAL') {
+            <ui-button color="danger" tabindex="-1" type="button" (onClick)="onReject()">{{ 'Reject' | translate }}</ui-button>
+          }
+          @if ((data.status === 'REJECTED' || data.status === 'PENDING_APPROVAL')) {
+            <ui-button color="success" tabindex="-1" type="button" (onClick)="onApprove()">{{ 'Approve' | translate }}</ui-button>
+          }
         }
-      </ui-button>
-<!--      <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>-->
-      @let isManager = auth.role && ['admin', 'principal', 'coordinator'].includes(auth.role);
-      @if (!disableWork) {
-        <ui-button [disabled]="form.invalid" (onClick)="onSubmit()">
-          Salvar
-          @if (data.status && data.status != 'APPROVED' && isManager) {
-            e aprovar
+
+        <ui-button color="neutral" type="button" (onClick)="modal.close()">
+          @if (disabled()) {
+            {{ 'Close' | translate }}
+          } @else {
+            {{ 'Cancel' | translate }}
           }
         </ui-button>
-      }
+  <!--      <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>-->
+        @let isManager = auth.role && ['admin', 'principal', 'coordinator'].includes(auth.role);
+        @if (!disableWork) {
+          <ui-button [disabled]="form.invalid" (onClick)="onSubmit()">
+            Salvar
+            @if (data.status && data.status != 'APPROVED' && isManager) {
+              e aprovar
+            }
+          </ui-button>
+        }
 
-<!--      @if (hasNext) {-->
-        <ui-button
-          [disabled]="form.invalid"
-          (onClick)="onSubmit(true)">
-          {{ 'Save and duplicate' | translate }}
-        </ui-button>
-<!--      }-->
+  <!--      @if (hasNext) {-->
+          <ui-button
+            [disabled]="form.invalid"
+            (onClick)="onSubmit(true)">
+            {{ 'Save and duplicate' | translate }}
+          </ui-button>
+  <!--      }-->
+      </div>
     </div>
-  </div>
+  }
 </ng-template>

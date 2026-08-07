@@ -50,7 +50,7 @@ export class TestFormModal extends BaseModal<Test> implements OnInit {
   private router = inject(Router);
   private classService = inject(ClassesService);
   event = model.required<LessonEvent>();
-  testForm!: FormGroup<ITestForm>;
+  declare form: FormGroup<ITestForm>;
   readonly = input(false);
   classHash = input('');
   override modal = viewChild<ModalComponent>('modal');
@@ -62,10 +62,12 @@ export class TestFormModal extends BaseModal<Test> implements OnInit {
   initialSelectedEvents: UniqueLessonEvent[] = [];
 
   set test(test: Test) {
-    this.dup.data = test;
+    // this.dup.data = test;
+
+    this.data.set(test);
   }
   get test() {
-    return this.dup.data;
+    return this.data() || new Test();
   }
 
   constructor() {
@@ -77,13 +79,13 @@ export class TestFormModal extends BaseModal<Test> implements OnInit {
     this.deleteModal()?.open();
   }
 
-  saveTest(proofModal: ModalComponent, deleteProofOnUpdateModal: ModalComponent) {
+  saveTest(proofModal: ModalComponent, deleteTestOnUpdateModal: ModalComponent) {
     this.dup.nextMode = false;
     this._saveTest((success: boolean) => {
       if (success) {
         proofModal.close(true);
       }
-    }, deleteProofOnUpdateModal)
+    }, deleteTestOnUpdateModal)
   }
 
   private _saveTest(callback?: (success: boolean) => void, confirmModal?: ModalComponent) {
@@ -269,10 +271,10 @@ export class TestFormModal extends BaseModal<Test> implements OnInit {
   }
 
   ngOnInit() {
-    this.deleteModal()?.ref.afterClosed()?.pipe(takeUntil(this.destroy$)).subscribe((res: TestDeleteResponse) => {
-      if (res.success) {
-        console.log('Successfully deleted test, refresh:', res.refresh);
-      }
-    })
+    // this.deleteModal()?.ref.afterClosed()?.pipe(takeUntil(this.destroy$)).subscribe((res: TestDeleteResponse) => {
+    //   if (res.success) {
+    //     console.log('Successfully deleted test, refresh:', res.refresh);
+    //   }
+    // })
   }
 }

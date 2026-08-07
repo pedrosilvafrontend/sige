@@ -43,11 +43,12 @@ export class WorkFormModal extends BaseModal<Work> {
   readonly = input(false);
   schoolId = input.required<number>();
   workInput = input.required<Work>({ alias: 'work' });
+  override modal = viewChild<ModalComponent>('modal');
   statusClass: any = Work.statusClass;
 
   constructor() {
     super();
-    this.data = new Work();
+    this.data.set(new Work());
   }
 
   async onSubmit(goNext?: boolean) {
@@ -56,7 +57,7 @@ export class WorkFormModal extends BaseModal<Work> {
     }
     if (this.form.valid) {
       const work = this.form.getRawValue() as Work;
-      const {lessonId, date, timeScheduleId} = this.data;
+      const {lessonId, date, timeScheduleId} = this.data() || {};
       if (!lessonId || !date || !timeScheduleId) {
         this.alert('Erro ao salvar');
         return;
@@ -72,7 +73,7 @@ export class WorkFormModal extends BaseModal<Work> {
       if (workResponse.id) {
         this.alert('Salvo com sucesso!');
         this.form.reset();
-        this.modal.close({data: workResponse, goNext});
+        this.modal()?.close({data: workResponse, goNext});
       }
 
       // const request$ = data.id ? this.workService.update(data) : this.workService.add(data);
@@ -91,30 +92,38 @@ export class WorkFormModal extends BaseModal<Work> {
   }
 
   protected onApprove() {
-    this.workService.approve(this.data).subscribe((work: Work) => {
+    const data = this.data();
+    if (!data) {
+      return;
+    }
+    this.workService.approve(data).subscribe((work: Work) => {
       this.alert('Aprovado com sucesso!');
-      this.modal?.close(work);
-      this.data = work;
+      this.modal()?.close(work);
+      this.data.set(work);
     });
   }
 
   protected onReject() {
-    this.workService.reject(this.data).subscribe((work: Work) => {
+    const data = this.data();
+    if (!data) {
+      return;
+    }
+    this.workService.reject(data).subscribe((work: Work) => {
       this.alert('Reprovado com sucesso!');
-      this.modal?.close(work);
-      this.data = work;
+      this.modal()?.close(work);
+      this.data.set(work);
     });
   }
 
-  protected setModal($event: ModalComponent) {
-    this.modal = $event;
-  }
+  // protected setModal($event: ModalComponent) {
+  //   this.modal = $event;
+  // }
 
   onDeleteWork($event: boolean) {
     if ($event) {
       this.alert('Trabalho excluído com sucesso!');
       this.form.reset();
-      this.close(this.data);
+      this.close(this.data());
     }
   }
 }

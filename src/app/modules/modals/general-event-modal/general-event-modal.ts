@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, viewChild } from '@angular/core';
 import { BaseModal } from '@modules/modals/base-modal/base-modal';
 import { GeneralEvent } from '@models';
 import { Button } from '@ui/button/button';
@@ -41,10 +41,11 @@ import { JsonPipe, TitleCasePipe } from '@angular/common';
 export class GeneralEventModal extends BaseModal<GeneralEvent> {
   private fb = new FormBuilder();
   types = Object.values(GeneralEvent.types);
+  override modal = viewChild<ModalComponent>('mainModal');
 
   constructor() {
     super();
-    this.data = new GeneralEvent();
+    this.data.set(new GeneralEvent());
     this.setForm();
   }
 

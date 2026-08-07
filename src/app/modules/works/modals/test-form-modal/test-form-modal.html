@@ -4,8 +4,8 @@
 <ng-template #template let-hasNext="hasNext" let-classHash="classHash" let-overrideTest="overrideTest">
   <div class="modalHeader">
     @let fullTest = testFormComponent.proof;
-    @let classCode = fullTest?.schoolClass?.code || data.schoolClass?.code || '';
-    @let rawTest = testForm?.getRawValue();
+    @let classCode = fullTest?.schoolClass?.code || data()?.schoolClass?.code || '';
+    @let rawTest = form?.getRawValue();
     <div mat-dialog-title>
       <div class="modalTitle">
         @if (readonly() || disabled()) {
@@ -61,7 +61,7 @@
       [timeScheduleId]="timeScheduleId"
       [event]="event()"
       [disabled]="disableTest"
-      (form$)="(testForm = $event)"
+      (form$)="(form = $event)"
       (initialSelectedEvents)="(initialSelectedEvents = $event)"
     >
     </app-test-form>
@@ -88,14 +88,14 @@
       @if (!disableTest) {
         <!--                  deleteOnUpdateModal-->
         @if (test.type == 'MULTICLASS_TEST') {
-          <ui-button [disabled]="testForm.invalid" (onClick)="saveTest(modal, deleteOnUpdateModal)">
+          <ui-button [disabled]="form.invalid" (onClick)="saveTest(modal, deleteOnUpdateModal)">
             Salvar
-            @if (test.status && test.status != 'APPROVED' && isManager && (testForm.controls.score.value && testForm.controls.content.value)) {
+            @if (test.status && test.status != 'APPROVED' && isManager && (form.controls.score.value && form.controls.content.value)) {
               e aprovar
             }
           </ui-button>
         } @else {
-          <ui-button [disabled]="testForm.invalid" (onClick)="saveTest(modal, deleteOnUpdateModal)">
+          <ui-button [disabled]="form.invalid" (onClick)="saveTest(modal, deleteOnUpdateModal)">
             Salvar
             @if (test.status && test.status != 'APPROVED' && isManager) {
               e aprovar
@@ -105,7 +105,7 @@
 
         @if (hasNext && test.type !== 'MULTICLASS_TEST') {
           <ui-button
-            [disabled]="testForm.invalid"
+            [disabled]="form.invalid"
             (onClick)="saveAndNext(modal)">
             {{ 'Save and duplicate' | translate }}
           </ui-button>
@@ -122,8 +122,8 @@
                        (actionClick)="confirmOverrideTest($event)">
 </ui-test-compare-modal>
 
-@let yearId = data.schoolClass?.yearId;
-@let ccId = data.curricularComponentId || data.curricularComponent?.id || undefined;
+@let yearId = data()?.schoolClass?.yearId;
+@let ccId = data()?.curricularComponentId || data()?.curricularComponent?.id || undefined;
 <ui-event-select-modal #eventSelectModal
                        [params]="{ classHash, yearId, ccId }"
                        [title]="'Select a lesson for duplicate test'"

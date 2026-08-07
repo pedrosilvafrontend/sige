@@ -1,6 +1,6 @@
 <ui-modal #modal [template]="template"></ui-modal>
 <ng-template #template>
-  @let isMulticlass = data.type === 'MULTICLASS_TEST';
+  @let isMulticlass = data()?.type === 'MULTICLASS_TEST';
   @if (isMulticlass) {
     <h3 mat-dialog-title>Excluír prova</h3>
     <mat-dialog-content>
@@ -20,7 +20,7 @@
   } @else {
     <h3 mat-dialog-title>Excluír prova</h3>
     <mat-dialog-content>
-      <p>Prova: <strong>{{ data?.title }}</strong></p>
+      <p>Prova: <strong>{{ data()?.title }}</strong></p>
       Deseja realmente excluír a prova ?
     </mat-dialog-content>
     <mat-dialog-actions>

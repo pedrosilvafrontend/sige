@@ -230,7 +230,7 @@ export class WorksComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected openWorkDialog(dialogRef: MatDialogRef<ModalDialogComponent>) {
+  protected openWorkDialog(dialogRef: MatDialogRef<ModalDialogComponent, Work> | undefined) {
     dialogRef?.afterClosed().pipe(take(1)).subscribe((result) => {
       if (result) {
         this.loadData();

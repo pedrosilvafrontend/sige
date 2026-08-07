@@ -63,6 +63,7 @@ import { Router } from '@angular/router';
 import { WorkFormComponent } from '@modules/common/form/work-form/work-form.component';
 import { ActivityDuplicate } from '@ui/event-select-modal/activity-duplicate';
 import { TestFormModal } from '@modules/works/modals/test-form-modal/test-form-modal';
+import { BaseModal } from '@modules/modals/base-modal/base-modal';
 
 export interface DialogData {
   item: EventMerge;
@@ -121,7 +122,9 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
   private lessonEventService = inject(LessonEventService);
   private lessonEventExtraService = inject(LessonEventExtraService);
   private message = inject(MessageService);
-  private testDup!: ActivityDuplicate<Test>;
+  // private testDup!: ActivityDuplicate<Test>;
+  private testModal = viewChild<ModalComponent>('testModal');
+  private workModal = viewChild<WorkFormModal>('workModal');
 
   // private _saveTestNextMode = false;
   // get saveTestNextMode(): boolean {
@@ -143,17 +146,21 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
 
   private _test: Test = new Test();
   set test(test: Test) {
-    if (!this.testDup) {
-      this._test = test;
-      return;
-    }
-    this.testDup.data = test;
+    this._test = test;
+
+    // if (!this.testDup) {
+    //   this._test = test;
+    //   return;
+    // }
+    // this.testDup.data = test;
   }
   get test() {
-    if (!this.testDup) {
-      return this._test;
-    }
-    return this.testDup.data;
+    return this._test;
+
+    // if (!this.testDup) {
+    //   return this._test;
+    // }
+    // return this.testDup.data;
   }
 
   generalEvent!: GeneralEvent;
@@ -324,10 +331,10 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
     })
   }
 
-  workModalOpen(openFn: (data?: Work) => MatDialogRef<ModalDialogComponent, any>) {
-    const ref = openFn?.(this.work);
+  workModalOpen() {
+    const ref = this.workModal()?.open(this.work);
     if (ref) {
-      ref.afterClosed().pipe(take(1)).subscribe((res: { data: Work, goNext?: boolean }) => {
+      ref.afterClosed().pipe(take(1)).subscribe((res: any) => {
         if (res?.data?.id) {
           this.closeRefresh = true;
           this.work = res.data;
@@ -337,11 +344,15 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
         }
         if (res.goNext) {
           this.closeRefresh = true;
-          // this.openEventSelect();
-          this.testDup.openEventSelect();
+          this.openEventSelect();
+          // this.testDup.openEventSelect();
         }
       })
     }
+  }
+
+  openEventSelect() {
+    // TODO: continuar
   }
 
   gEventOpen(openFn: (data?: GeneralEvent) => MatDialogRef<ModalDialogComponent, GeneralEvent>) {
@@ -598,15 +609,18 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
 
   protected readonly ProofService = TestService;
 
-  // protected async openTestModal(proofModal: ModalComponent, overrideTest?: Partial<Test> | null) {
+  protected async openTestModal(overrideTest?: Partial<Test> | null) {
+
+
+
   //   let codePrefix = this.dialogData.item.schoolClass?.codePrefix || '';
-  //   const schoolClass = this.dialogData.item.schoolClass;
-  //   const classCode = schoolClass?.code || '';
-  //   const testContext: any = {
-  //     classHash: this.classHash,
-  //     overrideTest
-  //   };
-  //
+    const schoolClass = this.dialogData.item.schoolClass;
+    const classCode = schoolClass?.code || '';
+    const testContext: any = {
+      classHash: this.classHash,
+      overrideTest
+    };
+
   //   if (!this.router.url.includes('/public/')) {
   //     if (!codePrefix && classCode) {
   //       codePrefix = classCode.match(/^[A-Za-z]+\d+/)?.[0] || '';
@@ -627,7 +641,9 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
   //   //     this.openEventSelect();
   //   //   }
   //   // });
-  // }
+
+    this.testModal()?.open(testContext);
+  }
 
   // async selectEvent(event: LessonEvent, testModal: ModalComponent) {
   //   const originalTest = event.evalTools.test;

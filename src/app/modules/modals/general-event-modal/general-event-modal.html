@@ -7,11 +7,11 @@
     </div>
   </ui-button>
 </ng-content>
-<ui-modal (modal)="(modal = $event)" [template]="template" [options]="{width: '800px', disableClose: true}"></ui-modal>
+<ui-modal #mainModal [template]="template" [options]="{width: '800px', disableClose: true}"></ui-modal>
 <ng-template #template>
   <div class="modalHeader">
     <h3 mat-dialog-title>{{ 'General event' | translate }}</h3>
-    <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="modal.close()">
+    <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="modal()?.close()">
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -45,7 +45,7 @@
 
     <div class="dialog-buttons">
 
-      <ui-button color="neutral" type="button" (onClick)="modal.close()">
+      <ui-button color="neutral" type="button" (onClick)="modal()?.close()">
         @if (disabled()) {
           {{ 'Close' | translate }}
         } @else {
