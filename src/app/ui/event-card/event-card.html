@@ -1,4 +1,4 @@
-@let proofType = $safeNavigationMigration(event().evalTools.proof?.type);
+@let proofType = $safeNavigationMigration(event().evalTools.test?.type);
 <mat-card class="cursor-pointer"
           [ngStyle]="{'background-color': color, 'color': color | textColor }"
           [ngClass]="{
@@ -12,7 +12,7 @@
 
         <div class="d-flex gap-1 justify-content-between mb-3">
           <div class="activities">
-            @let pStatus = evt.evalTools.proof?.status || '';
+            @let pStatus = evt.evalTools.test?.status || '';
             @let wStatus = evt.evalTools.work?.status || '';
             @if (pStatus === 'APPROVED') {
               <span [className]="'badge m-x-2 activity-test'" [ngStyle]="$safeNavigationMigration(activities().get('TEST')?.color) | colorStyle">{{ proofType | translate }}</span>

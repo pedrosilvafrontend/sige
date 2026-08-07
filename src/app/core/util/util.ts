@@ -114,7 +114,7 @@ export class Util {
       color, observations, countActivities, evalTools, curricularComponent } = event;
     const { timeSchedule } = frequency;
     const { schoolClass } = lesson;
-    const { proof, work } = evalTools;
+    const { test, work } = evalTools;
     return {
       title,
       date,
@@ -149,8 +149,8 @@ export class Util {
         acronym: school?.acronym || '',
       },
       evalTools: {
-        proof: {
-          id: proof?.id || 0,
+        test: {
+          id: test?.id || 0,
         },
         work: {
           id: work?.id || 0,
@@ -173,8 +173,8 @@ export class Util {
       frequencyId: event.frequency?.id || 0,
       timeScheduleId: event.frequency?.timeSchedule?.id || 0,
       weekday: (event.weekday || event.frequency?.weekday || 'UNIQUE') as Weekday,
-      proofId: event.evalTools?.proof?.id || 0,
-      proofType: event.evalTools?.proof?.type || '',
+      proofId: event.evalTools?.test?.id || 0,
+      proofType: event.evalTools?.test?.type || '',
       workId: event.evalTools?.work?.id || 0,
       selected: (event as any)?.selected || false
     }

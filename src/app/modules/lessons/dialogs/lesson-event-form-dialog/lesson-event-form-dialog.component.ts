@@ -351,15 +351,15 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
         this.message.success('Salvo com sucesso!');
         callback?.(true);
         this.closeRefresh = true;
-        let proof: Test;
+        let test: Test;
         if (isMulticlass && Array.isArray(response)) {
-          proof = response.find((p: Test) => p.lessonId === lessonId);
+          test = response.find((p: Test) => p.lessonId === lessonId);
         }
         else {
-          proof = response;
+          test = response;
         }
-        this.test = proof;
-        this.proofForm.patchValue(proof);
+        this.test = test;
+        this.proofForm.patchValue(test);
       },
       error: (error) => {
         callback?.(false);
@@ -463,7 +463,7 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
       this.proofService.deleteAll(proof.id || 0).subscribe(() => {
         this.message.success('Provas excluídas com sucesso!');
         this.proofForm.reset();
-        Object.assign(this.event.evalTools.proof || {}, this.proofForm.value);
+        Object.assign(this.event.evalTools.test || {}, this.proofForm.value);
         this.closeRefresh = true;
         callback?.();
       })
@@ -475,7 +475,7 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
     this.proofService.deleteItem(proof.id || 0).subscribe(() => {
       this.message.success('Prova excluída com sucesso!');
       this.proofForm.reset();
-      Object.assign(this.event.evalTools.proof || {}, this.proofForm.value);
+      Object.assign(this.event.evalTools.test || {}, this.proofForm.value);
       this.closeRefresh = true;
       callback?.();
     })
@@ -536,8 +536,8 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
 
       // this.event = this.dialogData.item;
       this.event = event;
-      if (this.event?.evalTools?.proof?.id) {
-        const proof = this.event.evalTools.proof;
+      if (this.event?.evalTools?.test?.id) {
+        const proof = this.event.evalTools.test;
         if (!this.test.timeScheduleId) {
           this.test.timeScheduleId = this.timeScheduleId;
         }
@@ -588,7 +588,7 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
   }
 
   async selectEvent(event: LessonEvent, testModal: ModalComponent) {
-    const originalTest = event.evalTools.proof;
+    const originalTest = event.evalTools.test;
     if (originalTest?.type === 'MULTICLASS_TEST') {
       await Swal.fire({
         title: 'Prova bimestral',
@@ -610,7 +610,7 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
         if (resp === true || resp === false) {
           if (resp) {
             this.originalTest = originalTest;
-            this.overrideTest = Object.assign({}, this.test);
+            this.overrideTest = Object.assign({}, this.test, { id: 0 });
           } else {
             this.overrideTest = null;
           }

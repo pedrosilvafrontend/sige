@@ -5,7 +5,7 @@ import { IWorkForm } from '@form/work.form';
 import { IProofForm } from '@form/proof.form';
 
 export interface EvalTools {
-  proof?: Test;
+  test?: Test;
   work?: Work;
 }
 
@@ -17,7 +17,7 @@ export interface EvalToolsForm {
 export class EvalTools {
   constructor(evalTools: Partial<EvalTools> = {}) {
     {
-      this.proof = evalTools.proof || new Test();
+      this.test = evalTools.test || new Test();
       this.work = evalTools.work || new Work();
     }
   }

@@ -143,13 +143,13 @@ export class TestFormComponent implements OnInit, OnDestroy {
       }
       else {
         if (this.override()) {
-          const id = event?.evalTools?.proof?.id || 0;
+          const id = event?.evalTools?.test?.id || 0;
           const { title, score, content, whereToFindIt } = this.override() || {};
           this.pathValue({ id, title, score, content, whereToFindIt }, true);
-        } else if (event?.evalTools?.proof?.id) {
-          this.pathValue(event?.evalTools?.proof || {}, true);
+        } else if (event?.evalTools?.test?.id) {
+          this.pathValue(event?.evalTools?.test || {}, true);
         } else if (this.test()) {
-          this.pathValue(this.test());
+          this.pathValue(this.test(), true);
         } else {
           this.pathValue(new Test());
         }
@@ -158,13 +158,18 @@ export class TestFormComponent implements OnInit, OnDestroy {
   }
 
   pathValue(test: Partial<Test>, forceId?: boolean) {
-    const { title, score, content, whereToFindIt } = test;
+    const { title, score, content, whereToFindIt, curricularComponent, curricularComponentId } = test;
     const data: Partial<Test> = {
       title: title || '',
       score: score || '',
       content: content || '',
-      whereToFindIt: whereToFindIt || ''
+      whereToFindIt: whereToFindIt || '',
+      curricularComponentId: curricularComponentId || 0
     };
+    if (curricularComponent) {
+      data.curricularComponent = curricularComponent;
+      data.curricularComponentId = curricularComponentId || curricularComponent.id;
+    }
     if (forceId) {
       data.id = test.id || 0;
     }
@@ -232,7 +237,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
 
       const initialSelecteds: UniqueLessonEvent[] = [];
       this.events = (lessons || []).map(l => {
-        const type = l.evalTools.proof?.type;
+        const type = l.evalTools.test?.type;
         const isMulti = type === 'MULTICLASS_TEST';
         const disabled = type && !isMulti;
         const isCreate = !this.form.controls.id.value;
@@ -251,18 +256,18 @@ export class TestFormComponent implements OnInit, OnDestroy {
       this.initialSelectedEvents.emit(initialSelecteds);
 
       const eventWithMultiClass = this.events.find(
-        (e) => e.evalTools.proof?.type === 'MULTICLASS_TEST');
-      const multiclassTest = eventWithMultiClass?.evalTools.proof;
+        (e) => e.evalTools.test?.type === 'MULTICLASS_TEST');
+      const multiclassTest = eventWithMultiClass?.evalTools.test;
       if (multiclassTest?.id && !this.form.controls.id.value) {
         await this.getTest(multiclassTest.id);
       }
       const multiclassEventRef = this.events.find(
         e => {
-          return e.evalTools.proof?.type === 'MULTICLASS_TEST' && e.evalTools.proof?.lessonId === e.lesson.id
+          return e.evalTools.test?.type === 'MULTICLASS_TEST' && e.evalTools.test?.lessonId === e.lesson.id
         });
       const currentEvent = this.events.find(
         e => e.lesson.id === this.eventInput()?.lesson.id);
-      this.isMulticlass = currentEvent?.evalTools?.proof?.type === 'MULTICLASS_TEST';
+      this.isMulticlass = currentEvent?.evalTools?.test?.type === 'MULTICLASS_TEST';
       const classRef = multiclassEventRef?.schoolClass || this.events[0]?.schoolClass;
       const classYearId = classRef?.yearId;
       if (classYearId) {
