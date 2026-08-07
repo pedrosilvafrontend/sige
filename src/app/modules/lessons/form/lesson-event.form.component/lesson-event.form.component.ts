@@ -144,7 +144,7 @@ export class LessonEventFormComponent implements OnInit, OnDestroy {
 
   patchForm(data: LessonEventFormValue) {
     this.form.patchValue(data);
-    if (data.evalTools?.proof?.score) {
+    if (data.evalTools?.test?.score) {
       this.showProof = true;
     }
   }
