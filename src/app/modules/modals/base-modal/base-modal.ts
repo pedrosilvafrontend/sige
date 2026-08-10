@@ -62,6 +62,7 @@ export class BaseModal<T, R=T> implements OnDestroy {
 
   constructor() {
     this.open = this.open.bind(this);
+    // this.modal$.emit(this.modal);
 
     effect(() => {
       const modal = this.modal();
@@ -71,7 +72,7 @@ export class BaseModal<T, R=T> implements OnDestroy {
     });
   }
 
-  open(data?: T, context?: any) {
+  open(data?: T | null, context?: any) {
     if (data) {
       this.data.set(data);
     }
