@@ -149,7 +149,7 @@ export class TestFormComponent implements OnInit, OnDestroy {
         } else if (event?.evalTools?.test?.id) {
           this.pathValue(event?.evalTools?.test || {}, true);
         } else if (this.test()) {
-          this.pathValue(this.test());
+          this.pathValue(this.test(), true);
         } else {
           this.pathValue(new Test());
         }
@@ -158,13 +158,18 @@ export class TestFormComponent implements OnInit, OnDestroy {
   }
 
   pathValue(test: Partial<Test>, forceId?: boolean) {
-    const { title, score, content, whereToFindIt } = test;
+    const { title, score, content, whereToFindIt, curricularComponent, curricularComponentId } = test;
     const data: Partial<Test> = {
       title: title || '',
       score: score || '',
       content: content || '',
-      whereToFindIt: whereToFindIt || ''
+      whereToFindIt: whereToFindIt || '',
+      curricularComponentId: curricularComponentId || 0
     };
+    if (curricularComponent) {
+      data.curricularComponent = curricularComponent;
+      data.curricularComponentId = curricularComponentId || curricularComponent.id;
+    }
     if (forceId) {
       data.id = test.id || 0;
     }

@@ -383,103 +383,90 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
     })
   }
 
-  // saveOrUpdateProof(data: Test, callback?: (success: boolean) => void) {
-  //   const isUpdate = !!data?.id;
-  //   const isMulticlass = data?.type === 'MULTICLASS_TEST';
-  //   const lessonId = this.lessonId;
-  //   if (!lessonId) {
-  //     return;
-  //   }
-  //   const request$ = isUpdate ? this.testService.update(data) : this.testService.add(data);
-  //   request$.subscribe({
-  //     next: (response: any) => {
-  //       this.message.success('Salvo com sucesso!');
-  //       callback?.(true);
-  //       this.closeRefresh = true;
-  //       let proof: Test;
-  //       if (isMulticlass && Array.isArray(response)) {
-  //         proof = response.find((p: Test) => p.lessonId === lessonId);
-  //       }
-  //       else {
-  //         proof = response;
-  //       }
-  //       this.test = proof;
-  //       this.proofForm.patchValue(proof);
-  //     },
-  //     error: (error) => {
-  //       callback?.(false);
-  //       console.error('Proof Update Error:', error);
-  //       this.form.setErrors({ temp: true });
-  //     },
-  //   });
-  // }
-  //
-  // testNextMode(nextMode: boolean) {
-  //   if (this.testDup) {
-  //     this.testDup.nextMode = nextMode;
-  //   }
-  // }
-  //
-  // saveTest(proofModal: ModalComponent, deleteProofOnUpdateModal: ModalComponent) {
-  //   this.testNextMode(false);
-  //   this.saveProof((success: boolean) => {
-  //     if (success) {
-  //       proofModal.close(true);
-  //     }
-  //   }, deleteProofOnUpdateModal)
-  // }
-  //
-  // saveProof(callback?: (success: boolean) => void, confirmModal?: ModalComponent) {
-  //   if (this.proofForm.valid) {
-  //     const formData = this.form.getRawValue() as LessonEventFormValue;
-  //     const proof = this.proofForm.getRawValue();
-  //     const isUpdate = !!proof?.id;
-  //     const isMulticlass = proof?.type === 'MULTICLASS_TEST';
-  //     const lessonId = this.lessonId;
-  //     // const ccId = this.dialogData.item?.curricularComponent?.id || 0;
-  //     if (!lessonId) {
-  //       return;
-  //     }
-  //     if (proof?.score || isMulticlass) {
-  //       // const events = proof.events?.filter((e: UniqueLessonEvent) => e.selected) || [];
-  //       const events = proof.events;
-  //       const data: Test = {
-  //         id: proof.id || 0,
-  //         type: proof.type || 'TEST',
-  //         lessonId: lessonId,
-  //         schoolId: proof.schoolId || this.schoolId,
-  //         content: proof.content || '',
-  //         date: formData.date,
-  //         score: proof.score || '',
-  //         status: proof.status || '',
-  //         timeScheduleId: formData.timeSchedule?.id || 0,
-  //         title: proof.title || '',
-  //         whereToFindIt: proof.whereToFindIt || '',
-  //         events: events,
-  //         curricularComponentId: proof.curricularComponent?.id || 0
-  //       }
-  //
-  //       // alerta de provas a serem excluídas
-  //       const originalSelected = this.initialSelectedProofEvents.map((e) => e.proofId);
-  //       const proofExcludes = isUpdate ? proof.events?.filter((e) => !e.selected && originalSelected.includes(e.proofId)) || [] : [];
-  //       const hasExcludes = proofExcludes.length > 0;
-  //       if (hasExcludes) {
-  //         const modalRef = confirmModal?.open({ events: proofExcludes });
-  //         modalRef?.afterClosed().pipe(take(1))
-  //           .subscribe((confirmed: boolean) => {
-  //             if (confirmed) {
-  //               this.saveOrUpdateProof(data, callback);
-  //             }
-  //           });
-  //         return;
-  //       }
-  //
-  //       this.saveOrUpdateProof(data, callback);
-  //
-  //     }
-  //
-  //   }
-  // }
+  saveOrUpdateProof(data: Test, callback?: (success: boolean) => void) {
+    const isUpdate = !!data?.id;
+    const isMulticlass = data?.type === 'MULTICLASS_TEST';
+    const lessonId = this.lessonId;
+    if (!lessonId) {
+      return;
+    }
+    const request$ = isUpdate ? this.proofService.update(data) : this.proofService.add(data);
+    request$.subscribe({
+      next: (response: any) => {
+        this.message.success('Salvo com sucesso!');
+        callback?.(true);
+        this.closeRefresh = true;
+        let test: Test;
+        if (isMulticlass && Array.isArray(response)) {
+          test = response.find((p: Test) => p.lessonId === lessonId);
+        }
+        else {
+          test = response;
+        }
+        this.test = test;
+        this.proofForm.patchValue(test);
+      },
+      error: (error) => {
+        callback?.(false);
+        console.error('Proof Update Error:', error);
+        this.form.setErrors({ temp: true });
+      },
+    });
+  }
+
+  saveTest(proofModal: ModalComponent, deleteProofOnUpdateModal: ModalComponent) {
+    this.saveTestNextMode = false;
+    this.saveProof((success: boolean) => {
+      if (success) {
+        proofModal.close(true);
+      }
+    }, deleteProofOnUpdateModal)
+  }
+
+  saveProof(callback?: (success: boolean) => void, confirmModal?: ModalComponent) {
+    if (this.proofForm.valid) {
+      const formData = this.form.getRawValue() as LessonEventFormValue;
+      const proof = this.proofForm.getRawValue();
+      const isUpdate = !!proof?.id;
+      const isMulticlass = proof?.type === 'MULTICLASS_TEST';
+      const lessonId = this.lessonId;
+      // const ccId = this.dialogData.item?.curricularComponent?.id || 0;
+      if (!lessonId) {
+        return;
+      }
+      if (proof?.score || isMulticlass) {
+        // const events = proof.events?.filter((e: UniqueLessonEvent) => e.selected) || [];
+        const events = proof.events;
+        const data: Test = {
+          id: proof.id || 0,
+          type: proof.type || 'TEST',
+          lessonId: lessonId,
+          schoolId: proof.schoolId || this.schoolId,
+          content: proof.content || '',
+          date: formData.date,
+          score: proof.score || '',
+          status: proof.status || '',
+          timeScheduleId: formData.timeSchedule?.id || 0,
+          title: proof.title || '',
+          whereToFindIt: proof.whereToFindIt || '',
+          events: events,
+          curricularComponentId: proof.curricularComponent?.id || 0
+        }
+
+        // alerta de provas a serem excluídas
+        const originalSelected = this.initialSelectedProofEvents.map((e) => e.proofId);
+        const proofExcludes = isUpdate ? proof.events?.filter((e) => !e.selected && originalSelected.includes(e.proofId)) || [] : [];
+        const hasExcludes = proofExcludes.length > 0;
+        if (hasExcludes) {
+          const modalRef = confirmModal?.open({ events: proofExcludes });
+          modalRef?.afterClosed().pipe(take(1))
+            .subscribe((confirmed: boolean) => {
+              if (confirmed) {
+                this.saveOrUpdateProof(data, callback);
+              }
+            });
+          return;
+        }
 
   // openEventSelect = () => {};
   //
@@ -644,44 +631,33 @@ export class LessonEventFormDialogComponent implements OnInit, OnDestroy {
 
     this.testModal()?.open(testContext);
   }
+  async selectEvent(event: LessonEvent, testModal: ModalComponent) {
+    const originalTest = event.evalTools.test;
+    if (originalTest?.type === 'MULTICLASS_TEST') {
+      await Swal.fire({
+        title: 'Prova bimestral',
+        text: 'Não é possível duplicar para prova bimestral',
+        icon: 'warning',
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+    if (originalTest?.id) {
+      this.originalTest = originalTest;
+      const ref = this.testCompareModal()?.open();
+      ref?.afterClosed().pipe(take(1)).subscribe((resp: any) => {
 
-  // async selectEvent(event: LessonEvent, testModal: ModalComponent) {
-  //   const originalTest = event.evalTools.test;
-  //   if (originalTest?.type === 'MULTICLASS_TEST') {
-  //     await Swal.fire({
-  //       title: 'Prova bimestral',
-  //       text: 'Não é possível duplicar para prova bimestral',
-  //       icon: 'warning',
-  //       confirmButtonText: 'OK',
-  //     });
-  //     return;
-  //   }
-  //   if (originalTest?.id) {
-  //     this.originalTest = originalTest;
-  //     const ref = this.testCompareModal()?.open();
-  //     ref?.afterClosed().pipe(take(1)).subscribe((resp: any) => {
-  //
-  //       if (!resp) {
-  //         this.originalTest = new Test();
-  //         this.overrideTest = null;
-  //       }
-  //       if (resp === true || resp === false) {
-  //         if (resp) {
-  //           this.originalTest = originalTest;
-  //           this.overrideTest = Object.assign({}, this.test);
-  //         } else {
-  //           this.overrideTest = null;
-  //         }
-  //
-  //         this.openTestModal(testModal, this.overrideTest).then();
-  //       }
-  //       this.reset(event).then();
-  //     });
-  //     return;
-  //   }
-  //   this.reset(event).then();
-  //   this.openTestModal(testModal).then();
-  // }
+        if (!resp) {
+          this.originalTest = new Test();
+          this.overrideTest = null;
+        }
+        if (resp === true || resp === false) {
+          if (resp) {
+            this.originalTest = originalTest;
+            this.overrideTest = Object.assign({}, this.test, { id: 0 });
+          } else {
+            this.overrideTest = null;
+          }
 
   // confirmOverrideTest(confirm: boolean) {
   //   if (!confirm) {

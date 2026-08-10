@@ -1,3 +1,30 @@
+## [1.1.63](https://github.com/pedrosilvafrontend/sige/compare/v1.1.62...v1.1.63) (2026-08-02)
+
+
+### Bug Fixes
+
+* public calendar fix auth required ([cd7f430](https://github.com/pedrosilvafrontend/sige/commit/cd7f43001ee0c43e7caddd1a97c91e3590726a48))
+
+
+### Features
+
+* show test and work on lesson event modal ([2a784fa](https://github.com/pedrosilvafrontend/sige/commit/2a784fa7c687406f0aaf8904c62c997c92981c3f))
+
+## [1.1.62](https://github.com/pedrosilvafrontend/sige/compare/v1.1.61...v1.1.62) (2026-07-29)
+
+
+### Features
+
+* public calendar filters auto search ([643131c](https://github.com/pedrosilvafrontend/sige/commit/643131c3e48e8dd9e0e19b1d09c10cdc8c78b102))
+
+## [1.1.61](https://github.com/pedrosilvafrontend/sige/compare/v1.1.60...v1.1.61) (2026-07-25)
+
+
+### Bug Fixes
+
+* public calendar incorrect auth required ([9f81a7f](https://github.com/pedrosilvafrontend/sige/commit/9f81a7fb422ab0ceafdb8c664a1e6425a9ea702a))
+* public calendar incorrect auth required ([a8c6f31](https://github.com/pedrosilvafrontend/sige/commit/a8c6f312355e1adafbc4358d9ceb70e88e0895b4))
+
 ## [1.1.60](https://github.com/pedrosilvafrontend/sige/compare/v1.1.59...v1.1.60) (2026-07-08)
 
 
