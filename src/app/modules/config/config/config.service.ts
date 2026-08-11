@@ -16,8 +16,13 @@ export class ConfigService extends BaseService<ConfigData> {
   }
 
   getConfig(params?: any): Observable<ConfigResponse> {
+    let url = this.apiURL;
+    if (!params.schoolId && params.classHash) {
+      url = `${this.baseUrl}/public/${params.classHash}/config`;
+      delete params.classHash;
+    }
     return this.http
-      .get<ConfigResponse>(`${this.apiURL}`, { params })
+      .get<ConfigResponse>(url, { params })
       .pipe(take(1), catchError(this.handleError));
   }
 

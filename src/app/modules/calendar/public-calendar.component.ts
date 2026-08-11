@@ -49,9 +49,11 @@ import { LessonEventService } from '@services/lesson-event.service';
 import { ActivityService } from '@modules/config/activity/activity.service';
 import { Skeleton } from '@ui/skeleton/skeleton';
 import { LoadingService } from '@services/loading.service';
-import { startOfYear } from 'date-fns';
+import { isWithinInterval, startOfYear } from 'date-fns';
 import { MatMenuModule } from '@angular/material/menu';
 import {TeacherCcSelectComponent} from '@modules/teachers/teacher-cc-select/teacher-cc-select.component';
+import { ConfigService } from '@modules/config/config/config.service';
+import { ConfigData } from '@models/config.model';
 
 @Component({
   selector: 'app-calendar',
@@ -90,6 +92,7 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
   private degreesService = inject(DegreesService);
   private lesEventService = inject(LesEventService);
   private activityService = inject(ActivityService);
+  private configService = inject(ConfigService);
   private snackBar = inject(MatSnackBar);
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
@@ -144,6 +147,8 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
   protected deferredPrompt = signal<any>(null);
   protected showInstallButton = signal<boolean>(true);
   protected utmSource: string = '';
+  private configs!: ConfigData;
+  protected semester: { num: number; range: { start: string; end: string } } | null = null;
 
   constructor() {
     this.dialogTitle = 'Add New Event';
@@ -246,7 +251,7 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  setCalendarView(viewType: 'multiMonthYear' | 'listMonth' | 'listYear') {
+  async setCalendarView(viewType: 'multiMonthYear' | 'listMonth' | 'listYear') {
     // dayGridMonth: Visão mensal tradicional em grade.
     // dayGridWeek: Visão semanal em grade (sem divisão por horários).
     // dayGridDay: Visão diária em grade (mostra apenas o dia atual).
@@ -261,8 +266,36 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
     const api = this.calendarComponent?.getApi();
     if (!api) return;
     const now = new Date();
+    this.semester = null;
     if (viewType === 'listYear' || viewType === 'multiMonthYear') {
-      api.setOption('validRange', {start: startOfYear(now)});
+      const schoolId = this.filters.get('school')?.value?.id || 0;
+      let semester = 0;
+      const config = await this.getConfig(schoolId);
+      if (config) {
+        let range = {
+          start: config.startFirstSemester,
+          end: config.endFirstSemester,
+        }
+        isWithinInterval(new Date(), range) && (semester = 1);
+
+        if (!semester) {
+          range = {
+            start: config.startSecondSemester,
+            end: config.endSecondSemester,
+          }
+          isWithinInterval(new Date(), range) && (semester = 2);
+        }
+
+        this.semester = {
+          num: semester,
+          range
+        }
+
+        api.setOption('validRange', range);
+      }
+      else {
+        api.setOption('validRange', {start: startOfYear(now)});
+      }
     } else {
       api.setOption('validRange', {start: now});
     }
@@ -478,6 +511,27 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
       }
     }
     return this.getScrollParent(node.parentElement);
+  }
+
+  async getConfig(schoolId?: number) {
+    const params: any = {
+      classHash: this.classHash
+    };
+    if (schoolId) {
+      params.schoolId = schoolId;
+    }
+    const configs = await firstValueFrom(this.configService.getConfig(params));
+    if (configs && configs.school && configs.association) {
+      this.configs = {
+        ...configs.school,
+        startFirstSemester: configs.school.startFirstSemester || configs.association.startFirstSemester,
+        endSecondSemester: configs.school.endSecondSemester || configs.association.endSecondSemester,
+        startSecondSemester: configs.school.startSecondSemester || configs.association.startSecondSemester,
+        endFirstSemester: configs.school.endFirstSemester || configs.association.endFirstSemester,
+      } as ConfigData;
+    }
+
+    return this.configs;
   }
 
   calendarOptions: CalendarOptions = (() => {
