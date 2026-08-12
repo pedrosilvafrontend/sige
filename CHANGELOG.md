@@ -1,3 +1,10 @@
+## [1.1.65](https://github.com/pedrosilvafrontend/sige/compare/v1.1.64...v1.1.65) (2026-08-11)
+
+
+### Features
+
+* calendar semester range ([e7c0eb1](https://github.com/pedrosilvafrontend/sige/commit/e7c0eb16ee7547f432c663ea5bca2de6e579ffdf))
+
 ## [1.1.64](https://github.com/pedrosilvafrontend/sige/compare/v1.1.63...v1.1.64) (2026-08-07)
 
 
