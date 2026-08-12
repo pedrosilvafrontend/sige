@@ -1,3 +1,10 @@
+## [1.1.66](https://github.com/pedrosilvafrontend/sige/compare/v1.1.65...v1.1.66) (2026-08-12)
+
+
+### Features
+
+* work save and duplicate ([ba7026c](https://github.com/pedrosilvafrontend/sige/commit/ba7026c0e98730ba91867cde7843f33aa313b81c))
+
 ## [1.1.65](https://github.com/pedrosilvafrontend/sige/compare/v1.1.64...v1.1.65) (2026-08-11)
 
 
