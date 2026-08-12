@@ -1,10 +1,11 @@
 import { Component, effect, inject, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { AuthService } from '@services';
-import { ModalComponent, ModalDialogComponent, ModalOutput } from '@ui/modal/modal.component';
+import { ModalComponent, ModalDialogComponent } from '@ui/modal/modal.component';
 import { MatDialogRef } from '@angular/material/dialog';
 import { take } from 'rxjs';
 import { UntypedFormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ModalOutput, ModalResult } from '@models/modal-result';
 
 @Component({
   selector: 'app-base-modal',
@@ -19,8 +20,8 @@ export class BaseModal<T> {
   auth = this.authService.user$.value;
   modal!: ModalComponent;
   modal$ = output<ModalOutput<T>>({ alias: 'modal' });
-  ref!: MatDialogRef<ModalDialogComponent, T>;
-  ref$ = output<MatDialogRef<ModalDialogComponent, T>>({ alias: 'ref' });
+  ref!: MatDialogRef<ModalDialogComponent, ModalResult<T>>;
+  ref$ = output<MatDialogRef<ModalDialogComponent, ModalResult<T>>>({ alias: 'ref' });
   data!: T;
   dataInput = input<T>();
   form = new UntypedFormGroup({});

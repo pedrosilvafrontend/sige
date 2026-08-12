@@ -39,6 +39,23 @@
   </div>
 </div>
 
+<app-work-form-modal #workModal [work]="currentWork" [schoolId]="schoolId" [allowDuplicate]="false">
+  <!--@let isManager = auth.role === 'admin' || auth.role === 'principal' || auth.role === 'coordinator';
+  <button
+    type="button"
+    [matTooltip]="(isManager && currentWork.status === 'PENDING_APPROVAL' ? 'Approve or reject': 'Edit') | translate"
+    mat-icon-button color="accent"
+    (click)="$event.stopPropagation();openWorkDialog(currentWork)"
+    class="tbl-action-btn">
+    @if (isManager && currentWork.status === 'PENDING_APPROVAL') {
+      <mat-icon>rule</mat-icon>
+    }
+    @else {
+      <mat-icon>edit</mat-icon>
+    }
+  </button>-->
+</app-work-form-modal>
+
 <div class="overflow-auto">
   <div class="responsive_table">
     <table mat-table [dataSource]="dataSource" matSort class="mat-cell advance-table">
@@ -50,21 +67,19 @@
               <mat-header-cell class="pr-0" *matHeaderCellDef [ngStyle]="{'width': '160px'}">{{ column.label }}</mat-header-cell>
               <mat-cell *matCellDef="let row; let i=index;" class="pr-0">
                 @let isManager = auth.role === 'admin' || auth.role === 'principal' || auth.role === 'coordinator';
-                <app-work-form-modal #workModal [work]="row" [schoolId]="$safeNavigationMigration(row.lesson?.school?.id)">
-                  <button
-                    type="button"
-                    [matTooltip]="(isManager && row.status === 'PENDING_APPROVAL' ? 'Approve or reject': 'Edit') | translate"
-                    mat-icon-button color="accent"
-                    (click)="$event.stopPropagation();openWorkDialog(workModal.open(row))"
-                    class="tbl-action-btn">
-                    @if (isManager && row.status === 'PENDING_APPROVAL') {
-                      <mat-icon>rule</mat-icon>
-                    }
-                    @else {
-                      <mat-icon>edit</mat-icon>
-                    }
-                  </button>
-                </app-work-form-modal>
+                <button
+                  type="button"
+                  [matTooltip]="(isManager && row.status === 'PENDING_APPROVAL' ? 'Approve or reject': 'Edit') | translate"
+                  mat-icon-button color="accent"
+                  (click)="$event.stopPropagation();openWorkModal(row)"
+                  class="tbl-action-btn">
+                  @if (isManager && row.status === 'PENDING_APPROVAL') {
+                    <mat-icon>rule</mat-icon>
+                  }
+                  @else {
+                    <mat-icon>edit</mat-icon>
+                  }
+                </button>
 
                 <button [matTooltip]="'Delete' | translate" mat-icon-button color="accent" (click)="$event.stopPropagation();deleteItem(row)"
                   class="tbl-action-btn">

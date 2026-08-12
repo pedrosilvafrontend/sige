@@ -25,6 +25,7 @@ import {
 } from '@core/resources/lesson-event.resource';
 import { FnsPipe } from '@util/fns-pipe';
 import { firstValueFrom } from 'rxjs';
+import { ModalResult } from '@models/modal-result';
 
 @Component({
   selector: 'ui-event-select-modal',
@@ -103,14 +104,14 @@ export class EventSelectModal implements OnInit {
     return ref;
   }
 
-  close(data?: any) {
+  close(data?: ModalResult<LessonEvent>) {
     this.lastDate = '';
     this.modal()?.close(data);
   }
 
   select(event: LessonEvent) {
     this.onSelect.emit(event);
-    this.close(event);
+    this.close({ data: event });
   }
 
   async getEvents(filterParams?: any) {

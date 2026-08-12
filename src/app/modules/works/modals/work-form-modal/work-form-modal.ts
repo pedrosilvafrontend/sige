@@ -8,8 +8,8 @@ import {
 import { ModalComponent } from '@ui/modal/modal.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import { WorkFormComponent } from '@modules/common/form/work-form/work-form.component';
-import { Work } from '@models';
-import { NgClass } from '@angular/common';
+import { LessonEvent, SchoolClass, Work } from '@models';
+import { DatePipe, NgClass, SlicePipe } from '@angular/common';
 import { WorkService } from '@services/work.service';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
@@ -29,7 +29,9 @@ import { BaseModal } from '@modules/modals/base-modal/base-modal';
     NgClass,
     MatIcon,
     MatIconButton,
-    DeleteWorkModal
+    DeleteWorkModal,
+    DatePipe,
+    SlicePipe
   ],
   templateUrl: './work-form-modal.html',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -40,6 +42,8 @@ export class WorkFormModal extends BaseModal<Work> {
   readonly = input(false);
   schoolId = input.required<number>();
   workInput = input.required<Work>({ alias: 'work' });
+  event = input<LessonEvent>();
+  allowDuplicate = input<boolean>(true);
   statusClass: any = Work.statusClass;
 
   constructor() {
@@ -47,7 +51,7 @@ export class WorkFormModal extends BaseModal<Work> {
     this.data = new Work();
   }
 
-  onSubmit() {
+  onSubmit(nextMode?: boolean) {
     if (this.readonly()) {
       return;
     }
@@ -69,7 +73,7 @@ export class WorkFormModal extends BaseModal<Work> {
         next: (response) => {
           this.alert('Salvo com sucesso!');
           this.form.reset();
-          this.modal.close(response);
+          this.modal.close({ success: true, nextMode, data: response });
         },
         error: (error) => {
           console.error('Work Add Error:', error);
@@ -82,7 +86,7 @@ export class WorkFormModal extends BaseModal<Work> {
   protected onApprove() {
     this.workService.approve(this.data).subscribe((work: Work) => {
       this.alert('Aprovado com sucesso!');
-      this.modal?.close(work);
+      this.modal?.close({data: work});
       this.data = work;
     });
   }
@@ -90,7 +94,7 @@ export class WorkFormModal extends BaseModal<Work> {
   protected onReject() {
     this.workService.reject(this.data).subscribe((work: Work) => {
       this.alert('Reprovado com sucesso!');
-      this.modal?.close(work);
+      this.modal?.close({data: work});
       this.data = work;
     });
   }
@@ -103,7 +107,8 @@ export class WorkFormModal extends BaseModal<Work> {
     if ($event) {
       this.alert('Trabalho excluído com sucesso!');
       this.form.reset();
-      this.close(this.data);
+      this.data = new Work();
+      this.modal.close({data: this.data, action: 'delete'});
     }
   }
 }

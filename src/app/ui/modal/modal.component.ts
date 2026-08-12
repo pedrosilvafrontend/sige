@@ -9,11 +9,6 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angu
 import { MatButton } from '@angular/material/button';
 import { NgTemplateOutlet } from '@angular/common';
 
-export interface ModalOutput<T = any> {
-  open: (data?: T) => MatDialogRef<ModalDialogComponent>;
-  close: () => void;
-}
-
 @Component({
   selector: 'ui-modal-dialog',
   imports: [

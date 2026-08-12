@@ -1,4 +1,13 @@
-import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ChangeDetectionStrategy,
+  viewChild
+} from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -6,7 +15,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Subject, take } from 'rxjs';
+import { firstValueFrom, Subject, take } from 'rxjs';
 import { WorksDeleteDialogComponent } from './dialogs/delete/works-delete-dialog.component';
 import { MAT_DATE_LOCALE, MatOptionModule, MatRippleModule, } from '@angular/material/core';
 import { CommonModule, NgClass } from '@angular/common';
@@ -27,7 +36,8 @@ import { User, Work } from '@models';
 import { PageHeaderComponent } from '@ui/page-header/page-header.component';
 import { AuthService } from '@services';
 import { WorkFormModal } from '@modules/works/modals/work-form-modal/work-form-modal';
-import { ModalDialogComponent, ModalOutput } from '@ui/modal/modal.component';
+import { ModalDialogComponent } from '@ui/modal/modal.component';
+import { ModalOutput } from '@models/modal-result';
 
 @Component({
   selector: 'app-works',
@@ -71,7 +81,9 @@ export class WorksComponent implements OnInit, OnDestroy {
   public translate = inject(TranslateService);
   public workStatusClass: any = Work.statusClass;
   public auth: User = this.authService.user$.value;
-  workModal!: ModalOutput;
+  public currentWork = new Work();
+  public schoolId = 0;
+  workModal = viewChild<WorkFormModal>('workModal');
 
   columnsLabels = ['date', 'curricularComponent', 'class', 'teacher', 'title', 'score', 'status', 'actions'].map((key: string) => this.translate.instant(key));
 
@@ -230,12 +242,32 @@ export class WorksComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected openWorkDialog(dialogRef: MatDialogRef<ModalDialogComponent>) {
-    dialogRef?.afterClosed().pipe(take(1)).subscribe((result) => {
-      if (result) {
-        this.loadData();
-      }
-    })
+  async openWorkModal(work?: Work) {
+    const ref = this.workModal()?.open(work);
+    if (!ref) {
+      return;
+    }
+    const ret = await firstValueFrom(ref.afterClosed());
+    if (ret?.data) {
+      this.currentWork = ret.data;
+    }
+
+    return ret;
   }
+
+  // protected openWorkDialog(row: Work) {
+  //   this.schoolId = row?.lesson?.school?.id || 0;
+  //   this.currentWork = row;
+  //   this.workModal()?.open(row).afterClosed().pipe(take(1)).subscribe((response) => {
+  //
+  //   })
+  // }
+  // protected openWorkDialog(dialogRef: MatDialogRef<ModalDialogComponent>) {
+  //   dialogRef?.afterClosed().pipe(take(1)).subscribe((result) => {
+  //     if (result) {
+  //       this.loadData();
+  //     }
+  //   })
+  // }
 
 }

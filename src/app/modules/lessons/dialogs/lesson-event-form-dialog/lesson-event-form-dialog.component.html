@@ -1,11 +1,17 @@
 <div class="dialogContainer">
   <div class="modalHeader">
-    <div class="modalTitle">
-      @if (disabled || readonly) {
-        {{ 'Lesson event' | translate }}
-      } @else {
-        {{ 'Edit lesson event' | translate }}
-      }
+    <div mat-dialog-title>
+      <div class="modalTitle">
+        @if (disabled || readonly) {
+          {{ 'Lesson event' | translate }}
+        } @else {
+          {{ 'Edit lesson event' | translate }}
+        }
+      </div>
+      <div class="modalSubtitle">
+<!--        <span>{{ 'Lesson' | translate }}: <strong>{{ event.lesson.id }}</strong></span>-->
+        <span>{{ 'Class' | translate }}: <strong>{{ event.schoolClass.code }}</strong></span>
+      </div>
     </div>
     <button mat-icon-button mat-dialog-close class="modal-close-button" aria-label="Close dialog" type="button">
       <mat-icon>close</mat-icon>
@@ -122,7 +128,7 @@
           <ng-template #proofTemplate let-hasNext="hasNext" let-classHash="classHash" let-overrideTest="overrideTest">
             <div class="modalHeader">
               @let fullTest = testFormComponent.proof;
-              @let classCode = fullTest?.schoolClass?.code || dialogData.item.schoolClass?.code || '';
+              @let classCode = fullTest?.schoolClass?.code || dialogData.item.schoolClass?.code || event.schoolClass?.code || '';
               @let rawTest = proofForm?.getRawValue();
               <div mat-dialog-title>
                 <div class="modalTitle">
@@ -201,14 +207,14 @@
                 @if (!disableTest) {
 <!--                  deleteProofOnUpdateModal-->
                   @if (test.type == 'MULTICLASS_TEST') {
-                    <ui-button [disabled]="proofForm.invalid" (onClick)="saveTest(proofModal, deleteProofOnUpdateModal)">
+                    <ui-button [disabled]="proofForm.invalid" (onClick)="saveTest()">
                       Salvar
                       @if (test.status && test.status != 'APPROVED' && isManager && (proofForm.controls.score.value && proofForm.controls.content.value)) {
                         e aprovar
                       }
                     </ui-button>
                   } @else {
-                    <ui-button [disabled]="proofForm.invalid" (onClick)="saveTest(proofModal, deleteProofOnUpdateModal)">
+                    <ui-button [disabled]="proofForm.invalid" (onClick)="saveTest()">
                       Salvar
                       @if (test.status && test.status != 'APPROVED' && isManager) {
                         e aprovar
@@ -219,7 +225,7 @@
                   @if (hasNext && test.type !== 'MULTICLASS_TEST') {
                     <ui-button
                       [disabled]="proofForm.invalid"
-                      (onClick)="setEventSelect(eventSelectModal); saveTestNext(proofModal)">
+                      (onClick)="saveTest(true)">
                       {{ 'Save and duplicate' | translate }}
                     </ui-button>
                   }
@@ -238,8 +244,9 @@
           @let codePrefix = dialogData.item.schoolClass?.code | codePrefix;
           <ui-event-select-modal #eventSelectModal
                                  [params]="{ codePrefix, classHash }"
-                                 [title]="'Select a lesson for duplicate test'"
-                                 (onSelect)="selectEvent($event, proofModal)">
+                                 [title]="'Select a lesson for duplicate activity'"
+                                 >
+<!--                                 (onSelect)="selectEvent($event)">-->
           </ui-event-select-modal>
 
           <ui-modal #deleteProofModal [template]="deleteProofTemplate"></ui-modal>
@@ -310,7 +317,7 @@
             </mat-dialog-actions>
           </ng-template>
 
-          <ui-modal #deleteWorkModal [template]="deleteWorkTemplate"></ui-modal>
+          <!--<ui-modal #deleteWorkModal [template]="deleteWorkTemplate"></ui-modal>
           <ng-template #deleteWorkTemplate>
             <h3 mat-dialog-title>Excluír trabalho</h3>
             <mat-dialog-content>
@@ -323,7 +330,7 @@
                 <ui-button color="danger" (onClick)="deleteWork(workModal.close);deleteWorkModal.close()" cdkFocusInitial>Excluír trabalho</ui-button>
               </div>
             </mat-dialog-actions>
-          </ng-template>
+          </ng-template>-->
         </div>
       </div>
     </div>
@@ -337,16 +344,16 @@
           <ui-button color="default" (onClick)="openColorModal(colorModal)">Cor</ui-button>
           <ui-button color="default" (onClick)="planningModal.open()">{{ 'Planning' | translate }}</ui-button>
         }
-        <app-work-form-modal #workModal [work]="work" [schoolId]="schoolId" [hidden]="readonly && !work.id" [disabled]="readonly">
+        <app-work-form-modal #workModal [work]="work" [schoolId]="schoolId" [event]="event" [hidden]="readonly && !work.id" [disabled]="readonly">
           @if (!readonly && !disabled) {
-            <ui-button color="default" (onClick)="workModalOpen(workModal.open)" badge=""
+            <ui-button color="default" (onClick)="openWorkModal()" badge=""
                        [badgeColor]="activityStatusClass[work.status]" [disabled]="!work.id && (isMaxTotal || isMaxWorks)">
               {{ 'Work' | translate }}
             </ui-button>
           }
         </app-work-form-modal>
         @if (!readonly && !disabled) {
-          <ui-button color="default" (onClick)="openTestModal(proofModal)" badge=""
+          <ui-button color="default" (onClick)="openTestModal()" badge=""
                      [badgeColor]="activityStatusClass[test.status]" [disabled]="!test.id && (isMaxTotal || isMaxProofs)">
             {{ 'Proof' | translate }}
           </ui-button>

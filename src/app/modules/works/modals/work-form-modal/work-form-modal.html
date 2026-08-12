@@ -1,18 +1,24 @@
-<ng-content>
-  <ui-button icon="grading" color="default" (onClick)="open()" badge=""
-             [badgeColor]="statusClass[data.status]" [disabled]="disabledButton()">
-    <div class="d-flex gap-1 align-items-center">
-      <span>
-        {{ 'Work' | translate }}
-      </span>
-    </div>
-  </ui-button>
-</ng-content>
+<ng-content></ng-content>
 
 <ui-modal (modal)="setModal($event)" [template]="workTemplate" [options]="{width: '800px', disableClose: true}"></ui-modal>
 <ng-template #workTemplate>
   <div class="modalHeader">
-    <h3 mat-dialog-title>Trabalho</h3>
+    <div mat-dialog-title>
+      <div class="modalTitle">
+        {{ 'Work' | translate }}
+      </div>
+      @if (event(); as event) {
+        <div class="modalSubtitle">
+          <span>{{ 'Class' | translate }}: <strong>{{ event.schoolClass.code }}</strong></span>
+          @if (event.date) {
+            <span>Data: <strong>{{ event.date | date:'dd/MM/yyyy' }}</strong></span>
+          }
+          @if ((event.frequency && event.frequency.timeSchedule && event.frequency.timeSchedule.startTime) || ''; as time) {
+            <span>Hora: <strong>{{ time | slice:0:5 }}</strong></span>
+          }
+        </div>
+      }
+    </div>
     <button mat-icon-button class="modal-close-button" aria-label="Close dialog" type="button" (click)="modal.close()">
       <mat-icon>close</mat-icon>
     </button>
@@ -52,11 +58,7 @@
       }
 
       <ui-button color="neutral" type="button" (onClick)="modal.close()">
-        @if (disabled()) {
-          {{ 'Close' | translate }}
-        } @else {
-          {{ 'Cancel' | translate }}
-        }
+        {{ (disabled() ? 'Close' : 'Cancel') | translate }}
       </ui-button>
 <!--      <ui-button [disabled]="!form.valid" type="submit">{{ 'Save' | translate }}</ui-button>-->
       @let isManager = auth.role && ['admin', 'principal', 'coordinator'].includes(auth.role);
@@ -66,6 +68,13 @@
           @if (data.status && data.status != 'APPROVED' && isManager) {
             e aprovar
           }
+        </ui-button>
+      }
+      @if (allowDuplicate()) {
+        <ui-button
+          [disabled]="form.invalid"
+          (onClick)="onSubmit(true)">
+          {{ 'Save and duplicate' | translate }}
         </ui-button>
       }
     </div>

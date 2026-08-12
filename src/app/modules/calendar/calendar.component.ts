@@ -329,23 +329,20 @@ export class CalendarComponent implements OnInit, OnDestroy {
     if (!params.start || !params.end) {
       return;
     }
-    // const { start, end } = this.lastParams || {};
-    // if (start == params.start && end == params.end && this.originalData.length) {
+
+    // const paramsEntries = Object.entries(params || {});
+    // const lastParamsEntries = Object.entries(this.lastParams || {});
+    // let isEqual = false;
+    // if (paramsEntries.length === lastParamsEntries.length) {
+    //   isEqual = paramsEntries.every(([k, v]) => {
+    //     return this.lastParams[k] === v;
+    //   })
+    // }
+    // if (isEqual && this.originalData.length) {
     //   return;
     // }
-    const paramsEntries = Object.entries(params || {});
-    const lastParamsEntries = Object.entries(this.lastParams || {});
-    let isEqual = false;
-    if (paramsEntries.length === lastParamsEntries.length) {
-      isEqual = paramsEntries.every(([k, v]) => {
-        return this.lastParams[k] === v;
-      })
-    }
-    if (isEqual && this.originalData.length) {
-      return;
-    }
+    // this.lastParams = params;
 
-    this.lastParams = params;
 
     return !params.schoolId && params.classHash ?
       this.lessonEventService.getPublicAllLite(params) :
@@ -712,7 +709,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
+      if (result?.refresh) {
         this.refresh();
       }
     })

@@ -816,7 +816,7 @@ export class PublicCalendarComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
+      if (result?.refresh) {
         this.refresh();
       }
     })

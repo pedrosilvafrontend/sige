@@ -43,6 +43,7 @@ import { ActivityConfig, LessonBatch, LessonEvent } from '@models';
 import { LessonEventService } from '@services/lesson-event.service';
 import { UpdateService } from '@services/update.service';
 import { ActivityService } from '@modules/config/activity/activity.service';
+import { ModalResult } from '@models/modal-result';
 
 @Component({
   selector: 'app-lesson-events',
@@ -164,9 +165,9 @@ export class LessonEventsComponent extends BaseListComponent<LessonEvent> implem
       maxWidth: '100vw',
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe((result: ModalResult) => {
       const text = 'Salvo com sucesso!';
-      if (result) {
+      if (result?.refresh) {
         this.showNotification(
           'bg-green-500',
           text,

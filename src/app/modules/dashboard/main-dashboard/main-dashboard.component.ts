@@ -292,7 +292,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
+      if (result?.refresh) {
         this.refresh().then();
       }
     });
